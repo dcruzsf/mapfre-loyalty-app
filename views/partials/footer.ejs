@@ -1,0 +1,47 @@
+</div><!-- /container -->
+  
+<!-- Footer con panel de control -->
+<footer class="app-footer">
+  <div class="container">
+    <div class="footer-content">
+      <div class="copyright">
+        &copy; <%= brand.copyright %>
+      </div>
+      <div class="demo-panel">
+        <% if (typeof session !== 'undefined' && session.memberId) { %>
+          <!-- Control para eliminar cuenta individual (solo si hay sesión activa) -->
+          <form method="POST" action="/reset-account" onsubmit="return confirm('¿Seguro que deseas eliminar tu cuenta y reiniciar la demo? Esta acción no se puede deshacer.')" style="display: inline-block;">
+            <button type="submit" class="btn btn-sm btn-warning">Eliminar mi cuenta y reiniciar demo</button>
+          </form>
+        <% } %>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- jQuery, Popper.js, and Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<!-- Custom JS -->
+<script src="/js/main.js"></script>
+
+<!-- Script para mostrar información de debug en desarrollo -->
+<% if (process.env.NODE_ENV === 'development') { %>
+<script>
+  console.log('=== <%= brand.name.toUpperCase() %> LOYALTY CLUB DEBUG INFO ===');
+  <% if (typeof member !== 'undefined' && member) { %>
+    console.log('Usuario actual:', '<%= member.name %> (<%= member.email %>)');
+    console.log('ID de sesión:', '<%= member.id %>');
+    console.log('Puntos de nivel:', '<%= member.levelPoints %>');
+    console.log('Puntos de rewards:', '<%= member.rewardPoints %>');
+    console.log('Tier:', '<%= member.tier %>');
+  <% } else { %>
+    console.log('No hay usuario autenticado');
+  <% } %>
+  console.log('Total de usuarios registrados:', 'No disponible en cliente');
+  console.log('=====================================');
+</script>
+<% } %>
+</body>
+</html>

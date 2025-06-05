@@ -1,0 +1,32 @@
+{
+  "name": "loyalty-demo-interactive",
+  "version": "1.0.0",
+  "description": "Demo interactivo de Salesforce Loyalty Management",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "express-session": "^1.17.3",
+    "express-basic-auth": "^1.2.1",
+    "body-parser": "^1.20.2",
+    "ejs": "^3.1.9",
+    "axios": "^1.6.2",
+    "querystring": "^0.2.1",
+    "dotenv": "^16.3.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  },
+  "keywords": [
+    "salesforce",
+    "loyalty",
+    "demo",
+    "express",
+    "nodejs"
+  ],
+  "author": "Jaime García",
+  "license": "Salesforce"
+}

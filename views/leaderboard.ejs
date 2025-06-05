@@ -1,0 +1,162 @@
+<%- include('partials/header', {currentPage: 'leaderboard', member: member}) %>
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/">Inicio</a></li>
+    <li class="breadcrumb-item active">Leaderboard</li>
+  </ol>
+</nav>
+
+<div class="page-header-space">
+  <h1 class="page-title">Tu Engagement Score</h1>
+  <p class="page-subtitle">Descubre tu nivel de compromiso y compite en el leaderboard</p>
+</div>
+
+<% if (typeof errorMessage !== 'undefined' && errorMessage) { %>
+  <div class="alert alert-danger">
+    <i class="fas fa-exclamation-circle"></i> <%= errorMessage %>
+  </div>
+<% } %>
+
+<% if (typeof successMessage !== 'undefined' && successMessage) { %>
+  <div class="confirmation-message">
+    <i class="fas fa-check-circle"></i> <%= successMessage %>
+  </div>
+<% } %>
+
+<% if (typeof missingId !== 'undefined' && missingId) { %>
+  <div class="alert alert-warning">
+    <i class="fas fa-exclamation-triangle"></i> <strong>Aviso:</strong> Tu cuenta no tiene un ID de Salesforce asignado.
+    <% if (useSalesforce) { %>
+      Para participar en el leaderboard, debes registrarte con el modo Salesforce activado.
+    <% } else { %>
+      El modo Salesforce está desactivado. Estás en modo demo.
+    <% } %>
+  </div>
+<% } %>
+
+<div class="leaderboard-container">
+  <div class="row">
+    <div class="col-md-6">
+      <div class="score-display">
+        <div class="score-circle">
+          <div class="score-value"><%= Math.round(scorePreview.score) %></div>
+          <div class="score-label">PUNTOS</div>
+        </div>
+        <div class="engagement-level"><%= scorePreview.level %></div>
+      </div>
+    </div>
+    
+    <div class="col-md-6">
+      <div class="score-details">
+        <% const details = scorePreview.details; %>
+        
+        <!-- Logros -->
+        <div class="score-category">
+          <div class="score-category-label">
+            <span class="score-category-name">Logros desbloqueados</span>
+            <span class="score-category-value"><%= details.achievements.value %>/<%= details.achievements.maxValue %> (<%=  Math.round(details.achievements.percentage) %>%)</span>
+          </div>
+          <div class="score-progress-bar">
+            <div class="score-progress-fill progress-achievements" data-width="<%= details.achievements.percentage %>"></div>
+          </div>
+        </div>
+        
+        <!-- Puntos de nivel -->
+        <div class="score-category">
+          <div class="score-category-label">
+            <span class="score-category-name">Puntos de nivel</span>
+            <span class="score-category-value"><%= details.levelPoints.value %> (<%= Math.round(details.levelPoints.percentage) %>%)</span>
+          </div>
+          <div class="score-progress-bar">
+            <div class="score-progress-fill progress-levelPoints" data-width="<%= details.levelPoints.percentage %>"></div>
+          </div>
+        </div>
+        
+        <!-- Puntos de rewards -->
+        <div class="score-category">
+          <div class="score-category-label">
+            <span class="score-category-name">Puntos de rewards</span>
+            <span class="score-category-value"><%= details.rewardPoints.value %> (<%= Math.round(details.rewardPoints.percentage) %>%)</span>
+          </div>
+          <div class="score-progress-bar">
+            <div class="score-progress-fill progress-rewardPoints" data-width="<%= details.rewardPoints.percentage %>"></div>
+          </div>
+        </div>
+        
+        <!-- Nivel -->
+        <div class="score-category">
+          <div class="score-category-label">
+            <span class="score-category-name">Nivel actual</span>
+            <span class="score-category-value"><%= details.tier.value %> (<%= Math.round(details.tier.percentage) %>%)</span>
+          </div>
+          <div class="score-progress-bar">
+            <div class="score-progress-fill progress-tier" data-width="<%= details.tier.percentage %>"></div>
+          </div>
+        </div>
+        
+        <!-- Saldo restante -->
+        <div class="score-category">
+          <div class="score-category-label">
+            <span class="score-category-name">Saldo disponible</span>
+            <span class="score-category-value"><%= details.balance.value.toFixed(2) %>€ (<%= Math.round(details.balance.percentage) %>%)</span>
+          </div>
+          <div class="score-progress-bar">
+            <div class="score-progress-fill progress-balance" data-width="<%= details.balance.percentage %>"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <% if (!hasSubmitted) { %>
+    <form method="POST" action="/leaderboard/submit" id="leaderboardForm">
+      <button type="submit" class="submit-button" <%= (missingId && useSalesforce) ? 'disabled' : '' %>>
+        <i class="fas fa-trophy"></i> Enviar al Leaderboard
+      </button>
+      <% if (missingId && useSalesforce) { %>
+        <p class="text-center text-muted mt-2">
+          No puedes enviar tu puntuación sin un ID de Salesforce.
+        </p>
+      <% } %>
+    </form>
+  <% } else { %>
+    <div class="text-center mt-4">
+      <p class="text-success">
+        <i class="fas fa-check-circle"></i> 
+        Ya has enviado tu puntuación al leaderboard 
+        (<%= new Date(member.leaderboardSubmittedAt).toLocaleString() %>)
+      </p>
+    </div>
+  <% } %>
+</div>
+
+<div class="leaderboard-explanation">
+  <h4>¿Cómo se calcula tu Engagement Score?</h4>
+  <p>Tu puntuación se basa en tu actividad e interacción con nuestra plataforma:</p>
+  
+  <ul>
+    <li><strong>Logros desbloqueados (40%):</strong> Cuantos más logros consigas, mayor será tu puntuación.</li>
+    <li><strong>Puntos de nivel (25%):</strong> Los puntos de nivel que has acumulado.</li>
+    <li><strong>Puntos de rewards (15%):</strong> Los puntos disponibles para canjear por recompensas.</li>
+    <li><strong>Nivel alcanzado (15%):</strong> Tu nivel actual (Bronze, Silver, Gold o Platinum).</li>
+    <li><strong>Saldo disponible (5%):</strong> Un bono por mantener un buen saldo.</li>
+  </ul>
+  
+  <p class="mb-0">Tu puntuación se actualizará automáticamente a medida que interactúes con la plataforma. ¡Sigue participando para mejorar tu posición en el leaderboard!</p>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Configurar todos los elementos con data-width (barras de progreso)
+    const progressBars = document.querySelectorAll('[data-width]');
+    progressBars.forEach(bar => {
+      const width = bar.getAttribute('data-width');
+      if (width) {
+        bar.style.width = width + '%';
+      }
+    });
+  });
+</script>
+
+<%- include('partials/footer') %>

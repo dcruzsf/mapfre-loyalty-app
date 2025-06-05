@@ -1,0 +1,258 @@
+<%- include('partials/header', {currentPage: 'achievements'}) %>
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/">Inicio</a></li>
+    <li class="breadcrumb-item active">Logros</li>
+  </ol>
+</nav>
+
+<div class="page-header-space">
+  <h1 class="page-title">Tus Logros</h1>
+</div>
+
+<!-- Resumen de progreso -->
+<div class="member-summary">
+  <div class="member-stat">
+    <div class="member-stat-label">Miembro</div>
+    <div class="member-stat-value"><%= member.name %></div>
+  </div>
+  
+  <div class="member-stat">
+    <div class="member-stat-label">Puntos de Nivel</div>
+    <div class="member-stat-value"><%= member.levelPoints %></div>
+  </div>
+  
+  <div class="member-stat">
+    <div class="member-stat-label">Puntos de Rewards</div>
+    <div class="member-stat-value"><%= member.rewardPoints %></div>
+  </div>
+  
+  <div class="member-stat">
+    <div class="member-stat-label">Nivel</div>
+    <div class="member-stat-value tier-<%= member.tier.toLowerCase() %>"><%= member.tier %></div>
+  </div>
+</div>
+
+<!-- Contador de logros y barra de progreso -->
+<div class="achievements-progress text-center mt-4 mb-4">
+  <h3 class="mb-3">Logros Desbloqueados: <%= member.achievements.length %> / 10</h3>
+  <div class="tier-progress-container" style="max-width: 600px; margin: 0 auto;">
+    <% const achievementProgress = (member.achievements.length / 10) * 100; %>
+    <div class="tier-progress-bar">
+      <div class="tier-progress-fill" data-width="<%= achievementProgress %>"></div>
+    </div>
+    <div class="tier-progress-text">
+      <%= Math.round(achievementProgress) %>% completado
+    </div>
+  </div>
+</div>
+
+<!-- Pestañas de categorías -->
+<div class="tabs">
+  <button class="tab active" data-target="all-achievements">Todos</button>
+  <button class="tab" data-target="purchase-achievements">Compras</button>
+  <button class="tab" data-target="social-achievements">Social</button>
+  <button class="tab" data-target="tier-achievements">Niveles</button>
+</div>
+
+<!-- Logros -->
+<div id="all-achievements" class="tab-content" style="display: block;">
+  <div class="achievements-grid">
+    <% allAchievements.forEach(achievement => { %>
+      <% const unlocked = member.hasAchievement(achievement.id); %>
+      <div class="achievement-card <%= unlocked ? 'unlocked' : 'locked' %> animate-in">
+        <div class="achievement-icon <%= unlocked ? '' : 'achievement-locked-icon' %>">
+          <% if (unlocked) { %>
+            <i class="fas fa-<%= achievement.icon || 'star' %>"></i>
+          <% } else { %>
+            ?
+          <% } %>
+        </div>
+        <h3 class="achievement-title">
+          <% if (unlocked) { %>
+            <%= achievement.name %>
+          <% } else { %>
+            <% if (achievement.hideWhenLocked) { %>
+              ???
+            <% } else { %>
+              <%= achievement.name %>
+            <% } %>
+          <% } %>
+        </h3>
+        <% if (unlocked) { %>
+          <p class="achievement-points"><%= achievement.points %> puntos</p>
+          <p class="achievement-date" style="color: var(--secondary-color); font-weight: 500;">
+            ¡Desbloqueado!
+          </p>
+        <% } else { %>
+          <p class="achievement-points">
+            <% if (achievement.hideWhenLocked) { %>
+              ???
+            <% } else { %>
+              <%= achievement.points %> puntos
+            <% } %>
+          </p>
+          <p class="achievement-description">
+            <% if (achievement.id === 'challenge_profile_complete') { %>
+              <%= achievement.hint || 'Completa toda la información de tu perfil (4 veces)' %>
+            <% } else { %>
+              <%= achievement.hint || 'Sigue participando para desbloquear' %>
+            <% } %>
+          </p>
+        <% } %>
+      </div>
+    <% }); %>
+  </div>
+</div>
+
+<div id="purchase-achievements" class="tab-content" style="display: none;">
+  <div class="achievements-grid">
+    <% allAchievements.filter(a => a.category === 'purchase').forEach(achievement => { %>
+      <% const unlocked = member.hasAchievement(achievement.id); %>
+      <div class="achievement-card <%= unlocked ? 'unlocked' : 'locked' %> animate-in">
+        <div class="achievement-icon <%= unlocked ? '' : 'achievement-locked-icon' %>">
+          <% if (unlocked) { %>
+            <i class="fas fa-<%= achievement.icon || 'star' %>"></i>
+          <% } else { %>
+            ?
+          <% } %>
+        </div>
+        <h3 class="achievement-title">
+          <% if (unlocked) { %>
+            <%= achievement.name %>
+          <% } else { %>
+            <% if (achievement.hideWhenLocked) { %>
+              ???
+            <% } else { %>
+              <%= achievement.name %>
+            <% } %>
+          <% } %>
+        </h3>
+        <% if (unlocked) { %>
+          <p class="achievement-points"><%= achievement.points %> puntos</p>
+          <p class="achievement-date" style="color: var(--secondary-color); font-weight: 500;">
+            ¡Desbloqueado!
+          </p>
+        <% } else { %>
+          <p class="achievement-points">
+            <% if (achievement.hideWhenLocked) { %>
+              ???
+            <% } else { %>
+              <%= achievement.points %> puntos
+            <% } %>
+          </p>
+          <p class="achievement-description">
+            <%= achievement.hint || 'Sigue participando para desbloquear' %>
+          </p>
+        <% } %>
+      </div>
+    <% }); %>
+  </div>
+</div>
+
+<div id="social-achievements" class="tab-content" style="display: none;">
+  <div class="achievements-grid">
+    <% allAchievements.filter(a => a.category === 'social').forEach(achievement => { %>
+      <% const unlocked = member.hasAchievement(achievement.id); %>
+      <div class="achievement-card <%= unlocked ? 'unlocked' : 'locked' %> animate-in">
+        <div class="achievement-icon <%= unlocked ? '' : 'achievement-locked-icon' %>">
+          <% if (unlocked) { %>
+            <i class="fas fa-<%= achievement.icon || 'star' %>"></i>
+          <% } else { %>
+            ?
+          <% } %>
+        </div>
+        <h3 class="achievement-title">
+          <% if (unlocked) { %>
+            <%= achievement.name %>
+          <% } else { %>
+            <% if (achievement.hideWhenLocked) { %>
+              ???
+            <% } else { %>
+              <%= achievement.name %>
+            <% } %>
+          <% } %>
+        </h3>
+        <% if (unlocked) { %>
+          <p class="achievement-points"><%= achievement.points %> puntos</p>
+          <p class="achievement-date" style="color: var(--secondary-color); font-weight: 500;">
+            ¡Desbloqueado!
+          </p>
+        <% } else { %>
+          <p class="achievement-points">
+            <% if (achievement.hideWhenLocked) { %>
+              ???
+            <% } else { %>
+              <%= achievement.points %> puntos
+            <% } %>
+          </p>
+          <p class="achievement-description">
+            <%= achievement.hint || 'Sigue participando para desbloquear' %>
+          </p>
+        <% } %>
+      </div>
+    <% }); %>
+  </div>
+</div>
+
+<div id="tier-achievements" class="tab-content" style="display: none;">
+  <div class="achievements-grid">
+    <% allAchievements.filter(a => a.category === 'tier').forEach(achievement => { %>
+      <% const unlocked = member.hasAchievement(achievement.id); %>
+      <div class="achievement-card <%= unlocked ? 'unlocked' : 'locked' %> animate-in">
+        <div class="achievement-icon <%= unlocked ? '' : 'achievement-locked-icon' %>">
+          <% if (unlocked) { %>
+            <i class="fas fa-<%= achievement.icon || 'star' %>"></i>
+          <% } else { %>
+            ?
+          <% } %>
+        </div>
+        <h3 class="achievement-title">
+          <% if (unlocked) { %>
+            <%= achievement.name %>
+          <% } else { %>
+            <% if (achievement.hideWhenLocked) { %>
+              ???
+            <% } else { %>
+              <%= achievement.name %>
+            <% } %>
+          <% } %>
+        </h3>
+        <% if (unlocked) { %>
+          <p class="achievement-points"><%= achievement.points %> puntos</p>
+          <p class="achievement-date" style="color: var(--secondary-color); font-weight: 500;">
+            ¡Desbloqueado!
+          </p>
+        <% } else { %>
+          <p class="achievement-points">
+            <% if (achievement.hideWhenLocked) { %>
+              ???
+            <% } else { %>
+              <%= achievement.points %> puntos
+            <% } %>
+          </p>
+          <p class="achievement-description">
+            <%= achievement.hint || 'Sigue participando para desbloquear' %>
+          </p>
+        <% } %>
+      </div>
+    <% }); %>
+  </div>
+</div>
+
+<% if (typeof newAchievement !== 'undefined') { %>
+  <% if (newAchievement) { %>
+    <div class="notification show">
+      <div class="notification-title">¡LOGRO DESBLOQUEADO!</div>
+      <div class="notification-body"><%= achievementName %></div>
+      <% if (typeof achievementPoints !== 'undefined') { %>
+        <% if (achievementPoints > 0) { %>
+          <div class="notification-points">+<%= achievementPoints %> puntos</div>
+        <% } %>
+      <% } %>
+    </div>
+  <% } %>
+<% } %>
+
+<%- include('partials/footer') %>

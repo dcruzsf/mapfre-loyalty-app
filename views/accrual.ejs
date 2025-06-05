@@ -1,0 +1,121 @@
+<%- include('partials/header', {currentPage: 'accrual'}) %>
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/">Inicio</a></li>
+    <li class="breadcrumb-item active">Ganar Puntos</li>
+  </ol>
+</nav>
+
+<div class="page-header-space">
+  <h1 class="page-title">Ganar Puntos</h1>
+</div>
+
+<% if (typeof message !== 'undefined') { %>
+  <% if (message) { %>
+    <div class="notification show">
+      <div class="notification-title">¡Éxito!</div>
+      <div class="notification-body"><%= message %></div>
+      <% if (typeof pointsEarned !== 'undefined') { %>
+        <% if (pointsEarned) { %>
+          <div class="notification-points">+<%= pointsEarned %> puntos de nivel y rewards</div>
+        <% } %>
+      <% } %>
+    </div>
+  <% } %>
+<% } %>
+
+<!-- Resumen del miembro -->
+<div class="member-summary">
+  <div class="member-stat">
+    <div class="member-stat-label">Saldo</div>
+    <div class="member-stat-value"><%= member.balance.toFixed(2) %> €</div>
+  </div>
+  
+  <div class="member-stat">
+    <div class="member-stat-label">Puntos de Nivel</div>
+    <div class="member-stat-value"><%= member.levelPoints %></div>
+  </div>
+  
+  <div class="member-stat">
+    <div class="member-stat-label">Puntos de Rewards</div>
+    <div class="member-stat-value"><%= member.rewardPoints %></div>
+  </div>
+  
+  <div class="member-stat">
+    <div class="member-stat-label">Nivel</div>
+    <div class="member-stat-value tier-<%= member.tier.toLowerCase() %>"><%= member.tier %></div>
+  </div>
+  
+  <% if (member.getNextTier()) { %>
+    <div class="tier-progress-container">
+      <div class="tier-progress-bar">
+        <div class="tier-progress-fill" data-width="<%= member.getProgressToNextTier() %>"></div>
+      </div>
+      <div class="tier-progress-text">
+        <%= member.levelPoints %>/<%= member.getPointsForNextTier() %> puntos para <%= member.getNextTier() %>
+      </div>
+    </div>
+  <% } %>
+</div>
+
+<!-- Pestañas -->
+<div class="tabs">
+  <button class="tab active" data-target="purchases-content">Compras</button>
+  <button class="tab" data-target="activities-content">Actividades</button>
+</div>
+
+<!-- Contenido de pestañas -->
+<div id="purchases-content" class="tab-content" style="display: block;">
+  <div class="product-grid">
+    <% products.forEach(product => { %>
+      <div class="product-card animate-in <%= member.balance < product.price ? 'unavailable' : '' %>">
+        <div class="product-image" style="background-image: url('/img/<%= product.image %>')">
+          <% if (!product.image.includes('.jpg') && !product.image.includes('.png')) { %>
+            <span>Imagen: <%= product.name %></span>
+          <% } %>
+        </div>
+        <div class="product-details">
+          <h3 class="product-title"><%= product.name %></h3>
+          <p class="product-price">Precio: <%= product.price.toFixed(2) %> €</p>
+          <p class="product-points">+<%= product.points %> puntos de nivel y rewards</p>
+          <p class="product-description" style="font-size: 12px; color: #666;"><%= product.description %></p>
+          <form method="POST" action="/accrual/purchase/<%= product.id %>" class="purchase-form">
+            <button 
+              type="submit" 
+              class="btn"
+              <%= member.balance < product.price ? 'disabled' : '' %>
+            >
+              <%= member.balance < product.price ? 'Saldo insuficiente' : 'Comprar' %>
+            </button>
+          </form>
+        </div>
+      </div>
+    <% }) %>
+  </div>
+</div>
+
+<div id="activities-content" class="tab-content" style="display: none;">
+  <div class="product-grid">
+    <% activities.forEach(activity => { %>
+      <div class="product-card animate-in">
+        <div class="product-image" style="background-image: url('/img/<%= activity.image %>')">
+          <% if (!activity.image.includes('.jpg') && !activity.image.includes('.png')) { %>
+            <span>Actividad: <%= activity.name %></span>
+          <% } %>
+        </div>
+        <div class="product-details">
+          <h3 class="product-title"><%= activity.name %></h3>
+          <p class="product-points">+<%= activity.points %> puntos de nivel y rewards</p>
+          <form method="POST" action="/accrual/activity/<%= activity.id %>" class="purchase-form">
+            <button type="submit" class="btn">
+              Realizar actividad
+            </button>
+          </form>
+        </div>
+      </div>
+    <% }) %>
+  </div>
+</div>
+
+<%- include('partials/footer') %>

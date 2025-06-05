@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= brand.fullName %> - Demo</title>
+  <!-- Favicon -->
+  <link rel="icon" href="<%= brand.images.favicon %>" type="image/x-icon">
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <!-- Font Awesome para iconos -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="/css/style.css">
+  
+  <!-- CSS Variables dinámicas para la marca -->
+  <style>
+    :root {
+      --primary-color: <%= brand.colors.primary %>;
+      --secondary-color: <%= brand.colors.secondary %>;
+      --accent-color: <%= brand.colors.accent %>;
+      --light-gray: <%= brand.colors.lightGray %>;
+      --mid-gray: <%= brand.colors.midGray %>;
+      --dark-gray: <%= brand.colors.darkGray %>;
+      --text-color: <%= brand.colors.textColor %>;
+      --text-light: <%= brand.colors.textLight %>;
+      --background-color: <%= brand.colors.backgroundColor %>;
+      --card-background: <%= brand.colors.cardBackground %>;
+      --border-color: <%= brand.colors.borderColor %>;
+      --success-color: <%= brand.colors.successColor %>;
+      --error-color: <%= brand.colors.errorColor %>;
+      --notification-color: <%= brand.colors.notificationColor %>;
+      --notification-gradient: linear-gradient(to right, <%= brand.colors.notificationColor %>, <%= brand.colors.primary %>);
+      
+      /* Colores de tier */
+      --bronze-color: <%= brand.colors.tierColors.bronze %>;
+      --silver-color: <%= brand.colors.tierColors.silver %>;
+      --gold-color: <%= brand.colors.tierColors.gold %>;
+      --platinum-color: <%= brand.colors.tierColors.platinum %>;
+      
+      /* Variables para animaciones */
+      --transition-speed: 0.3s;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav class="navbar">
+      <div class="container d-flex justify-content-between align-items-center">
+        <a class="navbar-brand" href="/">
+          <img src="<%= brand.images.logo %>" alt="<%= brand.name %>" class="navbar-logo">
+        </a>
+        
+        <% if (typeof member !== 'undefined' && member) { %>
+          <!-- Menú para usuarios autenticados -->
+          <div class="navbar-nav d-flex flex-row align-items-center">
+            <a class="nav-link <%= currentPage === 'home' ? 'active' : '' %> mr-4" href="/">Inicio</a>
+            <a class="nav-link <%= currentPage === 'accrual' ? 'active' : '' %> mr-4" href="/accrual">Ganar Puntos</a>
+            <a class="nav-link <%= currentPage === 'redemption' ? 'active' : '' %> mr-4" href="/redemption">Canjear Puntos</a>
+            <a class="nav-link <%= currentPage === 'achievements' ? 'active' : '' %> mr-4" href="/achievements">Logros</a>
+            <a class="nav-link leaderboard-link <%= currentPage === 'leaderboard' ? 'active' : '' %> mr-4" href="/leaderboard">
+              <i class="fas fa-trophy"></i> Leaderboard
+            </a>
+            
+            <!-- Información del usuario -->
+            <div class="user-info" style="display: flex; align-items: center; font-size: 12px; color: <%= brand.colors.textLight %>;">
+              <div style="text-align: right; margin-right: 10px;">
+                <div style="font-weight: 500; color: <%= brand.colors.textColor %>;"><%= member.name %></div>
+                <div style="font-size: 10px;"><%= member.levelPoints %> pts | <%= member.tier %></div>
+              </div>
+              <div style="width: 35px; height: 35px; border-radius: 50%; background-color: <%= brand.colors.secondary %>; color: white; display: flex; align-items: center; justify-content: center; font-weight: 500;">
+                <%= member.name.split(' ').map(n => n.charAt(0).toUpperCase()).join('').substring(0, 2) %>
+              </div>
+            </div>
+          </div>
+        <% } else { %>
+          <!-- Menú para usuarios no autenticados -->
+          <div class="navbar-nav d-flex flex-row">
+            <a class="nav-link <%= currentPage === 'home' ? 'active' : '' %> mr-4" href="/">Inicio</a>
+            <a class="nav-link <%= currentPage === 'register' ? 'active' : '' %>" href="/register">
+              <i class="fas fa-user-plus"></i> Registrarse
+            </a>
+          </div>
+        <% } %>
+      </div>
+    </nav>
+  </header>
+  
+  <div class="container main-container">

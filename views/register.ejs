@@ -1,0 +1,103 @@
+<%- include('partials/header', {currentPage: 'register'}) %>
+
+<div class="row mt-5">
+  <div class="col-md-8 offset-md-2">
+    <div class="card">
+      <div class="card-header">
+        <h2 class="mb-0">Registro en <%= brand.fullName %></h2>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-4 d-none d-md-block">
+            <!-- Logo grande en la página de registro -->
+            <div class="text-center mb-4">
+              <img src="<%= brand.images.logo %>" alt="<%= brand.name %>" width="150" height="auto">
+            </div>
+            
+            <div class="benefits-list">
+              <h5><%= brand.messages.benefits.title %></h5>
+              <ul class="list-unstyled">
+                <% brand.messages.benefits.list.forEach(benefit => { %>
+                  <li class="mb-2"><i class="fas fa-check mr-2"></i> <%= benefit %></li>
+                <% }); %>
+              </ul>
+            </div>
+            
+            <div class="welcome-bonus p-3 mt-4 bg-light text-center">
+              <h6 class="mb-2">REGALO DE BIENVENIDA</h6>
+              <p class="display-4 mb-0">250 €</p>
+            </div>
+          </div>
+          
+          <div class="col-md-8">
+            <% if (typeof message !== 'undefined' && message) { %>
+              <div class="alert alert-info">
+                <%= message %>
+              </div>
+            <% } %>
+            
+            <% if (typeof error !== 'undefined' && error) { %>
+              <div class="alert alert-danger">
+                <%= error %>
+              </div>
+            <% } %>
+            
+            <form method="POST" action="/register">
+              <div class="form-group">
+                <label for="name" class="form-label">NOMBRE COMPLETO</label>
+                <input 
+                  type="text" 
+                  class="form-control" 
+                  id="name" 
+                  name="name" 
+                  required
+                  placeholder="Ej: Juan Pérez"
+                  value="<%= typeof formData !== 'undefined' ? formData.name : '' %>"
+                >
+              </div>
+              
+              <div class="form-group">
+                <label for="email" class="form-label">EMAIL</label>
+                <input 
+                  type="email" 
+                  class="form-control" 
+                  id="email" 
+                  name="email" 
+                  required
+                  placeholder="Ej: juan.perez@email.com"
+                  value="<%= typeof formData !== 'undefined' ? formData.email : '' %>"
+                >
+                <small class="form-text text-muted">
+                  Cada email solo puede registrarse una vez. Si ya tienes cuenta, utiliza un email diferente para probar la demo.
+                </small>
+              </div>
+              
+              <div class="form-group">
+                <label class="form-label">INTERESES</label>
+                <% brand.categories.forEach(category => { %>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="preferences" value="<%= category.id %>" id="<%= category.id %>">
+                    <label class="form-check-label" for="<%= category.id %>">
+                      <%= category.label %>
+                    </label>
+                  </div>
+                <% }); %>
+              </div>
+              
+              <button type="submit" class="btn btn-primary btn-lg btn-block mt-4"><%= brand.messages.joinClub %></button>
+            </form>
+            
+            <div class="text-center mt-4">
+              <div class="alert alert-info" style="border-left: 4px solid var(--accent-color); background-color: #f8f9fa; border: 1px solid #dee2e6;">
+                <i class="fas fa-info-circle"></i> 
+                <strong>Esta es una demo.</strong> Los datos se almacenan temporalmente y se borrarán tras la finalización de la misma.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('partials/footer') %>
