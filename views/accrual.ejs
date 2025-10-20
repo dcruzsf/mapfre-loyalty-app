@@ -2,23 +2,23 @@
 
 <nav aria-label="breadcrumb">
   <ol class="breadcrumb">
-    <li class="breadcrumb-item"><a href="/">Inicio</a></li>
-    <li class="breadcrumb-item active">Ganar Puntos</li>
+    <li class="breadcrumb-item"><a href="/"><%= t('navigation.home') %></a></li>
+    <li class="breadcrumb-item active"><%= t('pages.accrual.breadcrumb') %></li>
   </ol>
 </nav>
 
 <div class="page-header-space">
-  <h1 class="page-title">Ganar Puntos</h1>
+  <h1 class="page-title"><%= t('pages.accrual.title') %></h1>
 </div>
 
 <% if (typeof message !== 'undefined') { %>
   <% if (message) { %>
     <div class="notification show">
-      <div class="notification-title">¡Éxito!</div>
+      <div class="notification-title"><%= t('pages.accrual.notification.success') %></div>
       <div class="notification-body"><%= message %></div>
       <% if (typeof pointsEarned !== 'undefined') { %>
         <% if (pointsEarned) { %>
-          <div class="notification-points">+<%= pointsEarned %> puntos de nivel y rewards</div>
+          <div class="notification-points">+<%= pointsEarned %> <%= t('pages.accrual.notification.pointsEarned') %></div>
         <% } %>
       <% } %>
     </div>
@@ -28,23 +28,23 @@
 <!-- Resumen del miembro -->
 <div class="member-summary">
   <div class="member-stat">
-    <div class="member-stat-label">Saldo</div>
+    <div class="member-stat-label"><%= t('member.balance') %></div>
     <div class="member-stat-value"><%= member.balance.toFixed(2) %> €</div>
   </div>
-  
+
   <div class="member-stat">
-    <div class="member-stat-label">Puntos de Nivel</div>
+    <div class="member-stat-label"><%= t('member.levelPoints') %></div>
     <div class="member-stat-value"><%= member.levelPoints %></div>
   </div>
-  
+
   <div class="member-stat">
-    <div class="member-stat-label">Puntos de Rewards</div>
+    <div class="member-stat-label"><%= t('member.rewardPoints') %></div>
     <div class="member-stat-value"><%= member.rewardPoints %></div>
   </div>
-  
+
   <div class="member-stat">
-    <div class="member-stat-label">Nivel</div>
-    <div class="member-stat-value tier-<%= member.tier.toLowerCase() %>"><%= member.tier %></div>
+    <div class="member-stat-label"><%= t('member.tier') %></div>
+    <div class="member-stat-value tier-<%= member.tier.toLowerCase() %>"><%= t('tiers.' + member.tier.toLowerCase()) %></div>
   </div>
   
   <% if (member.getNextTier()) { %>
@@ -53,7 +53,7 @@
         <div class="tier-progress-fill" data-width="<%= member.getProgressToNextTier() %>"></div>
       </div>
       <div class="tier-progress-text">
-        <%= member.levelPoints %>/<%= member.getPointsForNextTier() %> puntos para <%= member.getNextTier() %>
+        <%= member.levelPoints %>/<%= member.getPointsForNextTier() %> <%= t('member.pointsToNext') %> <%= t('tiers.' + member.getNextTier().toLowerCase()) %>
       </div>
     </div>
   <% } %>
@@ -61,8 +61,8 @@
 
 <!-- Pestañas -->
 <div class="tabs">
-  <button class="tab active" data-target="purchases-content">Compras</button>
-  <button class="tab" data-target="activities-content">Actividades</button>
+  <button class="tab active" data-target="purchases-content"><%= t('pages.accrual.tabs.purchases') %></button>
+  <button class="tab" data-target="activities-content"><%= t('pages.accrual.tabs.activities') %></button>
 </div>
 
 <!-- Contenido de pestañas -->
@@ -77,16 +77,16 @@
         </div>
         <div class="product-details">
           <h3 class="product-title"><%= product.name %></h3>
-          <p class="product-price">Precio: <%= product.price.toFixed(2) %> €</p>
-          <p class="product-points">+<%= product.points %> puntos de nivel y rewards</p>
+          <p class="product-price"><%= t('pages.accrual.product.price') %>: <%= product.price.toFixed(2) %> €</p>
+          <p class="product-points">+<%= product.points %> <%= t('pages.accrual.product.points') %></p>
           <p class="product-description" style="font-size: 12px; color: #666;"><%= product.description %></p>
           <form method="POST" action="/accrual/purchase/<%= product.id %>" class="purchase-form">
-            <button 
-              type="submit" 
+            <button
+              type="submit"
               class="btn"
               <%= member.balance < product.price ? 'disabled' : '' %>
             >
-              <%= member.balance < product.price ? 'Saldo insuficiente' : 'Comprar' %>
+              <%= member.balance < product.price ? t('pages.accrual.product.insufficientBalance') : t('pages.accrual.product.buy') %>
             </button>
           </form>
         </div>
@@ -106,10 +106,10 @@
         </div>
         <div class="product-details">
           <h3 class="product-title"><%= activity.name %></h3>
-          <p class="product-points">+<%= activity.points %> puntos de nivel y rewards</p>
+          <p class="product-points">+<%= activity.points %> <%= t('pages.accrual.product.points') %></p>
           <form method="POST" action="/accrual/activity/<%= activity.id %>" class="purchase-form">
             <button type="submit" class="btn">
-              Realizar actividad
+              <%= t('pages.accrual.product.performActivity') %>
             </button>
           </form>
         </div>

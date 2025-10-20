@@ -54,16 +54,16 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Mostrar la notificación
     notification.classList.add('show');
-    
-    // Ocultar después de 4 segundos
+
+    // Ocultar después de 2 segundos
     setTimeout(() => {
       notification.classList.remove('show');
-      
+
       // Eliminar del DOM después de que termine la transición
       setTimeout(() => {
         document.body.removeChild(notification);
       }, 300);
-    }, 4000);
+    }, 2000);
   };
   
   // Manejar formularios de compra
@@ -135,6 +135,54 @@ document.addEventListener('DOMContentLoaded', function() {
       setTimeout(() => {
         element.classList.add('fade-in');
       }, index * 100);
+    });
+  }
+
+  // Botón de autorelleno mágico en registro
+  const autofillBtn = document.getElementById('autofillBtn');
+  if (autofillBtn) {
+    // Lista de nombres y apellidos españoles
+    const nombres = ['Carlos', 'María', 'José', 'Ana', 'Luis', 'Carmen', 'Miguel', 'Laura', 'Antonio', 'Isabel',
+                     'Javier', 'Elena', 'David', 'Sofía', 'Pablo', 'Marta', 'Sergio', 'Patricia', 'Daniel', 'Cristina'];
+    const apellidos = ['García', 'Rodríguez', 'Martínez', 'López', 'González', 'Fernández', 'Sánchez', 'Pérez',
+                       'Romero', 'Torres', 'Ruiz', 'Ramírez', 'Flores', 'Morales', 'Jiménez', 'Castro', 'Ortiz'];
+
+    autofillBtn.addEventListener('click', function() {
+      // Seleccionar nombre y apellido aleatorio
+      const nombre = nombres[Math.floor(Math.random() * nombres.length)];
+      const apellido = apellidos[Math.floor(Math.random() * apellidos.length)];
+      const nombreCompleto = `${nombre} ${apellido}`;
+
+      // Crear email en formato jaimegarcia+NombreApellido@salesforce.com (sin tildes)
+      const nombreApellidoJunto = (nombre + apellido)
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, ''); // Eliminar tildes
+      const email = `jaimegarcia+${nombreApellidoJunto}@salesforce.com`;
+
+      // Rellenar los campos
+      document.getElementById('name').value = nombreCompleto;
+      document.getElementById('email').value = email;
+
+      // Marcar aleatoriamente 1-2 checkboxes de intereses
+      const checkboxes = document.querySelectorAll('input[name="preferences"]');
+      checkboxes.forEach(cb => cb.checked = false); // Desmarcar todos primero
+
+      const numToCheck = Math.floor(Math.random() * 2) + 1; // 1 o 2
+      const indices = [];
+      while(indices.length < numToCheck) {
+        const r = Math.floor(Math.random() * checkboxes.length);
+        if(indices.indexOf(r) === -1) indices.push(r);
+      }
+      indices.forEach(i => checkboxes[i].checked = true);
+
+      // Animación visual
+      this.innerHTML = '<i class="fas fa-check"></i> ¡Rellenado!';
+      this.style.backgroundColor = '#00E676';
+      setTimeout(() => {
+        this.innerHTML = '<i class="fas fa-magic"></i> Rellenar automáticamente (Demo)';
+        this.style.backgroundColor = '';
+      }, 2000);
     });
   }
 });

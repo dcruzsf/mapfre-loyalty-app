@@ -2,23 +2,23 @@
 
 <nav aria-label="breadcrumb">
   <ol class="breadcrumb">
-    <li class="breadcrumb-item"><a href="/">Inicio</a></li>
-    <li class="breadcrumb-item active">Canjear Puntos</li>
+    <li class="breadcrumb-item"><a href="/"><%= t('navigation.home') %></a></li>
+    <li class="breadcrumb-item active"><%= t('pages.redemption.breadcrumb') %></li>
   </ol>
 </nav>
 
 <div class="page-header-space">
-  <h1 class="page-title">Canjear Puntos</h1>
+  <h1 class="page-title"><%= t('pages.redemption.title') %></h1>
 </div>
 
 <% if (typeof message !== 'undefined') { %>
   <% if (message) { %>
     <div class="notification show">
-      <div class="notification-title">¡Éxito!</div>
+      <div class="notification-title"><%= t('pages.redemption.notification.success') %></div>
       <div class="notification-body"><%= message %></div>
       <% if (typeof pointsRedeemed !== 'undefined') { %>
         <% if (pointsRedeemed) { %>
-          <div class="notification-points">-<%= pointsRedeemed %> puntos de rewards</div>
+          <div class="notification-points">-<%= pointsRedeemed %> <%= t('pages.redemption.notification.pointsRedeemed') %></div>
         <% } %>
       <% } %>
     </div>
@@ -28,29 +28,30 @@
 <!-- Puntos disponibles -->
 <div class="member-summary text-center">
   <div class="member-stat" style="margin: 0 auto;">
-    <div class="member-stat-label">TUS PUNTOS DE REWARDS DISPONIBLES</div>
+    <div class="member-stat-label"><%= (t('member.rewardPoints') + ' ' + t('common.available')).toUpperCase() %></div>
     <div class="member-stat-value" style="font-size: 36px;"><%= member.rewardPoints %></div>
   </div>
 </div>
 
-<!-- Sección de descuentos -->
-<h3 class="mt-4 mb-3">Descuentos</h3>
+<!-- Sección de Cashback -->
+<h3 class="mt-4 mb-3"><%= locale === 'es' ? 'Cashback' : 'Cashback' %></h3>
 
 <div class="reward-grid">
-  <% rewards.filter(r => r.type === 'discount').forEach((reward, index) => { %>
+  <% rewards.filter(r => r.type === 'cashback').forEach((reward, index) => { %>
     <div class="reward-card animate-in <%= member.rewardPoints < reward.points ? 'unavailable' : '' %>">
       <div class="reward-image" style="background-image: url('/img/<%= reward.image %>')">
       </div>
       <div class="reward-details">
         <h3 class="reward-title"><%= reward.name %></h3>
-        <p class="reward-points"><%= reward.points %> puntos</p>
+        <p class="reward-description"><%= reward.description %></p>
+        <p class="reward-points"><%= reward.points %> <%= t('pages.redemption.reward.points') %></p>
         <form method="POST" action="/redemption/redeem/<%= reward.id %>" class="redeem-form">
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             class="btn"
             <%= member.rewardPoints < reward.points ? 'disabled' : '' %>
           >
-            <%= member.rewardPoints < reward.points ? 'Puntos insuficientes' : 'Canjear' %>
+            <%= member.rewardPoints < reward.points ? t('pages.redemption.reward.insufficientPoints') : t('pages.redemption.reward.redeem') %>
           </button>
         </form>
       </div>
@@ -58,24 +59,51 @@
   <% }) %>
 </div>
 
-<!-- Sección de experiencias -->
-<h3 class="mt-4 mb-3">Experiencias</h3>
+<!-- Sección de Beneficios Premium -->
+<h3 class="mt-4 mb-3"><%= locale === 'es' ? 'Beneficios Premium' : 'Premium Benefits' %></h3>
 
 <div class="reward-grid">
-  <% rewards.filter(r => r.type === 'experience').forEach((reward, index) => { %>
+  <% rewards.filter(r => ['subscription', 'product'].includes(r.type)).forEach((reward, index) => { %>
     <div class="reward-card animate-in <%= member.rewardPoints < reward.points ? 'unavailable' : '' %>">
       <div class="reward-image" style="background-image: url('/img/<%= reward.image %>')">
       </div>
       <div class="reward-details">
         <h3 class="reward-title"><%= reward.name %></h3>
-        <p class="reward-points"><%= reward.points %> puntos</p>
+        <p class="reward-description"><%= reward.description %></p>
+        <p class="reward-points"><%= reward.points %> <%= t('pages.redemption.reward.points') %></p>
         <form method="POST" action="/redemption/redeem/<%= reward.id %>" class="redeem-form">
-          <button 
-            type="submit" 
+          <button
+            type="submit"
+            class="btn"
+            <%= member.rewardPoints < reward.points ? 'disabled' : '' %>
+          >
+            <%= member.rewardPoints < reward.points ? t('pages.redemption.reward.insufficientPoints') : t('pages.redemption.reward.redeem') %>
+          </button>
+        </form>
+      </div>
+    </div>
+  <% }) %>
+</div>
+
+<!-- Sección de Servicios y Experiencias -->
+<h3 class="mt-4 mb-3"><%= locale === 'es' ? 'Servicios y Experiencias' : 'Services & Experiences' %></h3>
+
+<div class="reward-grid">
+  <% rewards.filter(r => ['service', 'experience'].includes(r.type)).forEach((reward, index) => { %>
+    <div class="reward-card animate-in <%= member.rewardPoints < reward.points ? 'unavailable' : '' %>">
+      <div class="reward-image" style="background-image: url('/img/<%= reward.image %>')">
+      </div>
+      <div class="reward-details">
+        <h3 class="reward-title"><%= reward.name %></h3>
+        <p class="reward-description"><%= reward.description %></p>
+        <p class="reward-points"><%= reward.points %> <%= t('pages.redemption.reward.points') %></p>
+        <form method="POST" action="/redemption/redeem/<%= reward.id %>" class="redeem-form">
+          <button
+            type="submit"
             class="btn <%= member.rewardPoints < reward.points ? 'btn-secondary' : '' %>"
             <%= member.rewardPoints < reward.points ? 'disabled' : '' %>
           >
-            <%= member.rewardPoints < reward.points ? 'Puntos insuficientes' : 'Canjear' %>
+            <%= member.rewardPoints < reward.points ? t('pages.redemption.reward.insufficientPoints') : t('pages.redemption.reward.redeem') %>
           </button>
         </form>
       </div>
@@ -87,8 +115,8 @@
   <div class="reward-code-container mt-4 mb-4 text-center animate-in celebrate">
     <div class="card">
       <div class="card-body">
-        <h4>¡Canje exitoso!</h4>
-        <p>Utiliza el siguiente código para tu <%= redeemedReward ? redeemedReward.name : 'recompensa' %>:</p>
+        <h4><%= locale === 'es' ? '¡Canje exitoso!' : 'Successful redemption!' %></h4>
+        <p><%= locale === 'es' ? 'Utiliza el siguiente código para tu ' + (redeemedReward ? redeemedReward.name : 'recompensa') + ':' : 'Use the following code for your ' + (redeemedReward ? redeemedReward.name : 'reward') + ':' %></p>
         <div class="reward-code">
           <code><%= codeGenerated %></code>
         </div>

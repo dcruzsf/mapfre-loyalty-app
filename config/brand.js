@@ -1,63 +1,66 @@
-// config/brand.js - Configuración centralizada de marca
+// config/brand.js - Configuración centralizada de marca CaixaBank Experience
 module.exports = {
   // Información básica de la marca
-  name: 'Hang-in-there',
-  fullName: 'Hang-in-there Loyalty Club',
-  
+  name: 'CaixaBank Experience',
+  fullName: 'CaixaBank Experience',
+  pointsName: 'Caixapoints',
+  pointsSymbol: '⭐',
+
   // Mensajes y textos
   messages: {
-    welcome: '¡Bienvenido a Hang-in-there Loyalty Club!',
-    welcomeDescription: 'Gracias por unirte a Hang-in-there Loyalty Club',
-    tagline: 'Demo de Salesforce Loyalty Management',
-    joinClub: 'UNIRSE AL CLUB',
+    welcome: '¡Bienvenido a CaixaBank Experience!',
+    welcomeDescription: 'Tu banca 100% digital que premia tu estilo de vida',
+    tagline: 'Banca digital que te impulsa',
+    joinClub: 'COMENZAR EXPERIENCE',
     benefits: {
-      title: 'BENEFICIOS EXCLUSIVOS',
+      title: 'BENEFICIOS DIGITALES',
       list: [
-        'Acumula puntos con cada compra',
-        'Acceso a descuentos exclusivos', 
-        'Desbloquea logros y sube de nivel',
-        'Experiencias exclusivas especiales'
+        'Gana Caixapoints con cada operación digital',
+        'Cashback instantáneo en tus compras',
+        'Acceso prioritario a nuevas funcionalidades',
+        'Experiencias exclusivas personalizadas'
       ]
     },
     features: [
       {
-        title: 'Gana recompensas',
-        description: 'Acumula puntos con cada compra y canjéalos por descuentos exclusivos.'
+        title: 'Gana Caixapoints',
+        description: 'Acumula Caixapoints con cada operación digital: transferencias, pagos móviles, inversiones y más.'
       },
       {
-        title: 'Consigue logros', 
-        description: 'Desbloquea logros y comparte tus éxitos.'
+        title: 'Desbloquea logros',
+        description: 'Completa retos digitales y alcanza objetivos financieros mientras ganas recompensas.'
       },
       {
-        title: 'Sube de nivel',
-        description: 'Progresa desde Bronze hasta Platinum con beneficios exclusivos.'
+        title: 'Evoluciona tu categoría',
+        description: 'Desde Basic hasta Elite: más uso digital, mejores beneficios exclusivos.'
       }
     ]
   },
   
-  // Paleta de colores - Alegre y elegante
+  // Paleta de colores - CaixaBank Experience (moderna y digital)
   colors: {
-    primary: '#2C5F51',        // Verde bosque elegante
-    secondary: '#FF8A47',      // Naranja cálido vibrante
-    accent: '#1A4742',         // Verde más oscuro para acentos
-    lightGray: '#F7F5F3',      // Beige muy claro, cálido
-    midGray: '#D4C5B0',        // Beige medio
-    darkGray: '#8B7355',       // Marrón grisáceo cálido
-    textColor: '#2C3E50',      // Azul oscuro elegante para texto
-    textLight: '#7F8C8D',      // Gris azulado para texto secundario
+    primary: '#0066B3',        // Azul CaixaBank principal - vibrante
+    secondary: '#00C9FF',      // Azul cielo brillante (digital)
+    accent: '#003D6E',         // Azul profundo premium
+    lightGray: '#F8F9FB',      // Gris ultra claro (background limpio)
+    midGray: '#E4E8ED',        // Gris medio suave
+    darkGray: '#7A8C9E',       // Gris texto secundario
+    textColor: '#1A2332',      // Texto principal (casi negro, pero más suave)
+    textLight: '#5F6F82',      // Texto secundario legible
     backgroundColor: '#FFFFFF',
     cardBackground: '#FFFFFF',
-    borderColor: '#E8DDD4',    // Beige claro para bordes
-    successColor: '#27AE60',   // Verde éxito
-    errorColor: '#E74C3C',     // Rojo elegante
-    notificationColor: '#FF8A47', // Naranja para notificaciones
-    
-    // Colores de tier - Inspirados en metales reales y naturales
+    borderColor: '#E8ECF1',    // Bordes ultra sutiles
+    successColor: '#00E676',   // Verde brillante (digital success)
+    errorColor: '#FF3D71',     // Rojo moderno
+    warningColor: '#FFB800',   // Amarillo/naranja advertencias
+    notificationColor: '#00C9FF', // Azul notificaciones brillante
+
+    // Colores de tier - Inspirados en tarjetas premium modernas
     tierColors: {
-      bronze: '#CD7F32',       // Bronce clásico
-      silver: '#C0C0C0',       // Plata real
-      gold: '#FFD700',         // Oro clásico
-      platinum: '#E5E4E2'      // Platino elegante
+      bronze: '#B87333',       // Basic - Bronce cálido
+      silver: '#B8BEC5',       // Plus - Plata moderna
+      gold: '#F4C542',         // Premium - Oro vibrante
+      platinum: '#C9D5E0'      // Elite - Platino elegante
     }
   },
   
@@ -68,13 +71,13 @@ module.exports = {
     favicon: '/img/favicon.ico'
   },
   
-  // Categorías de productos/intereses para registro
+  // Categorías de productos/intereses para registro (enfoque digital)
   categories: [
-    { id: 'clothing', label: 'Ropa casual' },
-    { id: 'accessories', label: 'Accesorios' },
-    { id: 'lifestyle', label: 'Estilo de vida' }
+    { id: 'digital_banking', label: 'Banca digital y pagos móviles' },
+    { id: 'investments', label: 'Inversiones y ahorro inteligente' },
+    { id: 'lifestyle', label: 'Experiencias y lifestyle' }
   ],
-  
+
   // Copyright
-  copyright: '2023-2025 Hang-in-there Loyalty Club'
+  copyright: '2024-2025 CaixaBank Experience, S.A.'
 };

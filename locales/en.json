@@ -1,0 +1,194 @@
+{
+  "navigation": {
+    "home": "Home",
+    "register": "Get Started",
+    "earnPoints": "Earn Points",
+    "redeemPoints": "Redeem Points",
+    "achievements": "Achievements",
+    "leaderboard": "Ranking"
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "submit": "Submit",
+    "continue": "Continue",
+    "back": "Back",
+    "close": "Close",
+    "edit": "Edit",
+    "delete": "Delete",
+    "search": "Search",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "warning": "Warning",
+    "info": "Information",
+    "yes": "Yes",
+    "no": "No",
+    "select": "Select",
+    "language": "Language",
+    "available": "available"
+  },
+  "member": {
+    "name": "User",
+    "email": "Email",
+    "balance": "Balance",
+    "levelPoints": "Caixapoints Status",
+    "rewardPoints": "Caixapoints Rewards",
+    "tier": "Tier",
+    "pointsToNext": "Caixapoints Status to",
+    "welcome": "Welcome"
+  },
+  "pages": {
+    "home": {
+      "title": "Home",
+      "memberSummary": "Member Summary"
+    },
+    "register": {
+      "title": "Registration",
+      "form": {
+        "name": "Full name",
+        "email": "Email address",
+        "phone": "Phone",
+        "submit": "Sign Up",
+        "interests": "Interests",
+        "demoNote": "This is a demo.",
+        "demoDescription": "Data is stored temporarily and will be deleted after completion.",
+        "welcomeBonus": "WELCOME BONUS"
+      }
+    },
+    "accrual": {
+      "title": "Earn Points",
+      "description": "Accumulate points with digital operations",
+      "breadcrumb": "Earn Points",
+      "tabs": {
+        "purchases": "Operations",
+        "activities": "Activities"
+      },
+      "product": {
+        "price": "Price",
+        "points": "points",
+        "buy": "Execute",
+        "insufficientBalance": "Insufficient balance",
+        "performActivity": "Complete activity"
+      },
+      "notification": {
+        "success": "Great!",
+        "pointsEarned": "points earned"
+      }
+    },
+    "redemption": {
+      "title": "Redeem Points",
+      "description": "Redeem your Caixapoints Rewards for exclusive rewards",
+      "breadcrumb": "Redeem Points",
+      "reward": {
+        "cost": "Cost",
+        "points": "points",
+        "redeem": "Redeem",
+        "insufficientPoints": "Insufficient points"
+      },
+      "notification": {
+        "success": "Perfect!",
+        "pointsRedeemed": "points redeemed"
+      }
+    },
+    "achievements": {
+      "title": "Achievements",
+      "description": "Your earned achievements and badges",
+      "breadcrumb": "Achievements",
+      "earnedCount": "achievements earned",
+      "totalCount": "total achievements",
+      "categories": {
+        "all": "All",
+        "earned": "Earned",
+        "pending": "Pending"
+      },
+      "status": {
+        "earned": "EARNED!",
+        "pending": "Pending",
+        "progress": "Progress"
+      }
+    },
+    "leaderboard": {
+      "title": "Leaderboard",
+      "description": "Ranking of top members",
+      "breadcrumb": "Leaderboard",
+      "position": "Position",
+      "member": "Member",
+      "points": "Points",
+      "tier": "Tier",
+      "you": "You",
+      "categories": {
+        "level": "By Level Points",
+        "rewards": "By Reward Points"
+      }
+    },
+    "error": {
+      "title": "Error",
+      "notFound": "Page not found",
+      "internalError": "Internal server error",
+      "goHome": "Go to Home"
+    }
+  },
+  "forms": {
+    "required": "Required field",
+    "invalidEmail": "Invalid email",
+    "invalidPhone": "Invalid phone",
+    "passwordMismatch": "Passwords don't match"
+  },
+  "messages": {
+    "memberRegistered": "Member registered successfully",
+    "pointsEarned": "Points earned successfully",
+    "pointsRedeemed": "Points redeemed successfully",
+    "achievementUnlocked": "Achievement unlocked!",
+    "sessionExpired": "Session expired",
+    "unauthorized": "Unauthorized",
+    "pageNotFound": "Page not found",
+    "internalError": "Internal server error",
+    "authRequired": "You must register to access this function",
+    "sessionExpiredAuth": "Your session has expired. Please register again",
+    "productNotFound": "Product not found",
+    "rewardNotFound": "Reward not found",
+    "purchaseSuccess": "Purchase successful",
+    "activitySuccess": "Activity completed successfully",
+    "redemptionSuccess": "Redemption successful",
+    "error": "Error",
+    "activityNotFound": "Activity not found"
+  },
+  "tiers": {
+    "bronze": "Basic",
+    "silver": "Plus",
+    "gold": "Premium",
+    "platinum": "Elite"
+  },
+  "footer": {
+    "deleteAccount": "Delete my account and restart demo",
+    "confirmDelete": "Are you sure you want to delete your account and restart the demo? This action cannot be undone."
+  },
+  "units": {
+    "currency": "€",
+    "points": "points"
+  },
+  "home": {
+    "whatToDo": "What do you want to do today?",
+    "pathToLevel": "Your progress to",
+    "youAreHere": "YOU ARE HERE!",
+    "recentTransactions": "Recent Activity",
+    "noTransactions": "No activity yet. Start earning points!",
+    "joinDescription": "Join CaixaBank Experience, 100% digital banking that rewards every operation. Earn points, unlock exclusive benefits and evolve your tier with every digital action.",
+    "transactionColumns": {
+      "date": "Date",
+      "type": "Type",
+      "description": "Description",
+      "levelPoints": "Caixapoints Status",
+      "rewardPoints": "Caixapoints Rewards"
+    }
+  },
+  "transactions": {
+    "types": {
+      "Accrual": "Accrual",
+      "Redemption": "Redemption",
+      "Purchase": "Purchase",
+      "System": "System"
+    }
+  }
+}

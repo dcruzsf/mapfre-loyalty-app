@@ -2,14 +2,14 @@
 
 <nav aria-label="breadcrumb">
   <ol class="breadcrumb">
-    <li class="breadcrumb-item"><a href="/">Inicio</a></li>
-    <li class="breadcrumb-item active">Leaderboard</li>
+    <li class="breadcrumb-item"><a href="/"><%= t('navigation.home') %></a></li>
+    <li class="breadcrumb-item active"><%= t('pages.leaderboard.breadcrumb') %></li>
   </ol>
 </nav>
 
 <div class="page-header-space">
-  <h1 class="page-title">Tu Engagement Score</h1>
-  <p class="page-subtitle">Descubre tu nivel de compromiso y compite en el leaderboard</p>
+  <h1 class="page-title"><%= locale === 'es' ? 'Tu Engagement Score' : 'Your Engagement Score' %></h1>
+  <p class="page-subtitle"><%= locale === 'es' ? 'Descubre tu nivel de compromiso y compite en el leaderboard' : 'Discover your engagement level and compete on the leaderboard' %></p>
 </div>
 
 <% if (typeof errorMessage !== 'undefined' && errorMessage) { %>
@@ -26,11 +26,11 @@
 
 <% if (typeof missingId !== 'undefined' && missingId) { %>
   <div class="alert alert-warning">
-    <i class="fas fa-exclamation-triangle"></i> <strong>Aviso:</strong> Tu cuenta no tiene un ID de Salesforce asignado.
+    <i class="fas fa-exclamation-triangle"></i> <strong><%= locale === 'es' ? 'Aviso:' : 'Notice:' %></strong> <%= locale === 'es' ? 'Tu cuenta no tiene un ID de Salesforce asignado.' : 'Your account does not have a Salesforce ID assigned.' %>
     <% if (useSalesforce) { %>
-      Para participar en el leaderboard, debes registrarte con el modo Salesforce activado.
+      <%= locale === 'es' ? 'Para participar en el leaderboard, debes registrarte con el modo Salesforce activado.' : 'To participate in the leaderboard, you must register with Salesforce mode enabled.' %>
     <% } else { %>
-      El modo Salesforce está desactivado. Estás en modo demo.
+      <%= locale === 'es' ? 'El modo Salesforce está desactivado. Estás en modo demo.' : 'Salesforce mode is disabled. You are in demo mode.' %>
     <% } %>
   </div>
 <% } %>
@@ -41,7 +41,7 @@
       <div class="score-display">
         <div class="score-circle">
           <div class="score-value"><%= Math.round(scorePreview.score) %></div>
-          <div class="score-label">PUNTOS</div>
+          <div class="score-label"><%= t('units.points').toUpperCase() %></div>
         </div>
         <div class="engagement-level"><%= scorePreview.level %></div>
       </div>
@@ -54,7 +54,7 @@
         <!-- Logros -->
         <div class="score-category">
           <div class="score-category-label">
-            <span class="score-category-name">Logros desbloqueados</span>
+            <span class="score-category-name"><%= locale === 'es' ? 'Logros desbloqueados' : 'Unlocked achievements' %></span>
             <span class="score-category-value"><%= details.achievements.value %>/<%= details.achievements.maxValue %> (<%=  Math.round(details.achievements.percentage) %>%)</span>
           </div>
           <div class="score-progress-bar">
@@ -65,7 +65,7 @@
         <!-- Puntos de nivel -->
         <div class="score-category">
           <div class="score-category-label">
-            <span class="score-category-name">Puntos de nivel</span>
+            <span class="score-category-name"><%= t('member.levelPoints') %></span>
             <span class="score-category-value"><%= details.levelPoints.value %> (<%= Math.round(details.levelPoints.percentage) %>%)</span>
           </div>
           <div class="score-progress-bar">
@@ -76,7 +76,7 @@
         <!-- Puntos de rewards -->
         <div class="score-category">
           <div class="score-category-label">
-            <span class="score-category-name">Puntos de rewards</span>
+            <span class="score-category-name"><%= t('member.rewardPoints') %></span>
             <span class="score-category-value"><%= details.rewardPoints.value %> (<%= Math.round(details.rewardPoints.percentage) %>%)</span>
           </div>
           <div class="score-progress-bar">
@@ -87,7 +87,7 @@
         <!-- Nivel -->
         <div class="score-category">
           <div class="score-category-label">
-            <span class="score-category-name">Nivel actual</span>
+            <span class="score-category-name"><%= locale === 'es' ? 'Nivel actual' : 'Current tier' %></span>
             <span class="score-category-value"><%= details.tier.value %> (<%= Math.round(details.tier.percentage) %>%)</span>
           </div>
           <div class="score-progress-bar">
@@ -98,7 +98,7 @@
         <!-- Saldo restante -->
         <div class="score-category">
           <div class="score-category-label">
-            <span class="score-category-name">Saldo disponible</span>
+            <span class="score-category-name"><%= locale === 'es' ? 'Saldo disponible' : 'Available balance' %></span>
             <span class="score-category-value"><%= details.balance.value.toFixed(2) %>€ (<%= Math.round(details.balance.percentage) %>%)</span>
           </div>
           <div class="score-progress-bar">
@@ -112,11 +112,11 @@
   <% if (!hasSubmitted) { %>
     <form method="POST" action="/leaderboard/submit" id="leaderboardForm">
       <button type="submit" class="submit-button" <%= (missingId && useSalesforce) ? 'disabled' : '' %>>
-        <i class="fas fa-trophy"></i> Enviar al Leaderboard
+        <i class="fas fa-trophy"></i> <%= locale === 'es' ? 'Enviar al Leaderboard' : 'Submit to Leaderboard' %>
       </button>
       <% if (missingId && useSalesforce) { %>
         <p class="text-center text-muted mt-2">
-          No puedes enviar tu puntuación sin un ID de Salesforce.
+          <%= locale === 'es' ? 'No puedes enviar tu puntuación sin un ID de Salesforce.' : 'You cannot submit your score without a Salesforce ID.' %>
         </p>
       <% } %>
     </form>
@@ -124,7 +124,7 @@
     <div class="text-center mt-4">
       <p class="text-success">
         <i class="fas fa-check-circle"></i> 
-        Ya has enviado tu puntuación al leaderboard 
+        <%= locale === 'es' ? 'Ya has enviado tu puntuación al leaderboard' : 'You have already submitted your score to the leaderboard' %> 
         (<%= new Date(member.leaderboardSubmittedAt).toLocaleString() %>)
       </p>
     </div>
@@ -132,18 +132,18 @@
 </div>
 
 <div class="leaderboard-explanation">
-  <h4>¿Cómo se calcula tu Engagement Score?</h4>
-  <p>Tu puntuación se basa en tu actividad e interacción con nuestra plataforma:</p>
+  <h4><%= locale === 'es' ? '¿Cómo se calcula tu Engagement Score?' : 'How is your Engagement Score calculated?' %></h4>
+  <p><%= locale === 'es' ? 'Tu puntuación se basa en tu actividad e interacción con nuestra plataforma:' : 'Your score is based on your activity and interaction with our platform:' %></p>
   
   <ul>
-    <li><strong>Logros desbloqueados (40%):</strong> Cuantos más logros consigas, mayor será tu puntuación.</li>
-    <li><strong>Puntos de nivel (25%):</strong> Los puntos de nivel que has acumulado.</li>
-    <li><strong>Puntos de rewards (15%):</strong> Los puntos disponibles para canjear por recompensas.</li>
-    <li><strong>Nivel alcanzado (15%):</strong> Tu nivel actual (Bronze, Silver, Gold o Platinum).</li>
-    <li><strong>Saldo disponible (5%):</strong> Un bono por mantener un buen saldo.</li>
+    <li><strong><%= locale === 'es' ? 'Logros desbloqueados (40%):' : 'Unlocked achievements (40%):' %></strong> <%= locale === 'es' ? 'Cuantos más logros consigas, mayor será tu puntuación.' : 'The more achievements you unlock, the higher your score.' %></li>
+    <li><strong><%= t('member.levelPoints') %> (25%):</strong> <%= locale === 'es' ? 'Los puntos de nivel que has acumulado.' : 'The level points you have accumulated.' %></li>
+    <li><strong><%= t('member.rewardPoints') %> (15%):</strong> <%= locale === 'es' ? 'Los puntos disponibles para canjear por recompensas.' : 'The points available to redeem for rewards.' %></li>
+    <li><strong><%= locale === 'es' ? 'Nivel alcanzado (15%):' : 'Tier reached (15%):' %></strong> <%= locale === 'es' ? 'Tu nivel actual (Bronze, Silver, Gold o Platinum).' : 'Your current tier (Bronze, Silver, Gold or Platinum).' %></li>
+    <li><strong><%= locale === 'es' ? 'Saldo disponible (5%):' : 'Available balance (5%):' %></strong> <%= locale === 'es' ? 'Un bono por mantener un buen saldo.' : 'A bonus for maintaining a good balance.' %></li>
   </ul>
   
-  <p class="mb-0">Tu puntuación se actualizará automáticamente a medida que interactúes con la plataforma. ¡Sigue participando para mejorar tu posición en el leaderboard!</p>
+  <p class="mb-0"><%= locale === 'es' ? 'Tu puntuación se actualizará automáticamente a medida que interactúes con la plataforma. ¡Sigue participando para mejorar tu posición en el leaderboard!' : 'Your score will update automatically as you interact with the platform. Keep participating to improve your leaderboard position!' %></p>
 </div>
 
 <script>

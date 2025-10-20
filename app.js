@@ -8,6 +8,10 @@ require('dotenv').config();
 // Importar configuración de marca
 const brandConfig = require('./config/brand');
 
+// Importar módulos de internacionalización
+const i18n = require('./modules/i18n');
+const brandTranslations = require('./modules/brandTranslations');
+
 // Importar rutas
 const indexRoutes = require('./routes/index');
 const registerRoutes = require('./routes/register');
@@ -42,6 +46,15 @@ app.use(session({
   }
 }));
 
+// Middleware de internacionalización (después de sessions)
+app.use(i18n.middleware());
+
+// Middleware para hacer disponible la URL actual en las vistas
+app.use((req, res, next) => {
+  res.locals.currentUrl = req.originalUrl;
+  next();
+});
+
 // Configuración de middlewares
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -51,9 +64,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
-// Middleware para hacer disponible la configuración de marca en todas las vistas
+// Middleware para hacer disponible la configuración de marca traducida en todas las vistas
 app.use((req, res, next) => {
-  res.locals.brand = brandConfig;
+  const locale = req.locale || 'es';
+  res.locals.brand = brandTranslations.getTranslatedBrand(brandConfig, locale);
   next();
 });
 
@@ -98,6 +112,21 @@ app.use((req, res, next) => {
   next();
 });
 
+// Ruta para cambio de idioma
+app.get('/change-language/:lang', (req, res) => {
+  const { lang } = req.params;
+  const redirect = req.query.redirect || '/';
+
+  // Validar idioma y establecerlo
+  if (i18n.setLocale(req, lang)) {
+    // Regenerar el helper con el nuevo idioma
+    res.locals.t = (key) => i18n.t(key, req.locale);
+    res.locals.locale = req.locale;
+  }
+
+  res.redirect(redirect);
+});
+
 // Rutas
 app.use('/', indexRoutes);
 app.use('/register', registerRoutes);
@@ -119,8 +148,9 @@ app.post('/logout', (req, res) => {
 // Manejo de errores - asegurarse de que este middleware esté al final
 app.use((err, req, res, next) => {
   console.error(err.stack);
+  const locale = req.locale || 'es';
   res.status(500).render('error', {
-    message: err.message || 'Ha ocurrido un error interno',
+    message: err.message || i18n.t('pages.error.internalError', locale),
     error: process.env.NODE_ENV === 'development' ? err : {},
     currentPage: 'error'
   });
@@ -128,8 +158,9 @@ app.use((err, req, res, next) => {
 
 // Manejo de 404 - página no encontrada
 app.use((req, res, next) => {
+  const locale = req.locale || 'es';
   res.status(404).render('error', {
-    message: 'Página no encontrada',
+    message: i18n.t('pages.error.notFound', locale),
     error: { status: 404 },
     currentPage: 'error'
   });

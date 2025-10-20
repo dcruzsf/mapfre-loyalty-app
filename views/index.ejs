@@ -12,28 +12,28 @@
     <div class="col-md-12">
       <div class="card">
         <div class="card-body">
-          <h3>Miembro: <%= member.name %></h3>
-          <p><strong>Email:</strong> <%= member.email %></p>
-          
+          <h3><%= t('member.name') %>: <%= member.name %></h3>
+          <p><strong><%= t('member.email') %>:</strong> <%= member.email %></p>
+
           <div class="member-summary">
             <div class="member-stat">
-              <div class="member-stat-label">Saldo</div>
+              <div class="member-stat-label"><%= t('member.balance') %></div>
               <div class="member-stat-value"><%= member.balance.toFixed(2) %> €</div>
             </div>
-            
+
             <div class="member-stat">
-              <div class="member-stat-label">Puntos de Nivel</div>
+              <div class="member-stat-label"><%= t('member.levelPoints') %></div>
               <div class="member-stat-value"><%= member.levelPoints %></div>
             </div>
-            
+
             <div class="member-stat">
-              <div class="member-stat-label">Puntos de Rewards</div>
+              <div class="member-stat-label"><%= t('member.rewardPoints') %></div>
               <div class="member-stat-value"><%= member.rewardPoints %></div>
             </div>
-            
+
             <div class="member-stat">
-              <div class="member-stat-label">Nivel</div>
-              <div class="member-stat-value tier-<%= member.tier.toLowerCase() %>"><%= member.tier %></div>
+              <div class="member-stat-label"><%= t('member.tier') %></div>
+              <div class="member-stat-value tier-<%= member.tier.toLowerCase() %>"><%= t('tiers.' + member.tier.toLowerCase()) %></div>
             </div>
             
             <% if (member.getNextTier()) { %>
@@ -42,7 +42,7 @@
                   <div class="tier-progress-fill" data-width="<%= member.getProgressToNextTier() %>"></div>
                 </div>
                 <div class="tier-progress-text">
-                  <%= member.levelPoints %>/<%= member.getPointsForNextTier() %> puntos para <%= member.getNextTier() %>
+                  <%= member.levelPoints %>/<%= member.getPointsForNextTier() %> <%= t('member.pointsToNext') %> <%= t('tiers.' + member.getNextTier().toLowerCase()) %>
                 </div>
               </div>
             <% } %>
@@ -50,21 +50,21 @@
           
           <!-- Sección de acciones destacada -->
           <div class="action-section">
-            <h4>¿Qué te gustaría hacer hoy?</h4>
+            <h4><%= t('home.whatToDo') %></h4>
             <div class="row">
               <div class="col-md-4 mb-3">
                 <a href="/accrual" class="btn action-btn">
-                  <i class="fas fa-coins"></i> Ganar Puntos
+                  <i class="fas fa-coins"></i> <%= t('navigation.earnPoints') %>
                 </a>
               </div>
               <div class="col-md-4 mb-3">
                 <a href="/redemption" class="btn action-btn">
-                  <i class="fas fa-gift"></i> Canjear Puntos
+                  <i class="fas fa-gift"></i> <%= t('navigation.redeemPoints') %>
                 </a>
               </div>
               <div class="col-md-4 mb-3">
                 <a href="/achievements" class="btn action-btn">
-                  <i class="fas fa-trophy"></i> Ver Logros
+                  <i class="fas fa-trophy"></i> <%= t('navigation.achievements') %>
                 </a>
               </div>
             </div>
@@ -73,7 +73,7 @@
           <!-- Camino al siguiente nivel - Sección mejorada con sombreado y espacio adicional -->
           <% if (member.getNextTier()) { %>
             <div class="level-progression-section mt-5 mb-5 p-4" style="background-color: #f9f9f9; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
-              <h4 class="mb-4">Camino al Nivel <%= member.getNextTier() %></h4>
+              <h4 class="mb-4"><%= t('home.pathToLevel') %> <%= t('tiers.' + member.getNextTier().toLowerCase()) %></h4>
               <div class="level-timeline">
                 <div class="level-timeline-line"></div>
                 
@@ -90,7 +90,7 @@
                     const positionPercent = Math.min(Math.max((member.levelPoints / 2000) * 100, 0), 100);
                   %>
                   <div class="level-point current user-position" data-position="<%= positionPercent %>">
-                    <div class="you-are-here">¡ESTÁS AQUÍ!</div>
+                    <div class="you-are-here"><%= t('home.youAreHere') %></div>
                     <div class="level-label"><%= member.levelPoints %> pts</div>
                   </div>
                 <% } %>
@@ -119,29 +119,32 @@
           
           <!-- Transacciones recientes -->
           <div class="mt-5">
-            <h4>Transacciones Recientes</h4>
+            <h4><%= t('home.recentTransactions') %></h4>
             <% if (member.transactions.length === 0) { %>
-              <p>No hay transacciones para mostrar.</p>
+              <p><%= t('home.noTransactions') %></p>
             <% } else { %>
               <table class="transactions-table">
                 <thead>
                   <tr>
-                    <th>Fecha</th>
-                    <th>Tipo</th>
-                    <th>Descripción</th>
-                    <th>Puntos Nivel</th>
-                    <th>Puntos Rewards</th>
+                    <th><%= t('home.transactionColumns.date') %></th>
+                    <th><%= t('home.transactionColumns.type') %></th>
+                    <th><%= t('home.transactionColumns.description') %></th>
+                    <th><%= t('home.transactionColumns.levelPoints') %></th>
+                    <th><%= t('home.transactionColumns.rewardPoints') %></th>
                   </tr>
                 </thead>
                 <tbody>
-                  <% 
+                  <%
+                    // Usar transacciones ya traducidas desde el controlador
+                    const translatedTransactions = member.translatedTransactions || member.transactions || [];
+
                     // Filtrar transacciones que no aportan (ambos valores son 0)
-                    const relevantTransactions = member.transactions.filter(tx => 
+                    const relevantTransactions = translatedTransactions.filter(tx =>
                       tx.levelPointsAmount !== 0 || tx.rewardPointsAmount !== 0
                     );
-                    
-                    for (let i = 0; i < Math.min(5, relevantTransactions.length); i++) { 
-                      const tx = relevantTransactions[relevantTransactions.length - 1 - i]; 
+
+                    for (let i = 0; i < Math.min(5, relevantTransactions.length); i++) {
+                      const tx = relevantTransactions[relevantTransactions.length - 1 - i];
                   %>
                     <tr>
                       <td><%= tx.timestamp.toLocaleString() %></td>
@@ -169,8 +172,8 @@
       <div class="card">
         <div class="card-body text-center">
           <h2 class="mb-4"><%= brand.messages.welcome %></h2>
-          <p class="lead mb-4">Únete a nuestro programa de fidelización para disfrutar de recompensas exclusivas, desbloquear logros y alcanzar nuevos niveles a medida que interactúas con nuestra marca.</p>
-          <a href="/register" class="btn btn-primary btn-lg mb-3">Registrarse</a>
+          <p class="lead mb-4"><%= t('home.joinDescription') %></p>
+          <a href="/register" class="btn btn-primary btn-lg mb-3"><%= t('navigation.register') %></a>
           <div class="row mt-4">
             <% brand.messages.features.forEach(feature => { %>
               <div class="col-md-4 text-center">

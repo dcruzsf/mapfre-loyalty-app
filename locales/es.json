@@ -1,0 +1,194 @@
+{
+  "navigation": {
+    "home": "Inicio",
+    "register": "Comenzar",
+    "earnPoints": "Ganar Puntos",
+    "redeemPoints": "Canjear Puntos",
+    "achievements": "Logros",
+    "leaderboard": "Ranking"
+  },
+  "common": {
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "submit": "Enviar",
+    "continue": "Continuar",
+    "back": "Volver",
+    "close": "Cerrar",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "search": "Buscar",
+    "loading": "Cargando...",
+    "error": "Error",
+    "success": "Éxito",
+    "warning": "Advertencia",
+    "info": "Información",
+    "yes": "Sí",
+    "no": "No",
+    "select": "Seleccionar",
+    "language": "Idioma",
+    "available": "disponibles"
+  },
+  "member": {
+    "name": "Usuario",
+    "email": "Email",
+    "balance": "Saldo",
+    "levelPoints": "Caixapoints Status",
+    "rewardPoints": "Caixapoints Rewards",
+    "tier": "Nivel",
+    "pointsToNext": "Caixapoints Status para",
+    "welcome": "Bienvenido"
+  },
+  "pages": {
+    "home": {
+      "title": "Inicio",
+      "memberSummary": "Resumen del Miembro"
+    },
+    "register": {
+      "title": "Registro",
+      "form": {
+        "name": "Nombre completo",
+        "email": "Correo electrónico",
+        "phone": "Teléfono",
+        "submit": "Registrarse",
+        "interests": "Intereses",
+        "demoNote": "Esta es una demo.",
+        "demoDescription": "Los datos se almacenan temporalmente y se borrarán tras la finalización de la misma.",
+        "welcomeBonus": "REGALO DE BIENVENIDA"
+      }
+    },
+    "accrual": {
+      "title": "Ganar Puntos",
+      "description": "Acumula puntos con operaciones digitales",
+      "breadcrumb": "Ganar Puntos",
+      "tabs": {
+        "purchases": "Operaciones",
+        "activities": "Actividades"
+      },
+      "product": {
+        "price": "Precio",
+        "points": "puntos",
+        "buy": "Realizar",
+        "insufficientBalance": "Saldo insuficiente",
+        "performActivity": "Completar actividad"
+      },
+      "notification": {
+        "success": "¡Genial!",
+        "pointsEarned": "puntos ganados"
+      }
+    },
+    "redemption": {
+      "title": "Canjear Puntos",
+      "description": "Canjea tus Caixapoints Rewards por recompensas exclusivas",
+      "breadcrumb": "Canjear Puntos",
+      "reward": {
+        "cost": "Costo",
+        "points": "puntos",
+        "redeem": "Canjear",
+        "insufficientPoints": "Puntos insuficientes"
+      },
+      "notification": {
+        "success": "¡Perfecto!",
+        "pointsRedeemed": "puntos canjeados"
+      }
+    },
+    "achievements": {
+      "title": "Logros",
+      "description": "Tus logros y badges conseguidos",
+      "breadcrumb": "Logros",
+      "earnedCount": "logros conseguidos",
+      "totalCount": "logros totales",
+      "categories": {
+        "all": "Todos",
+        "earned": "Conseguidos",
+        "pending": "Pendientes"
+      },
+      "status": {
+        "earned": "¡CONSEGUIDO!",
+        "pending": "Pendiente",
+        "progress": "Progreso"
+      }
+    },
+    "leaderboard": {
+      "title": "Leaderboard",
+      "description": "Ranking de los mejores miembros",
+      "breadcrumb": "Leaderboard",
+      "position": "Posición",
+      "member": "Miembro",
+      "points": "Puntos",
+      "tier": "Nivel",
+      "you": "Tú",
+      "categories": {
+        "level": "Por Puntos de Nivel",
+        "rewards": "Por Puntos de Rewards"
+      }
+    },
+    "error": {
+      "title": "Error",
+      "notFound": "Página no encontrada",
+      "internalError": "Error interno del servidor",
+      "goHome": "Volver al Inicio"
+    }
+  },
+  "forms": {
+    "required": "Campo requerido",
+    "invalidEmail": "Email no válido",
+    "invalidPhone": "Teléfono no válido",
+    "passwordMismatch": "Las contraseñas no coinciden"
+  },
+  "messages": {
+    "memberRegistered": "Miembro registrado exitosamente",
+    "pointsEarned": "Puntos ganados exitosamente",
+    "pointsRedeemed": "Puntos canjeados exitosamente",
+    "achievementUnlocked": "¡Logro desbloqueado!",
+    "sessionExpired": "Sesión expirada",
+    "unauthorized": "No autorizado",
+    "pageNotFound": "Página no encontrada",
+    "internalError": "Error interno del servidor",
+    "authRequired": "Debes registrarte para acceder a esta función",
+    "sessionExpiredAuth": "Tu sesión ha expirado. Por favor, regístrate nuevamente",
+    "productNotFound": "Producto no encontrado",
+    "rewardNotFound": "Recompensa no encontrada",
+    "purchaseSuccess": "Compra exitosa",
+    "activitySuccess": "Actividad completada exitosamente",
+    "redemptionSuccess": "Canje exitoso",
+    "error": "Error",
+    "activityNotFound": "Actividad no encontrada"
+  },
+  "tiers": {
+    "bronze": "Basic",
+    "silver": "Plus",
+    "gold": "Premium",
+    "platinum": "Elite"
+  },
+  "footer": {
+    "deleteAccount": "Eliminar mi cuenta y reiniciar demo",
+    "confirmDelete": "¿Seguro que deseas eliminar tu cuenta y reiniciar la demo? Esta acción no se puede deshacer."
+  },
+  "units": {
+    "currency": "€",
+    "points": "puntos"
+  },
+  "home": {
+    "whatToDo": "¿Qué quieres hacer hoy?",
+    "pathToLevel": "Tu progreso hacia",
+    "youAreHere": "¡ESTÁS AQUÍ!",
+    "recentTransactions": "Actividad Reciente",
+    "noTransactions": "Aún no tienes actividad. ¡Empieza a acumular puntos!",
+    "joinDescription": "Únete a CaixaBank Experience, la banca 100% digital que premia cada operación. Acumula puntos, desbloquea beneficios exclusivos y evoluciona tu nivel con cada acción digital.",
+    "transactionColumns": {
+      "date": "Fecha",
+      "type": "Tipo",
+      "description": "Descripción",
+      "levelPoints": "Caixapoints Status",
+      "rewardPoints": "Caixapoints Rewards"
+    }
+  },
+  "transactions": {
+    "types": {
+      "Accrual": "Acumulación",
+      "Redemption": "Canje",
+      "Purchase": "Compra",
+      "System": "Sistema"
+    }
+  }
+}

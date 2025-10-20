@@ -4,7 +4,7 @@
   <div class="col-md-8 offset-md-2">
     <div class="card">
       <div class="card-header">
-        <h2 class="mb-0">Registro en <%= brand.fullName %></h2>
+        <h2 class="mb-0"><%= t('pages.register.title') %> en <%= brand.fullName %></h2>
       </div>
       <div class="card-body">
         <div class="row">
@@ -24,7 +24,7 @@
             </div>
             
             <div class="welcome-bonus p-3 mt-4 bg-light text-center">
-              <h6 class="mb-2">REGALO DE BIENVENIDA</h6>
+              <h6 class="mb-2"><%= t('pages.register.form.welcomeBonus') %></h6>
               <p class="display-4 mb-0">250 €</p>
             </div>
           </div>
@@ -44,36 +44,36 @@
             
             <form method="POST" action="/register">
               <div class="form-group">
-                <label for="name" class="form-label">NOMBRE COMPLETO</label>
-                <input 
-                  type="text" 
-                  class="form-control" 
-                  id="name" 
-                  name="name" 
+                <label for="name" class="form-label"><%= t('pages.register.form.name').toUpperCase() %></label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="name"
+                  name="name"
                   required
-                  placeholder="Ej: Juan Pérez"
+                  placeholder="<%= locale === 'es' ? 'Ej: Juan Pérez' : 'Ex: John Doe' %>"
                   value="<%= typeof formData !== 'undefined' ? formData.name : '' %>"
                 >
               </div>
-              
+
               <div class="form-group">
-                <label for="email" class="form-label">EMAIL</label>
-                <input 
-                  type="email" 
-                  class="form-control" 
-                  id="email" 
-                  name="email" 
+                <label for="email" class="form-label"><%= t('pages.register.form.email').toUpperCase() %></label>
+                <input
+                  type="email"
+                  class="form-control"
+                  id="email"
+                  name="email"
                   required
-                  placeholder="Ej: juan.perez@email.com"
+                  placeholder="<%= locale === 'es' ? 'Ej: juan.perez@email.com' : 'Ex: john.doe@email.com' %>"
                   value="<%= typeof formData !== 'undefined' ? formData.email : '' %>"
                 >
                 <small class="form-text text-muted">
-                  Cada email solo puede registrarse una vez. Si ya tienes cuenta, utiliza un email diferente para probar la demo.
+                  <%= locale === 'es' ? 'Cada email solo puede registrarse una vez. Si ya tienes cuenta, utiliza un email diferente para probar la demo.' : 'Each email can only be registered once. If you already have an account, use a different email to try the demo.' %>
                 </small>
               </div>
               
               <div class="form-group">
-                <label class="form-label">INTERESES</label>
+                <label class="form-label"><%= t('pages.register.form.interests').toUpperCase() %></label>
                 <% brand.categories.forEach(category => { %>
                   <div class="form-check">
                     <input class="form-check-input" type="checkbox" name="preferences" value="<%= category.id %>" id="<%= category.id %>">
@@ -84,13 +84,21 @@
                 <% }); %>
               </div>
               
-              <button type="submit" class="btn btn-primary btn-lg btn-block mt-4"><%= brand.messages.joinClub %></button>
+              <button type="submit" class="btn btn-primary btn-lg btn-block mt-4"><%= t('pages.register.form.submit') %></button>
             </form>
-            
+
+            <!-- Botón mágico de autorelleno -->
+            <div class="text-center mt-3">
+              <button type="button" id="autofillBtn" class="btn btn-secondary btn-sm" style="font-size: 13px; padding: 8px 16px;">
+                <i class="fas fa-magic"></i> Rellenar automáticamente (Demo)
+              </button>
+            </div>
+
             <div class="text-center mt-4">
               <div class="alert alert-info" style="border-left: 4px solid var(--accent-color); background-color: #f8f9fa; border: 1px solid #dee2e6;">
-                <i class="fas fa-info-circle"></i> 
-                <strong>Esta es una demo.</strong> Los datos se almacenan temporalmente y se borrarán tras la finalización de la misma.
+                <i class="fas fa-info-circle"></i>
+                <strong><%= t('pages.register.form.demoNote') %></strong>
+                <%= t('pages.register.form.demoDescription') %>
               </div>
             </div>
           </div>

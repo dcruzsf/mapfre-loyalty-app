@@ -1,270 +1,326 @@
-// config/catalog.js - Configuración centralizada de productos, actividades y recompensas
+// config/catalog.js - Configuración de operaciones digitales y recompensas CaixaBank Experience
 module.exports = {
-  // Productos para la página de acumulación
+  // Operaciones digitales para acumulación de puntos (enfoque 100% digital)
   products: [
-    { 
-      id: 1, 
-      name: 'Urban Rider Tee', 
-      price: 95, 
-      points: 95, 
+    {
+      id: 1,
+      name: 'Transferencia Inmediata Bizum',
+      price: 10,
+      points: 15,
       image: 'compra1.png',
-      description: 'Camiseta negra de algodón premium con logo inspirador de estilo motero y corte entallado para un look urbano.',
-      category: 'clothing',
-      isPremium: false
+      description: 'Envía dinero al instante con Bizum. Sin comisiones, 100% digital. Gana puntos por cada transacción.',
+      category: 'digital_banking',
+      isPremium: false,
+      digitalOnly: true
     },
-    { 
-      id: 2, 
-      name: 'Denim Breeze Flare', 
-      price: 110, 
-      points: 110, 
+    {
+      id: 2,
+      name: 'Pago Contactless o Apple/Google Pay',
+      price: 25,
+      points: 20,
       image: 'compra2.png',
-      description: 'Pantalón vaquero de talle alto y pierna acampanada, lavado medio y costuras visibles para un estilo retro-contemporáneo.',
-      category: 'clothing',
-      isPremium: false
+      description: 'Paga con tu móvil o tarjeta contactless. Rápido, seguro y sin contacto. Acumula puntos automáticamente.',
+      category: 'digital_banking',
+      isPremium: false,
+      digitalOnly: true
     },
-    { 
-      id: 3, 
-      name: 'Vintage Tan Rider Jacket', 
-      price: 150, 
-      points: 150, 
+    {
+      id: 3,
+      name: 'Inversión Automática en Fondos',
+      price: 100,
+      points: 250,
       image: 'compra3.png',
-      description: 'Chaqueta de piel auténtica color caramelo, diseño clásico con cremallera frontal y bolsillos laterales discretos.',
-      category: 'clothing',
+      description: 'Activa inversiones automáticas desde la app. Haz crecer tu dinero mientras duermes. Gran bonificación en puntos.',
+      category: 'investments',
       isPremium: true,
-      premiumTrigger: 'Vintage Tan Rider Jacket' // Palabra clave que triggerea el logro premium
+      premiumTrigger: 'Inversión Automática en Fondos',
+      digitalOnly: true
     },
-    { 
-      id: 4, 
-      name: 'Sunbeam Cable Knit Beanie', 
-      price: 35, 
-      points: 35, 
+    {
+      id: 4,
+      name: 'Pago de Recibos desde la App',
+      price: 50,
+      points: 30,
       image: 'compra4.png',
-      description: 'Gorro de punto grueso con motivo de trenzas y pompones, en vibrante color amarillo mostaza para dar un toque de energía.',
-      category: 'accessories',
-      isPremium: false
+      description: 'Gestiona todos tus recibos desde la app móvil. Paga luz, agua, internet y gana puntos por cada uno.',
+      category: 'digital_banking',
+      isPremium: false,
+      digitalOnly: true
     },
-    { 
-      id: 5, 
-      name: 'SoftStack Trio Socks', 
-      price: 45, 
-      points: 45, 
+    {
+      id: 5,
+      name: 'Compra Online con Tarjeta Virtual',
+      price: 75,
+      points: 40,
       image: 'compra5.png',
-      description: 'Pack de tres pares de calcetines de punto suave y elástico, en tonos rojo intenso, azul cielo y negro básico.',
-      category: 'accessories',
-      isPremium: false
+      description: 'Crea tarjetas virtuales temporales para compras online ultra seguras. Máxima protección + Caixapoints.',
+      category: 'digital_banking',
+      isPremium: false,
+      digitalOnly: true
     }
   ],
 
-  // Actividades para ganar puntos
+  // Actividades digitales para ganar puntos extra
   activities: [
-    { 
-      id: 1, 
-      name: 'Descargar la App de Hang-in-there', 
-      points: 100, 
+    {
+      id: 1,
+      name: 'Activar CaixaBankNow en tu móvil',
+      points: 150,
       image: 'actividad1.png',
-      category: 'app'
+      category: 'app',
+      description: 'Descarga la app y activa tu banca móvil. Tu banco en el bolsillo.'
     },
-    { 
-      id: 2, 
-      name: 'Completar perfil', 
-      points: 75, 
+    {
+      id: 2,
+      name: 'Completar perfil financiero',
+      points: 80,
       image: 'actividad2.png',
       category: 'profile',
-      challengeTrigger: 'profile_complete' // Qué challenge actualiza
+      challengeTrigger: 'profile_complete',
+      description: 'Completa tu información financiera y preferencias de inversión.'
     },
-    { 
-      id: 3, 
-      name: 'Recomendar a un amigo', 
-      points: 50, 
+    {
+      id: 3,
+      name: 'Invitar amigos a CaixaBank Experience',
+      points: 100,
       image: 'actividad3.png',
-      category: 'referral'
+      category: 'referral',
+      description: 'Comparte tu código. Tú ganas, tu amigo gana.'
     },
-    { 
-      id: 4, 
-      name: 'Compartir en Redes Sociales', 
-      points: 60, 
+    {
+      id: 4,
+      name: 'Activar Face ID / Huella Digital',
+      points: 75,
       image: 'actividad4.png',
-      category: 'social',
-      challengeTrigger: 'social_share' // Qué challenge actualiza
+      category: 'security',
+      challengeTrigger: 'social_share',
+      description: 'Máxima seguridad biométrica para tu app.'
+    },
+    {
+      id: 5,
+      name: 'Vincular Apple/Google Wallet',
+      points: 90,
+      image: 'actividad1.png',
+      category: 'digital_wallet',
+      description: 'Añade tu tarjeta al móvil y paga sin sacarla del bolsillo.'
+    },
+    {
+      id: 6,
+      name: 'Domiciliación de Nómina Digital',
+      points: 500,
+      image: 'actividad3.png',
+      category: 'payroll',
+      description: 'Domicilia tu nómina 100% online y recibe una mega bonificación de Caixapoints. Tu sueldo, más rentable.'
     }
   ],
 
-  // Recompensas para la página de redención
+  // Recompensas digitales y experiencias (estilo Revolut)
   rewards: [
-    { 
-      id: 1, 
-      name: 'Cupón 10% descuento', 
-      points: 100, 
-      type: 'discount', 
+    {
+      id: 1,
+      name: 'Cashback Instantáneo 10€',
+      points: 150,
+      type: 'cashback',
       image: 'descuento1.png',
-      codePrefix: 'HANG'
+      codePrefix: 'CASH10',
+      description: 'Dinero directo a tu cuenta. Sin esperas, sin complicaciones.'
     },
-    { 
-      id: 2, 
-      name: 'Cupón 20% descuento', 
-      points: 200, 
-      type: 'discount', 
+    {
+      id: 2,
+      name: 'Cashback Instantáneo 25€',
+      points: 350,
+      type: 'cashback',
       image: 'descuento2.png',
-      codePrefix: 'HANG'
+      codePrefix: 'CASH25',
+      description: 'Recompensa inmediata en tu saldo disponible.'
     },
-    { 
-      id: 3, 
-      name: 'Acceso al lanzamiento de nuevas colecciones', 
-      points: 500, 
-      type: 'experience', 
+    {
+      id: 3,
+      name: 'Mes Premium GRATIS',
+      points: 500,
+      type: 'subscription',
       image: 'experiencia1.png',
-      codePrefix: 'EXP'
+      codePrefix: 'PREMIUM30',
+      description: 'Un mes de beneficios Elite: sin comisiones, cashback máximo y gestor personal.'
     },
-    { 
-      id: 4, 
-      name: 'Showroom con influencers', 
-      points: 800, 
-      type: 'experience', 
+    {
+      id: 4,
+      name: 'Inversión Asistida por IA',
+      points: 800,
+      type: 'service',
       image: 'experiencia2.png',
-      codePrefix: 'EXP'
+      codePrefix: 'AIINVEST',
+      description: 'Sesión de inversión personalizada con nuestro asistente de IA financiera.'
+    },
+    {
+      id: 5,
+      name: 'Upgrade de Tarjeta a Premium',
+      points: 1000,
+      type: 'product',
+      image: 'experiencia1.png',
+      codePrefix: 'CARDPREM',
+      description: 'Mejora tu tarjeta a Premium con límites superiores y sin cuotas durante 1 año.'
+    },
+    {
+      id: 6,
+      name: 'Acceso VIP a Eventos Exclusivos',
+      points: 1200,
+      type: 'experience',
+      image: 'experiencia2.png',
+      codePrefix: 'VIPEXP',
+      description: 'Entradas para eventos seleccionados: tecnología, finanzas, networking de élite.'
     }
   ],
 
-  // Configuración de challenges/retos
+  // Retos digitales (gamificación estilo Revolut)
   challenges: [
     {
-      id: 'accessories_lover',
-      name: 'Amor por los accesorios',
-      description: 'Compra los dos accesorios disponibles (gorro y calcetines)',
-      reward: 50,
-      goal: 2,
-      type: 'accessories',
-      triggerCategory: 'accessories' // Se actualiza al comprar productos de esta categoría
+      id: 'digital_warrior',
+      name: 'Guerrero Digital',
+      description: 'Realiza 5 operaciones completamente digitales (Bizum, pagos móviles, etc.)',
+      reward: 100,
+      goal: 5,
+      type: 'digital_banking',
+      triggerCategory: 'digital_banking'
     },
     {
       id: 'profile_complete',
-      name: 'Perfil Avanzado',
-      description: 'Completa toda la información de tu perfil (4 veces)',
-      reward: 75,
+      name: 'Perfil 100% Configurado',
+      description: 'Completa tu perfil, activa alertas y configura preferencias (4 acciones)',
+      reward: 120,
       goal: 4,
       type: 'profile'
     },
     {
-      id: 'social_share',
-      name: 'Social ambassador',
-      description: 'Comparte 3 productos en redes sociales',
-      reward: 75,
+      id: 'social_influencer',
+      name: 'Influencer Financiero',
+      description: 'Invita a 3 amigos a CaixaBank Experience',
+      reward: 150,
       goal: 3,
-      type: 'social'
+      type: 'referral'
+    },
+    {
+      id: 'investment_starter',
+      name: 'Inversor Inteligente',
+      description: 'Realiza tu primera inversión desde la app móvil',
+      reward: 200,
+      goal: 1,
+      type: 'investments',
+      triggerCategory: 'investments'
     }
   ],
 
-  // Configuración de logros
+  // Logros digitales (achievements con enfoque moderno)
   achievements: [
     {
       id: 'welcome',
-      name: 'Bienvenida',
-      description: 'Te has unido al programa de lealtad', // Se sobrescribe con brand.messages.welcomeDescription
-      points: 25,
-      icon: 'star',
+      name: 'Bienvenido a Experience',
+      description: 'Te has unido a la revolución digital de CaixaBank',
+      points: 50,
+      icon: 'rocket',
       category: 'general',
       hideWhenLocked: false,
-      autoUnlock: true // Se desbloquea automáticamente al registrarse
+      autoUnlock: true
     },
     {
-      id: 'first_purchase',
-      name: 'Primera Compra',
-      description: 'Has realizado tu primera compra',
-      points: 50,
-      icon: 'shopping-bag',
-      category: 'purchase',
+      id: 'first_digital_operation',
+      name: 'Primera Operación Digital',
+      description: 'Has realizado tu primera operación 100% digital',
+      points: 75,
+      icon: 'mobile-alt',
+      category: 'digital',
       hideWhenLocked: false,
-      hint: 'Realiza tu primera compra en la tienda',
-      trigger: 'purchase' // Se desbloquea con cualquier compra
+      hint: 'Realiza una operación desde la app',
+      trigger: 'purchase'
     },
     {
-      id: 'premium_purchase',
-      name: 'Compra Premium',
-      description: 'Has comprado la Vintage Tan Rider Jacket',
-      points: 150,
-      icon: 'award',
-      category: 'purchase',
+      id: 'premium_investor',
+      name: 'Inversor Premium',
+      description: 'Has activado inversiones automáticas desde la app',
+      points: 200,
+      icon: 'chart-line',
+      category: 'investment',
       hideWhenLocked: false,
-      hint: 'Compra la Vintage Tan Rider Jacket',
-      trigger: 'premium_purchase' // Se desbloquea con compra premium específica
+      hint: 'Activa inversiones automáticas',
+      trigger: 'premium_purchase'
     },
     {
       id: 'first_redemption',
-      name: 'Primer Canje',
-      description: 'Has canjeado tus puntos por primera vez',
+      name: 'Primera Recompensa',
+      description: 'Has canjeado tus Caixapoints por primera vez',
       points: 100,
       icon: 'gift',
       category: 'redemption',
       hideWhenLocked: false,
-      hint: 'Canjea tus puntos por una recompensa',
-      trigger: 'redemption' // Se desbloquea con cualquier canje
+      hint: 'Canjea tus Caixapoints por una recompensa',
+      trigger: 'redemption'
     },
     {
-      id: 'challenge_accessories_lover',
-      name: 'Amor por los accesorios',
-      description: 'Completaste el reto de comprar accesorios',
-      points: 30,
-      icon: 'check-circle',
+      id: 'challenge_digital_warrior',
+      name: 'Guerrero Digital',
+      description: 'Completaste el reto de 5 operaciones digitales',
+      points: 80,
+      icon: 'bolt',
       category: 'challenge',
       hideWhenLocked: false,
-      hint: 'Compra los dos accesorios disponibles (gorro y calcetines)',
-      trigger: 'challenge_complete' // Se desbloquea al completar challenge
+      hint: 'Realiza 5 operaciones digitales',
+      trigger: 'challenge_complete'
     },
     {
       id: 'challenge_profile_complete',
-      name: 'Perfil Avanzado',
-      description: 'Completaste el reto de perfil (4 veces)',
-      points: 50,
+      name: 'Perfil 100% Configurado',
+      description: 'Completaste toda la configuración de tu perfil',
+      points: 90,
       icon: 'user-check',
       category: 'challenge',
       hideWhenLocked: false,
-      hint: 'Completa toda la información de tu perfil 4 veces',
+      hint: 'Completa todas las configuraciones de perfil',
       trigger: 'challenge_complete'
     },
     {
-      id: 'challenge_social_share',
-      name: 'Social ambassador',
-      description: 'Completaste el reto de compartir en redes',
-      points: 60,
-      icon: 'share-alt',
+      id: 'challenge_social_influencer',
+      name: 'Influencer Financiero',
+      description: 'Invitaste a 3 amigos a CaixaBank Experience',
+      points: 100,
+      icon: 'users',
       category: 'social',
       hideWhenLocked: false,
-      hint: 'Comparte 3 productos en redes sociales',
+      hint: 'Invita a 3 amigos al programa',
       trigger: 'challenge_complete'
     },
     {
-      id: 'tier_silver',
-      name: 'Nivel Silver',
-      description: 'Has alcanzado el nivel Silver',
-      points: 100,
+      id: 'tier_plus',
+      name: 'Nivel Plus Desbloqueado',
+      description: 'Has alcanzado el nivel Plus con beneficios mejorados',
+      points: 150,
       icon: 'award',
       category: 'tier',
       hideWhenLocked: false,
-      hint: 'Alcanza 500 puntos',
+      hint: 'Alcanza 500 Caixapoints Status',
       trigger: 'tier_update',
       tierRequired: 'Silver'
     },
     {
-      id: 'tier_gold',
-      name: 'Nivel Gold',
-      description: 'Has alcanzado el nivel Gold',
-      points: 200,
-      icon: 'award',
+      id: 'tier_premium',
+      name: 'Nivel Premium Desbloqueado',
+      description: 'Has alcanzado el nivel Premium con beneficios superiores',
+      points: 250,
+      icon: 'crown',
       category: 'tier',
       hideWhenLocked: false,
-      hint: 'Alcanza 1000 puntos',
+      hint: 'Alcanza 1000 Caixapoints Status',
       trigger: 'tier_update',
       tierRequired: 'Gold'
     },
     {
-      id: 'tier_platinum',
-      name: 'Nivel Platinum',
-      description: 'Has alcanzado el nivel Platinum',
-      points: 300,
-      icon: 'crown',
+      id: 'tier_elite',
+      name: 'Nivel Elite Desbloqueado',
+      description: 'Has alcanzado el máximo nivel Elite con beneficios exclusivos',
+      points: 400,
+      icon: 'gem',
       category: 'tier',
       hideWhenLocked: false,
-      hint: 'Alcanza 2000 puntos',
+      hint: 'Alcanza 2000 Caixapoints Status',
       trigger: 'tier_update',
       tierRequired: 'Platinum'
     }

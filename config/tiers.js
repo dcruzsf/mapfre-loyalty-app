@@ -1,39 +1,61 @@
-// config/tiers.js - Configuración centralizada del sistema de niveles
+// config/tiers.js - Sistema de niveles CaixaBank Experience (estilo Revolut)
 module.exports = {
-  // Definición de niveles/tiers
+  // Definición de niveles con beneficios digitales
   tiers: [
     {
       name: 'Bronze',
       threshold: 0,
-      displayName: 'Bronze',
-      color: '#CD7F32',
-      benefits: ['Puntos base en compras', 'Acceso a recompensas básicas']
+      displayName: 'Basic',
+      color: '#B87333',
+      benefits: [
+        'Caixapoints base en operaciones digitales',
+        'Acceso a recompensas básicas',
+        'App móvil sin comisiones'
+      ]
     },
     {
-      name: 'Silver', 
+      name: 'Silver',
       threshold: 500,
-      displayName: 'Silver',
-      color: '#C0C0C0',
-      benefits: ['Puntos base + 10% bonus', 'Acceso a recompensas premium', 'Envío gratis']
+      displayName: 'Plus',
+      color: '#B8BEC5',
+      benefits: [
+        'Caixapoints + 15% de bonus',
+        'Cashback mejorado (1% en compras)',
+        'Transferencias internacionales sin comisión',
+        'Tarjetas virtuales ilimitadas'
+      ]
     },
     {
       name: 'Gold',
-      threshold: 1000, 
-      displayName: 'Gold',
-      color: '#FFD700',
-      benefits: ['Puntos base + 25% bonus', 'Acceso prioritario a ventas', 'Soporte premium']
+      threshold: 1000,
+      displayName: 'Premium',
+      color: '#F4C542',
+      benefits: [
+        'Caixapoints + 30% de bonus',
+        'Cashback premium (2% en compras)',
+        'Asesoría financiera digital por videollamada',
+        'Acceso prioritario a nuevas funcionalidades',
+        'Sin comisiones en operaciones internacionales'
+      ]
     },
     {
       name: 'Platinum',
       threshold: 2000,
-      displayName: 'Platinum', 
-      color: '#E5E4E2',
-      benefits: ['Puntos base + 50% bonus', 'Experiencias exclusivas', 'Personal shopper']
+      displayName: 'Elite',
+      color: '#C9D5E0',
+      benefits: [
+        'Caixapoints + 50% de bonus',
+        'Cashback elite (3% en compras)',
+        'Gestor personal 24/7',
+        'Acceso VIP a eventos exclusivos',
+        'Inversión asistida por IA premium',
+        'Upgrade gratuito de tarjeta a metal premium'
+      ]
     }
   ],
 
   // Configuración de progreso
-  maxPoints: 2000, // Puntos para el nivel máximo
+  maxPoints: 2000,
   
   // Configuración para cálculo de progreso
   getProgressCalculation: (currentPoints, currentTier, nextTier) => {
@@ -45,7 +67,6 @@ module.exports = {
 
   // Función para obtener tier actual basado en puntos
   getTierByPoints: function(points) {
-    // Ordenar tiers por threshold descendente y encontrar el primero que califique
     const sortedTiers = [...this.tiers].sort((a, b) => b.threshold - a.threshold);
     return sortedTiers.find(tier => points >= tier.threshold) || this.tiers[0];
   },

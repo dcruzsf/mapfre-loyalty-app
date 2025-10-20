@@ -1,0 +1,324 @@
+// modules/catalogTranslations.js - Traducciones del catálogo de productos, actividades, recompensas y logros
+class CatalogTranslations {
+  constructor() {
+    this.translations = {
+      es: {
+        // Operaciones digitales (productos)
+        products: {
+          1: {
+            name: 'Transferencia Inmediata Bizum',
+            description: 'Envía dinero al instante con Bizum. Sin comisiones, 100% digital. Gana Caixapoints por cada transacción.'
+          },
+          2: {
+            name: 'Pago Contactless o Apple/Google Pay',
+            description: 'Paga con tu móvil o tarjeta contactless. Rápido, seguro y sin contacto. Acumula Caixapoints automáticamente.'
+          },
+          3: {
+            name: 'Inversión Automática en Fondos',
+            description: 'Activa inversiones automáticas desde la app. Haz crecer tu dinero mientras duermes. Gran bonificación en Caixapoints.'
+          },
+          4: {
+            name: 'Pago de Recibos desde la App',
+            description: 'Gestiona todos tus recibos desde la app móvil. Paga luz, agua, internet y gana Caixapoints por cada uno.'
+          },
+          5: {
+            name: 'Compra Online con Tarjeta Virtual',
+            description: 'Crea tarjetas virtuales temporales para compras online ultra seguras. Máxima protección + Caixapoints.'
+          }
+        },
+
+        // Actividades digitales
+        activities: {
+          1: {
+            name: 'Activar CaixaBankNow en tu móvil',
+            description: 'Descarga la app y activa tu banca móvil. Tu banco en el bolsillo.'
+          },
+          2: {
+            name: 'Completar perfil financiero',
+            description: 'Completa tu información financiera y preferencias de inversión.'
+          },
+          3: {
+            name: 'Invitar amigos a CaixaBank Experience',
+            description: 'Comparte tu código. Tú ganas, tu amigo gana.'
+          },
+          4: {
+            name: 'Activar Face ID / Huella Digital',
+            description: 'Máxima seguridad biométrica para tu app.'
+          },
+          5: {
+            name: 'Vincular Apple/Google Wallet',
+            description: 'Añade tu tarjeta al móvil y paga sin sacarla del bolsillo.'
+          },
+          6: {
+            name: 'Domiciliación de Nómina Digital',
+            description: 'Domicilia tu nómina 100% online y recibe una mega bonificación de Caixapoints. Tu sueldo, más rentable.'
+          }
+        },
+
+        // Recompensas digitales
+        rewards: {
+          1: {
+            name: 'Cashback Instantáneo 10€',
+            description: 'Dinero directo a tu cuenta. Sin esperas, sin complicaciones.'
+          },
+          2: {
+            name: 'Cashback Instantáneo 25€',
+            description: 'Recompensa inmediata en tu saldo disponible.'
+          },
+          3: {
+            name: 'Mes Premium GRATIS',
+            description: 'Un mes de beneficios Elite: sin comisiones, cashback máximo y gestor personal.'
+          },
+          4: {
+            name: 'Inversión Asistida por IA',
+            description: 'Sesión de inversión personalizada con nuestro asistente de IA financiera.'
+          },
+          5: {
+            name: 'Upgrade de Tarjeta a Premium',
+            description: 'Mejora tu tarjeta a Premium con límites superiores y sin cuotas durante 1 año.'
+          },
+          6: {
+            name: 'Acceso VIP a Eventos Exclusivos',
+            description: 'Entradas para eventos seleccionados: tecnología, finanzas, networking de élite.'
+          }
+        },
+
+        // Logros
+        achievements: {
+          welcome: {
+            name: 'Bienvenida',
+            description: 'Te has unido al programa de lealtad'
+          },
+          first_purchase: {
+            name: 'Primera Compra',
+            description: 'Has realizado tu primera compra',
+            hint: 'Realiza tu primera compra en la tienda'
+          },
+          premium_purchase: {
+            name: 'Compra Premium',
+            description: 'Has comprado la Vintage Tan Rider Jacket',
+            hint: 'Compra la Vintage Tan Rider Jacket'
+          },
+          first_redemption: {
+            name: 'Primer Canje',
+            description: 'Has canjeado tus puntos por primera vez',
+            hint: 'Canjea tus puntos por una recompensa'
+          },
+          challenge_accessories_lover: {
+            name: 'Amor por los accesorios',
+            description: 'Completaste el reto de comprar accesorios',
+            hint: 'Compra los dos accesorios disponibles (gorro y calcetines)'
+          },
+          challenge_profile_complete: {
+            name: 'Perfil Avanzado',
+            description: 'Completaste el reto de perfil (4 veces)',
+            hint: 'Completa toda la información de tu perfil 4 veces'
+          },
+          challenge_social_share: {
+            name: 'Social ambassador',
+            description: 'Completaste el reto de compartir en redes',
+            hint: 'Comparte 3 productos en redes sociales'
+          },
+          tier_plus: {
+            name: 'Nivel Plus',
+            description: 'Has alcanzado el nivel Plus',
+            hint: 'Alcanza 500 Caixapoints Status'
+          },
+          tier_premium: {
+            name: 'Nivel Premium',
+            description: 'Has alcanzado el nivel Premium',
+            hint: 'Alcanza 1000 Caixapoints Status'
+          },
+          tier_elite: {
+            name: 'Nivel Elite',
+            description: 'Has alcanzado el nivel Elite',
+            hint: 'Alcanza 2000 Caixapoints Status'
+          }
+        }
+      },
+
+      en: {
+        // Digital operations (products)
+        products: {
+          1: {
+            name: 'Instant Bizum Transfer',
+            description: 'Send money instantly with Bizum. No fees, 100% digital. Earn Caixapoints with every transaction.'
+          },
+          2: {
+            name: 'Contactless or Apple/Google Pay',
+            description: 'Pay with your phone or contactless card. Fast, secure and contactless. Accumulate Caixapoints automatically.'
+          },
+          3: {
+            name: 'Automatic Fund Investment',
+            description: 'Activate automatic investments from the app. Grow your money while you sleep. Great Caixapoints bonus.'
+          },
+          4: {
+            name: 'Bill Payment from App',
+            description: 'Manage all your bills from the mobile app. Pay electricity, water, internet and earn Caixapoints for each one.'
+          },
+          5: {
+            name: 'Online Purchase with Virtual Card',
+            description: 'Create temporary virtual cards for ultra-secure online shopping. Maximum protection + Caixapoints.'
+          }
+        },
+
+        // Digital activities
+        activities: {
+          1: {
+            name: 'Activate CaixaBankNow on your mobile',
+            description: 'Download the app and activate your mobile banking. Your bank in your pocket.'
+          },
+          2: {
+            name: 'Complete financial profile',
+            description: 'Complete your financial information and investment preferences.'
+          },
+          3: {
+            name: 'Invite friends to CaixaBank Experience',
+            description: 'Share your code. You earn, your friend earns.'
+          },
+          4: {
+            name: 'Activate Face ID / Fingerprint',
+            description: 'Maximum biometric security for your app.'
+          },
+          5: {
+            name: 'Link Apple/Google Wallet',
+            description: 'Add your card to mobile and pay without taking it out of your pocket.'
+          },
+          6: {
+            name: 'Digital Payroll Direct Deposit',
+            description: 'Set up your payroll 100% online and receive a mega Caixapoints bonus. Your salary, more profitable.'
+          }
+        },
+
+        // Digital rewards
+        rewards: {
+          1: {
+            name: 'Instant Cashback €10',
+            description: 'Money direct to your account. No waiting, no complications.'
+          },
+          2: {
+            name: 'Instant Cashback €25',
+            description: 'Immediate reward in your available balance.'
+          },
+          3: {
+            name: 'FREE Premium Month',
+            description: 'One month of Elite benefits: no fees, maximum cashback and personal manager.'
+          },
+          4: {
+            name: 'AI-Assisted Investment',
+            description: 'Personalized investment session with our AI financial assistant.'
+          },
+          5: {
+            name: 'Premium Card Upgrade',
+            description: 'Upgrade your card to Premium with higher limits and no fees for 1 year.'
+          },
+          6: {
+            name: 'VIP Access to Exclusive Events',
+            description: 'Tickets to selected events: technology, finance, elite networking.'
+          }
+        },
+
+        // Logros
+        achievements: {
+          welcome: {
+            name: 'Welcome',
+            description: 'You have joined the loyalty program'
+          },
+          first_purchase: {
+            name: 'First Purchase',
+            description: 'You have made your first purchase',
+            hint: 'Make your first purchase in the store'
+          },
+          premium_purchase: {
+            name: 'Premium Purchase',
+            description: 'You have purchased the Vintage Tan Rider Jacket',
+            hint: 'Buy the Vintage Tan Rider Jacket'
+          },
+          first_redemption: {
+            name: 'First Redemption',
+            description: 'You have redeemed your points for the first time',
+            hint: 'Redeem your points for a reward'
+          },
+          challenge_accessories_lover: {
+            name: 'Accessories Lover',
+            description: 'You completed the accessory shopping challenge',
+            hint: 'Buy both available accessories (hat and socks)'
+          },
+          challenge_profile_complete: {
+            name: 'Advanced Profile',
+            description: 'You completed the profile challenge (4 times)',
+            hint: 'Complete all your profile information 4 times'
+          },
+          challenge_social_share: {
+            name: 'Social Ambassador',
+            description: 'You completed the social sharing challenge',
+            hint: 'Share 3 products on social media'
+          },
+          tier_plus: {
+            name: 'Plus Level',
+            description: 'You have reached Plus level',
+            hint: 'Reach 500 Caixapoints Status'
+          },
+          tier_premium: {
+            name: 'Premium Level',
+            description: 'You have reached Premium level',
+            hint: 'Reach 1000 Caixapoints Status'
+          },
+          tier_elite: {
+            name: 'Elite Level',
+            description: 'You have reached Elite level',
+            hint: 'Reach 2000 Caixapoints Status'
+          }
+        }
+      }
+    };
+  }
+
+  getTranslatedCatalog(originalCatalog, locale = 'es') {
+    if (!this.translations[locale]) {
+      locale = 'es'; // fallback
+    }
+
+    const translatedCatalog = JSON.parse(JSON.stringify(originalCatalog));
+    const translation = this.translations[locale];
+
+    // Traducir productos
+    if (translatedCatalog.products && translation.products) {
+      translatedCatalog.products = translatedCatalog.products.map(product => ({
+        ...product,
+        name: translation.products[product.id]?.name || product.name,
+        description: translation.products[product.id]?.description || product.description
+      }));
+    }
+
+    // Traducir actividades
+    if (translatedCatalog.activities && translation.activities) {
+      translatedCatalog.activities = translatedCatalog.activities.map(activity => ({
+        ...activity,
+        name: translation.activities[activity.id]?.name || activity.name
+      }));
+    }
+
+    // Traducir recompensas
+    if (translatedCatalog.rewards && translation.rewards) {
+      translatedCatalog.rewards = translatedCatalog.rewards.map(reward => ({
+        ...reward,
+        name: translation.rewards[reward.id]?.name || reward.name
+      }));
+    }
+
+    // Traducir logros
+    if (translatedCatalog.achievements && translation.achievements) {
+      translatedCatalog.achievements = translatedCatalog.achievements.map(achievement => ({
+        ...achievement,
+        name: translation.achievements[achievement.id]?.name || achievement.name,
+        description: translation.achievements[achievement.id]?.description || achievement.description,
+        hint: translation.achievements[achievement.id]?.hint || achievement.hint
+      }));
+    }
+
+    return translatedCatalog;
+  }
+}
+
+module.exports = new CatalogTranslations();

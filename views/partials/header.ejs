@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="<%= locale %>">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -54,16 +54,19 @@
         <% if (typeof member !== 'undefined' && member) { %>
           <!-- Menú para usuarios autenticados -->
           <div class="navbar-nav d-flex flex-row align-items-center">
-            <a class="nav-link <%= currentPage === 'home' ? 'active' : '' %> mr-4" href="/">Inicio</a>
-            <a class="nav-link <%= currentPage === 'accrual' ? 'active' : '' %> mr-4" href="/accrual">Ganar Puntos</a>
-            <a class="nav-link <%= currentPage === 'redemption' ? 'active' : '' %> mr-4" href="/redemption">Canjear Puntos</a>
-            <a class="nav-link <%= currentPage === 'achievements' ? 'active' : '' %> mr-4" href="/achievements">Logros</a>
+            <a class="nav-link <%= currentPage === 'home' ? 'active' : '' %> mr-4" href="/"><%= t('navigation.home') %></a>
+            <a class="nav-link <%= currentPage === 'accrual' ? 'active' : '' %> mr-4" href="/accrual"><%= t('navigation.earnPoints') %></a>
+            <a class="nav-link <%= currentPage === 'redemption' ? 'active' : '' %> mr-4" href="/redemption"><%= t('navigation.redeemPoints') %></a>
+            <a class="nav-link <%= currentPage === 'achievements' ? 'active' : '' %> mr-4" href="/achievements"><%= t('navigation.achievements') %></a>
             <a class="nav-link leaderboard-link <%= currentPage === 'leaderboard' ? 'active' : '' %> mr-4" href="/leaderboard">
-              <i class="fas fa-trophy"></i> Leaderboard
+              <i class="fas fa-trophy"></i> <%= t('navigation.leaderboard') %>
             </a>
-            
+
+            <!-- Selector de idioma -->
+            <%- include('language-selector') %>
+
             <!-- Información del usuario -->
-            <div class="user-info" style="display: flex; align-items: center; font-size: 12px; color: <%= brand.colors.textLight %>;">
+            <div class="user-info ml-3" style="display: flex; align-items: center; font-size: 12px; color: <%= brand.colors.textLight %>;">
               <div style="text-align: right; margin-right: 10px;">
                 <div style="font-weight: 500; color: <%= brand.colors.textColor %>;"><%= member.name %></div>
                 <div style="font-size: 10px;"><%= member.levelPoints %> pts | <%= member.tier %></div>
@@ -75,11 +78,14 @@
           </div>
         <% } else { %>
           <!-- Menú para usuarios no autenticados -->
-          <div class="navbar-nav d-flex flex-row">
-            <a class="nav-link <%= currentPage === 'home' ? 'active' : '' %> mr-4" href="/">Inicio</a>
-            <a class="nav-link <%= currentPage === 'register' ? 'active' : '' %>" href="/register">
-              <i class="fas fa-user-plus"></i> Registrarse
+          <div class="navbar-nav d-flex flex-row align-items-center">
+            <a class="nav-link <%= currentPage === 'home' ? 'active' : '' %> mr-4" href="/"><%= t('navigation.home') %></a>
+            <a class="nav-link <%= currentPage === 'register' ? 'active' : '' %> mr-4" href="/register">
+              <i class="fas fa-user-plus"></i> <%= t('navigation.register') %>
             </a>
+
+            <!-- Selector de idioma -->
+            <%- include('language-selector') %>
           </div>
         <% } %>
       </div>

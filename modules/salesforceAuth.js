@@ -1,8 +1,7 @@
-// modules/salesforceAuth.js - Versión simplificada
+// modules/salesforceAuth.js
 const axios = require('axios');
 const querystring = require('querystring');
 
-// Clase para gestionar la autenticación de Salesforce
 class SalesforceAuth {
   constructor() {
     this.accessToken = null;
@@ -10,64 +9,53 @@ class SalesforceAuth {
   }
 
   /**
-   * Obtiene un token de acceso desde Salesforce usando OAuth 2.0 username-password flow
-   * @returns {Promise<string>} Access token
+   * Obtiene un token de acceso usando client_credentials
    */
   async getAccessToken() {
     try {
-      // Configuración desde variables de entorno
       const clientId = process.env.SF_CLIENT_ID;
       const clientSecret = process.env.SF_CLIENT_SECRET;
-      const username = process.env.SF_USERNAME;
-      const password = process.env.SF_PASSWORD;
-      const loginUrl = process.env.SF_LOGIN_URL || 'https://login.salesforce.com';
+      const instanceUrl = process.env.SF_INSTANCE; // ← aquí tu dominio, ej: https://mi-org-dev-ed.my.salesforce.com
 
-      if (!clientId || !clientSecret || !username || !password) {
-        throw new Error('Faltan credenciales de Salesforce en las variables de entorno');
+      if (!clientId || !clientSecret || !instanceUrl) {
+        throw new Error('Faltan variables de entorno SF_CLIENT_ID, SF_CLIENT_SECRET o SF_INSTANCE');
       }
 
-      // Prepara la solicitud para obtener el token
       const data = querystring.stringify({
-        grant_type: 'password',
+        grant_type: 'client_credentials',
         client_id: clientId,
-        client_secret: clientSecret,
-        username: username,
-        password: password
+        client_secret: clientSecret
+        // ⚠️ NO incluir scope
       });
 
-      console.log('Solicitando token de acceso a Salesforce...');
-      
-      const response = await axios.post(`${loginUrl}/services/oauth2/token`, data, {
+      console.log('🔐 Solicitando token con client_credentials...');
+
+      const response = await axios.post(`${instanceUrl}/services/oauth2/token`, data, {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded'
         }
       });
 
-      // Guardar la respuesta
       this.accessToken = response.data.access_token;
-      this.instanceUrl = response.data.instance_url;
-      
-      console.log('Token de Salesforce obtenido correctamente');
-      console.log(`Instance URL: ${this.instanceUrl}`);
-      
+      this.instanceUrl = response.data.instance_url || instanceUrl;
+
+      console.log('✅ Token obtenido correctamente');
+      console.log(`🌐 Instance URL: ${this.instanceUrl}`);
+
       return this.accessToken;
     } catch (error) {
-      console.error('Error al obtener token de Salesforce:', error.message);
-      
+      console.error('❌ Error al obtener token con client_credentials:');
       if (error.response) {
-        console.error('Detalles del error:');
         console.error('- Status:', error.response.status);
-        console.error('- Datos:', JSON.stringify(error.response.data));
+        console.error('- Datos:', error.response.data);
+      } else {
+        console.error('- Mensaje:', error.message);
       }
-      
+
       throw new Error(`Error de autenticación: ${error.message}`);
     }
   }
 
-  /**
-   * Obtiene la URL de la instancia
-   * @returns {Promise<string>}
-   */
   async getInstanceUrl() {
     if (!this.instanceUrl) {
       await this.getAccessToken();
@@ -76,5 +64,4 @@ class SalesforceAuth {
   }
 }
 
-// Exportamos una instancia única para toda la aplicación
 module.exports = new SalesforceAuth();

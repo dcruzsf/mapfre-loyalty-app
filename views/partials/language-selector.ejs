@@ -1,0 +1,41 @@
+<!-- Selector de idioma -->
+<div class="dropdown language-selector">
+  <button class="btn btn-outline-light btn-sm dropdown-toggle" type="button" id="languageDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <% if (locale === 'es') { %>
+      🇪🇸 Español
+    <% } else if (locale === 'en') { %>
+      🇺🇸 English
+    <% } %>
+  </button>
+  <div class="dropdown-menu dropdown-menu-right" aria-labelledby="languageDropdown">
+    <a class="dropdown-item <%= locale === 'es' ? 'active' : '' %>" href="/change-language/es?redirect=<%= encodeURIComponent(typeof currentUrl !== 'undefined' ? currentUrl : '') %>">
+      🇪🇸 Español
+    </a>
+    <a class="dropdown-item <%= locale === 'en' ? 'active' : '' %>" href="/change-language/en?redirect=<%= encodeURIComponent(typeof currentUrl !== 'undefined' ? currentUrl : '') %>">
+      🇺🇸 English
+    </a>
+  </div>
+</div>
+
+<style>
+.language-selector .btn {
+  border-color: rgba(255,255,255,0.5);
+  color: white;
+  font-size: 12px;
+  padding: 0.25rem 0.5rem;
+}
+
+.language-selector .btn:hover {
+  background-color: rgba(255,255,255,0.1);
+  border-color: rgba(255,255,255,0.8);
+}
+
+.language-selector .dropdown-item {
+  font-size: 13px;
+}
+
+.language-selector .dropdown-item.active {
+  background-color: var(--primary-color);
+  color: white;
+}
+</style>

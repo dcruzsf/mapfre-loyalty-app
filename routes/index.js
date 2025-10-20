@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Member = require('../models/member');
 const { getCurrentMember } = require('../middleware/auth');
+const transactionTranslations = require('../modules/transactionTranslations');
 
 // Aplicar middleware para obtener el miembro actual
 router.use(getCurrentMember);
@@ -12,11 +13,19 @@ router.get('/', (req, res) => {
   const achievementName = req.query.achievementName;
   const achievementPoints = req.query.achievementPoints;
   const message = req.query.message;
-  
+  const locale = req.locale || 'es';
+
   // El miembro actual viene del middleware
   const member = req.member;
-  
-  res.render('index', { 
+
+  // Traducir transacciones si hay un miembro
+  if (member && member.transactions) {
+    member.translatedTransactions = member.transactions.map(tx =>
+      transactionTranslations.translateTransaction(tx, locale)
+    );
+  }
+
+  res.render('index', {
     member: member || null,
     newAchievement,
     achievementName,

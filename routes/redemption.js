@@ -5,6 +5,8 @@ const { requireAuth } = require('../middleware/auth');
 
 // Importar configuración centralizada
 const catalogConfig = require('../config/catalog');
+const catalogTranslations = require('../modules/catalogTranslations');
+const i18n = require('../modules/i18n');
 
 // Aplicar middleware de autenticación a todas las rutas
 router.use(requireAuth);
@@ -22,17 +24,21 @@ const generateRedemptionCode = (prefix) => {
 // Mostrar página de redención
 router.get('/', (req, res) => {
   const member = req.member; // Viene del middleware requireAuth
-  
+  const locale = req.locale || 'es';
+
   // Verificar si hay mensaje de éxito y puntos canjeados
   const message = req.query.message;
   const pointsRedeemed = req.query.points ? parseInt(req.query.points) : null;
   const codeGenerated = req.query.code || null;
   const rewardId = req.query.rewardId ? parseInt(req.query.rewardId) : null;
-  const redeemedReward = rewardId ? catalogConfig.rewards.find(r => r.id === rewardId) : null;
-  
-  res.render('redemption', { 
-    member, 
-    rewards: catalogConfig.rewards,
+
+  // Obtener catálogo traducido
+  const translatedCatalog = catalogTranslations.getTranslatedCatalog(catalogConfig, locale);
+  const redeemedReward = rewardId ? translatedCatalog.rewards.find(r => r.id === rewardId) : null;
+
+  res.render('redemption', {
+    member,
+    rewards: translatedCatalog.rewards,
     message,
     pointsRedeemed,
     codeGenerated,
@@ -44,9 +50,11 @@ router.get('/', (req, res) => {
 router.post('/redeem/:id', (req, res) => {
   const rewardId = parseInt(req.params.id);
   const reward = catalogConfig.rewards.find(r => r.id === rewardId);
-  
+  const locale = req.locale || 'es';
+
   if (!reward) {
-    return res.redirect('/redemption?message=Recompensa no encontrada');
+    const message = i18n.t('messages.rewardNotFound', locale);
+    return res.redirect(`/redemption?message=${encodeURIComponent(message)}`);
   }
   
   const member = req.member; // Viene del middleware requireAuth
@@ -73,12 +81,15 @@ router.post('/redeem/:id', (req, res) => {
         .filter(a => (new Date() - a.unlockedAt) < 5000)
         .sort((a, b) => b.unlockedAt - a.unlockedAt)[0];
         
-      return res.redirect(`/redemption?message=Redención exitosa: ${reward.name}&points=${reward.points}&code=${redemptionCode}&rewardId=${reward.id}&newAchievement=true&achievementName=${newAchievement.name}&achievementPoints=${newAchievement.points}`);
+      const message = `${i18n.t('messages.redemptionSuccess', locale)}: ${reward.name}`;
+      return res.redirect(`/redemption?message=${encodeURIComponent(message)}&points=${reward.points}&code=${redemptionCode}&rewardId=${reward.id}&newAchievement=true&achievementName=${newAchievement.name}&achievementPoints=${newAchievement.points}`);
     }
-    
-    res.redirect(`/redemption?message=Redención exitosa: ${reward.name}&points=${reward.points}&code=${redemptionCode}&rewardId=${reward.id}`);
+
+    const message = `${i18n.t('messages.redemptionSuccess', locale)}: ${reward.name}`;
+    res.redirect(`/redemption?message=${encodeURIComponent(message)}&points=${reward.points}&code=${redemptionCode}&rewardId=${reward.id}`);
   } catch (error) {
-    res.redirect(`/redemption?message=Error: ${error.message}`);
+    const message = `${i18n.t('messages.error', locale)}: ${error.message}`;
+    res.redirect(`/redemption?message=${encodeURIComponent(message)}`);
   }
 });
 

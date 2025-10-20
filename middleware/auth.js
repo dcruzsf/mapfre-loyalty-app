@@ -1,22 +1,27 @@
 // middleware/auth.js
 const Member = require('../models/member');
+const i18n = require('../modules/i18n');
 
 /**
  * Middleware para verificar que el usuario tiene una sesión activa
  */
 const requireAuth = (req, res, next) => {
+  const locale = req.locale || 'es';
+
   if (!req.session.memberId) {
-    return res.redirect('/register?message=Debes registrarte para acceder a esta función');
+    const message = i18n.t('messages.authRequired', locale);
+    return res.redirect(`/register?message=${encodeURIComponent(message)}`);
   }
-  
+
   // Verificar que el miembro todavía existe
   const member = Member.findById(req.session.memberId);
   if (!member) {
     // La sesión es inválida, destruirla
     req.session.destroy();
-    return res.redirect('/register?message=Tu sesión ha expirado. Por favor, regístrate nuevamente');
+    const message = i18n.t('messages.sessionExpiredAuth', locale);
+    return res.redirect(`/register?message=${encodeURIComponent(message)}`);
   }
-  
+
   // Añadir el miembro al objeto request para fácil acceso
   req.member = member;
   next();

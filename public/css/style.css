@@ -1,5 +1,5 @@
-/* style.css - Estilos para la versión gamificada */
-/* NOTA: Los colores se definen dinámicamente desde header.ejs usando las CSS custom properties */
+/* style.css - CaixaBank Experience - Diseño ultra moderno inspirado en Revolut */
+/* NOTA: Los colores se definen dinámicamente desde header.ejs */
 
 * {
   box-sizing: border-box;
@@ -8,14 +8,18 @@
 }
 
 body {
-  font-family: 'Helvetica Neue', Arial, sans-serif;
-  background-color: var(--background-color);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+  background: linear-gradient(135deg, #F8F9FB 0%, #FFFFFF 100%);
   position: relative;
   color: var(--text-color);
-  line-height: 1.6;
+  line-height: 1.65;
+  font-size: 15px;
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* Overlay para el fondo */
+/* Overlay ultra sutil con patrón moderno */
 body::before {
   content: "";
   position: fixed;
@@ -23,12 +27,11 @@ body::before {
   left: 0;
   width: 100%;
   height: 100%;
-  background-image: url('/img/background.png');
-  background-size: cover;
-  background-attachment: fixed;
-  background-position: center;
-  opacity: 0.15; /* Ajusta la opacidad para que se vea como marca de agua */
+  background-image:
+    radial-gradient(circle at 20% 50%, rgba(0, 201, 255, 0.03) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(0, 102, 179, 0.02) 0%, transparent 50%);
   z-index: -1;
+  pointer-events: none;
 }
 
 .container {
@@ -37,81 +40,112 @@ body::before {
   padding: 0 20px;
 }
 
-/* Barra de navegación (reducida en altura) */
+/* Barra de navegación ultra moderna estilo Revolut/Neobank */
 .navbar {
-  background-color: #FFFFFF;
-  padding: 8px 0; /* Reducido de 15px a 8px */
-  box-shadow: none; /* Eliminamos la sombra */
+  background-color: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  padding: 14px 0;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.03);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  transition: all 0.3s ease;
 }
 
 .navbar-brand {
-  font-weight: 300;
-  letter-spacing: 1.5px; /* Aumentado ligeramente para más elegancia */
-  font-size: 22px; /* Reducido ligeramente de 24px */
+  font-weight: 600;
+  letter-spacing: -0.5px;
+  font-size: 20px;
   color: var(--primary-color);
   text-decoration: none;
+  display: flex;
+  align-items: center;
 }
 
 .navbar-logo {
-  height: 24px; /* Reducido de 30px */
-  margin-right: 10px;
+  height: 28px;
+  margin-right: 12px;
   object-fit: contain;
 }
 
-/* Menú horizontal */
+/* Menú horizontal moderno */
 .navbar-nav {
   display: flex;
   flex-direction: row;
   align-items: center;
+  gap: 8px;
 }
 
 .nav-link {
-  color: var(--primary-color);
+  color: var(--text-color);
   text-decoration: none;
-  font-weight: 300;
-  font-size: 14px; /* Reducido para mantener proporción */
-  letter-spacing: 0.5px; /* Añadido para elegancia */
-  transition: opacity var(--transition-speed);
-  margin-left: 20px;
-}
-
-.nav-link:first-child {
-  margin-left: 0;
-}
-
-.mr-4 {
-  margin-right: 1.5rem;
+  font-weight: 500;
+  font-size: 14px;
+  padding: 8px 16px;
+  border-radius: 20px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  position: relative;
 }
 
 .nav-link:hover {
-  opacity: 0.8;
+  background-color: rgba(0, 102, 179, 0.06);
+  color: var(--primary-color);
+  transform: translateY(-1px);
 }
 
 .nav-link.active {
+  background: linear-gradient(135deg, rgba(0, 102, 179, 0.08) 0%, rgba(0, 201, 255, 0.08) 100%);
+  color: var(--primary-color);
   font-weight: 600;
-  text-decoration: underline;
+  box-shadow: 0 2px 8px rgba(0, 102, 179, 0.1);
 }
 
-/* Espacio entre el header y el contenido principal */
+.nav-link.active::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 30px;
+  height: 2px;
+  background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+  border-radius: 2px;
+}
+
+.mr-4 {
+  margin-right: 0;
+}
+
+/* Espacio entre header y contenido */
 .page-header-space {
-  margin-top: 30px; /* Espacio entre el header y el contenido */
+  margin-top: 40px;
 }
 
-/* Actualización para el banner principal */
+/* Títulos ultra modernos con gradientes sutiles */
 .page-title {
-  font-size: 32px;
-  margin-bottom: 10px;
-  font-weight: 300;
+  font-size: 42px;
+  margin-bottom: 12px;
+  font-weight: 800;
+  letter-spacing: -1.5px;
+  background: linear-gradient(135deg, var(--text-color) 0%, var(--primary-color) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .page-subtitle {
-  font-size: 18px;
+  font-size: 17px;
   color: var(--text-light);
-  margin-bottom: 30px;
-  font-weight: 300;
+  margin-bottom: 36px;
+  font-weight: 400;
+  line-height: 1.6;
 }
 
-/* Container principal con margen superior */
+/* Container principal */
 .main-container {
   margin-top: 20px;
 }
@@ -127,102 +161,145 @@ body::before {
 
 .breadcrumb-item {
   color: var(--text-light);
-  font-size: 14px;
+  font-size: 13px;
+  font-weight: 500;
 }
 
 .breadcrumb-item a {
   color: var(--text-light);
   text-decoration: none;
+  transition: color 0.2s;
 }
 
 .breadcrumb-item a:hover {
-  text-decoration: underline;
-}
-
-.breadcrumb-item+.breadcrumb-item::before {
-  content: ">";
-  padding: 0 8px;
-}
-
-/* Títulos y textos */
-h1, h2, h3, h4, h5, h6 {
-  font-weight: 300;
-  margin-bottom: 15px;
   color: var(--primary-color);
 }
 
-/* Tarjetas y contenedores */
+.breadcrumb-item+.breadcrumb-item::before {
+  content: "›";
+  padding: 0 8px;
+  color: var(--mid-gray);
+}
+
+/* Títulos */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 700;
+  margin-bottom: 15px;
+  color: var(--text-color);
+  letter-spacing: -0.5px;
+}
+
+/* Tarjetas ultra modernas estilo Revolut */
 .card {
   background-color: var(--card-background);
   border: 1px solid var(--border-color);
-  margin-bottom: 20px;
+  border-radius: 20px;
+  margin-bottom: 24px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.03), 0 1px 3px rgba(0, 0, 0, 0.02);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card:hover {
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06), 0 4px 12px rgba(0, 102, 179, 0.04);
+  transform: translateY(-2px);
 }
 
 .card-header {
-  padding: 15px 20px;
+  padding: 20px 24px;
   border-bottom: 1px solid var(--border-color);
   background-color: var(--primary-color);
   color: white;
+  font-weight: 600;
 }
 
 .card-body {
-  padding: 20px;
+  padding: 24px;
 }
 
-/* Estado del miembro y estadísticas */
+/* Card del usuario - Diseño premium estilo tarjeta digital */
 .member-summary {
-  background-color: var(--light-gray);
-  padding: 20px;
-  margin-bottom: 30px;
+  background: linear-gradient(135deg, #0066B3 0%, #003D6E 100%);
+  padding: 40px;
+  margin-bottom: 32px;
+  border-radius: 24px;
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
+  color: white;
+  box-shadow:
+    0 20px 60px rgba(0, 102, 179, 0.25),
+    0 8px 24px rgba(0, 61, 110, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Efecto de brillo sutil en el card premium */
+.member-summary::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.08) 0%, transparent 70%);
+  pointer-events: none;
 }
 
 .member-stat {
-  margin-right: 30px;
-  margin-bottom: 10px;
+  margin-right: 40px;
+  margin-bottom: 12px;
+  position: relative;
+  z-index: 1;
 }
 
 .member-stat-label {
-  font-size: 16px;
-  color: var(--text-light);
-  margin-bottom: 5px;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.75);
+  margin-bottom: 8px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .member-stat-value {
-  font-size: 24px;
-  font-weight: 300;
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: -1.5px;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Progreso de nivel */
+/* Progreso de categoría - Estilo moderno */
 .tier-progress-container {
   width: 100%;
-  margin-top: 10px;
+  margin-top: 16px;
 }
 
 .tier-progress-bar {
-  height: 20px;
-  background-color: var(--mid-gray);
+  height: 8px;
+  background-color: rgba(255, 255, 255, 0.2);
   border-radius: 10px;
   overflow: hidden;
-  margin-bottom: 5px;
+  margin-bottom: 8px;
 }
 
 .tier-progress-fill {
   height: 100%;
   background-color: var(--secondary-color);
   border-radius: 10px;
-  transition: width var(--transition-speed);
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 0 10px rgba(0, 163, 224, 0.5);
 }
 
 .tier-progress-text {
   font-size: 12px;
-  color: var(--text-light);
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 500;
 }
 
-/* Indicadores de nivel */
+/* Indicadores de categoría */
 .tier-indicator {
   display: flex;
   margin-top: 20px;
@@ -230,58 +307,51 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .tier-circle {
-  width: 16px;
-  height: 16px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
   background-color: var(--mid-gray);
   display: block;
   margin-bottom: 5px;
+  transition: all 0.3s ease;
 }
 
 .tier-circle.active {
   background-color: var(--secondary-color);
+  box-shadow: 0 0 10px rgba(0, 163, 224, 0.5);
 }
 
-.tier-circle.bronze {
-  background-color: var(--bronze-color);
-}
-
-.tier-circle.silver {
-  background-color: var(--silver-color);
-}
-
-.tier-circle.gold {
-  background-color: var(--gold-color);
-}
-
-.tier-circle.platinum {
-  background-color: var(--platinum-color);
-}
+.tier-circle.bronze { background-color: var(--bronze-color); }
+.tier-circle.silver { background-color: var(--silver-color); }
+.tier-circle.gold { background-color: var(--gold-color); }
+.tier-circle.platinum { background-color: var(--platinum-color); }
 
 .tier-label {
   font-size: 10px;
   color: var(--text-light);
   text-align: center;
+  font-weight: 600;
 }
 
-/* Retos y misiones */
+/* Retos/Desafíos - Cards limpios */
 .challenges-section {
   margin-bottom: 30px;
 }
 
 .challenge-card {
   margin-bottom: 20px;
-  transition: transform var(--transition-speed);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border-radius: 16px;
 }
 
 .challenge-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
 }
 
 .challenge-title {
   font-size: 18px;
-  font-weight: 400;
+  font-weight: 700;
   margin-bottom: 10px;
 }
 
@@ -292,14 +362,15 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .challenge-reward {
-  font-weight: 300;
+  font-weight: 600;
   margin-bottom: 15px;
+  color: var(--success-color);
 }
 
 .challenge-progress-bar {
-  height: 10px;
-  background-color: var(--mid-gray);
-  border-radius: 5px;
+  height: 8px;
+  background-color: var(--light-gray);
+  border-radius: 10px;
   overflow: hidden;
   margin-bottom: 5px;
 }
@@ -307,36 +378,49 @@ h1, h2, h3, h4, h5, h6 {
 .challenge-progress-fill {
   height: 100%;
   background-color: var(--secondary-color);
-  border-radius: 5px;
-  transition: width var(--transition-speed);
+  border-radius: 10px;
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .challenge-progress-text {
   font-size: 12px;
   color: var(--text-light);
+  font-weight: 500;
 }
 
-/* Pestañas */
+/* Pestañas modernas */
 .tabs {
   display: flex;
-  margin-bottom: 20px;
+  gap: 8px;
+  margin-bottom: 24px;
+  border-bottom: 2px solid var(--border-color);
+  padding-bottom: 0;
 }
 
 .tab {
-  padding: 15px 30px;
-  background-color: var(--light-gray);
+  padding: 12px 24px;
+  background-color: transparent;
   border: none;
   cursor: pointer;
-  font-size: 16px;
-  transition: background-color var(--transition-speed);
+  font-size: 15px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  color: var(--text-light);
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
 }
 
 .tab.active {
-  background-color: var(--primary-color);
-  color: white;
+  color: var(--primary-color);
+  border-bottom-color: var(--primary-color);
 }
 
-/* Productos y recompensas */
+.tab:hover {
+  color: var(--primary-color);
+  background-color: var(--light-gray);
+}
+
+/* Grid de productos/recompensas */
 .product-grid, .reward-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -346,12 +430,15 @@ h1, h2, h3, h4, h5, h6 {
 
 .product-card, .reward-card {
   border: 1px solid var(--border-color);
-  transition: transform var(--transition-speed), box-shadow var(--transition-speed);
+  border-radius: 16px;
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  background-color: white;
 }
 
 .product-card:hover, .reward-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
 }
 
 .product-image, .reward-image {
@@ -373,100 +460,151 @@ h1, h2, h3, h4, h5, h6 {
 
 .product-title, .reward-title {
   font-size: 18px;
-  font-weight: 400;
+  font-weight: 700;
   margin-bottom: 10px;
+  color: var(--text-color);
 }
 
 .product-price, .reward-points {
   color: var(--text-light);
   margin-bottom: 10px;
+  font-size: 14px;
+  font-weight: 500;
 }
 
 .product-points {
-  font-weight: 500;
+  font-weight: 600;
   margin-bottom: 15px;
+  color: var(--success-color);
+  font-size: 16px;
 }
 
+/* Botones ultra modernos estilo Revolut/N26 */
 .btn {
   display: inline-block;
-  padding: 10px 20px;
-  background-color: var(--primary-color);
+  padding: 16px 32px;
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
   color: white;
   border: none;
   cursor: pointer;
-  font-size: 16px;
-  transition: background-color var(--transition-speed);
+  font-size: 15px;
+  font-weight: 700;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   text-align: center;
   width: 100%;
   text-decoration: none;
+  border-radius: 14px;
+  letter-spacing: 0.3px;
+  box-shadow:
+    0 4px 16px rgba(0, 102, 179, 0.2),
+    0 2px 8px rgba(0, 61, 110, 0.15);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Efecto de brillo en hover */
+.btn::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.btn:hover::before {
+  left: 100%;
 }
 
 .btn:hover {
-  background-color: var(--accent-color);
+  transform: translateY(-3px);
+  box-shadow:
+    0 8px 28px rgba(0, 102, 179, 0.3),
+    0 4px 16px rgba(0, 61, 110, 0.2);
+}
+
+.btn:active {
+  transform: translateY(-1px);
 }
 
 .btn:disabled {
-  background-color: var(--dark-gray);
+  background: var(--mid-gray);
   cursor: not-allowed;
+  transform: none;
+  opacity: 0.5;
+  box-shadow: none;
 }
 
 .btn-secondary {
   background-color: var(--secondary-color);
 }
 
+.btn-secondary:hover {
+  background-color: #0092CC;
+}
+
 .btn-danger {
   background-color: var(--error-color);
 }
 
-/* Acciones destacadas en la página principal */
+.btn-danger:hover {
+  background-color: #E62E24;
+}
+
+/* Secciones de acciones destacadas */
 .action-section {
-  background-color: #f9f9f9;
-  border-radius: 5px;
+  background: linear-gradient(135deg, #F5F7FA 0%, #E1E8ED 100%);
+  border-radius: 20px;
   margin: 30px 0;
-  padding: 25px;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+  padding: 32px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
 }
 
 .action-section h4 {
-  margin-bottom: 20px;
-  font-weight: 400;
+  margin-bottom: 24px;
+  font-weight: 700;
   text-align: center;
+  font-size: 20px;
 }
 
 .action-btn {
-  font-weight: 500;
-  letter-spacing: 0.5px;
-  transition: all 0.3s ease;
-  border-radius: 3px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 10px;
 }
 
 .action-btn i {
-  margin-right: 8px;
+  font-size: 18px;
 }
 
 .action-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 102, 179, 0.25);
 }
 
-/* Notificaciones y alertas */
+/* Notificaciones estilo Revolut */
 .notification {
   position: fixed;
   top: 80px;
   right: 20px;
-  background: var(--notification-gradient);
-  color: white;
-  padding: 20px;
-  min-width: 300px;
+  background: white;
+  color: var(--text-color);
+  padding: 20px 24px;
+  min-width: 320px;
   z-index: 1000;
   opacity: 0;
   transform: translateX(100%);
-  transition: opacity var(--transition-speed), transform var(--transition-speed);
-  border-radius: 4px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  border-left: 4px solid var(--primary-color);
 }
 
 .notification.show {
@@ -475,22 +613,25 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .notification-title {
-  font-size: 18px;
-  font-weight: 500;
-  margin-bottom: 10px;
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: var(--text-color);
 }
 
 .notification-body {
   font-size: 14px;
-  margin-bottom: 5px;
+  margin-bottom: 8px;
+  color: var(--text-light);
 }
 
 .notification-points {
-  font-weight: 500;
-  font-size: 16px;
+  font-weight: 700;
+  font-size: 18px;
+  color: var(--success-color);
 }
 
-/* Animaciones */
+/* Animaciones suaves */
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
@@ -503,7 +644,7 @@ h1, h2, h3, h4, h5, h6 {
 
 @keyframes celebrate {
   0% { transform: scale(1); }
-  50% { transform: scale(1.1); }
+  50% { transform: scale(1.05); }
   100% { transform: scale(1); }
 }
 
@@ -519,7 +660,7 @@ h1, h2, h3, h4, h5, h6 {
   animation: celebrate 0.5s ease-in-out;
 }
 
-/* Logros */
+/* Logros - Grid moderno */
 .achievements-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -528,14 +669,16 @@ h1, h2, h3, h4, h5, h6 {
 
 .achievement-card {
   border: 1px solid var(--border-color);
-  padding: 20px;
+  padding: 24px;
   text-align: center;
-  transition: transform var(--transition-speed);
+  transition: all 0.2s ease;
+  border-radius: 16px;
+  background-color: white;
 }
 
 .achievement-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
 }
 
 .achievement-card.locked {
@@ -544,41 +687,51 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .achievement-icon {
-  width: 80px;
-  height: 80px;
+  width: 72px;
+  height: 72px;
   border-radius: 50%;
-  background-color: var(--secondary-color);
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
   color: white;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto 15px;
-  font-size: 24px;
-  font-weight: 300;
+  margin: 0 auto 16px;
+  font-size: 28px;
+  font-weight: 700;
+  box-shadow: 0 4px 16px rgba(0, 102, 179, 0.25);
 }
 
 .achievement-locked-icon {
-  background-color: var(--mid-gray);
+  background: linear-gradient(135deg, var(--mid-gray), var(--dark-gray));
+  box-shadow: none;
 }
 
 .achievement-title {
   font-size: 16px;
-  font-weight: 400;
-  margin-bottom: 5px;
+  font-weight: 700;
+  margin-bottom: 8px;
 }
 
 .achievement-points {
-  color: var(--text-light);
+  color: var(--success-color);
   font-size: 14px;
   margin-bottom: 10px;
+  font-weight: 600;
 }
 
 .achievement-date {
   font-size: 12px;
   color: var(--text-light);
+  font-weight: 500;
 }
 
-/* Timeline de nivel */
+.achievement-description {
+  font-size: 13px;
+  color: var(--text-light);
+  line-height: 1.5;
+}
+
+/* Timeline de categoría - Diseño limpio */
 .level-timeline {
   display: flex;
   justify-content: space-between;
@@ -590,7 +743,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .level-timeline-line {
   position: absolute;
-  height: 4px;
+  height: 3px;
   background-color: var(--light-gray);
   width: 100%;
   z-index: 1;
@@ -599,8 +752,8 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .level-point {
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
   background-color: var(--mid-gray);
   z-index: 2;
@@ -610,6 +763,8 @@ h1, h2, h3, h4, h5, h6 {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .level-point:nth-child(2) { left: 0%; }
@@ -618,54 +773,48 @@ h1, h2, h3, h4, h5, h6 {
 .level-point:nth-child(6) { left: 100%; }
 
 .level-point.current {
-  width: 16px;
-  height: 16px;
-  border: 2px solid var(--secondary-color);
+  width: 28px;
+  height: 28px;
+  border: 3px solid var(--secondary-color);
   background-color: white;
+  box-shadow: 0 4px 16px rgba(0, 163, 224, 0.4);
 }
 
 .level-point.completed {
   background-color: var(--secondary-color);
+  box-shadow: 0 4px 12px rgba(0, 163, 224, 0.3);
 }
 
-.level-point.bronze {
-  background-color: var(--bronze-color);
-}
-
-.level-point.silver {
-  background-color: var(--silver-color);
-}
-
-.level-point.gold {
-  background-color: var(--gold-color);
-}
-
-.level-point.platinum {
-  background-color: var(--platinum-color);
-}
+.level-point.bronze { background-color: var(--bronze-color); }
+.level-point.silver { background-color: var(--silver-color); }
+.level-point.gold { background-color: var(--gold-color); }
+.level-point.platinum { background-color: var(--platinum-color); }
 
 .level-label {
   position: absolute;
-  top: 25px;
-  font-size: 12px;
+  top: 35px;
+  font-size: 11px;
   color: var(--text-light);
   text-align: center;
   width: 70px;
   left: -35px;
+  font-weight: 600;
 }
 
 .you-are-here {
   position: absolute;
-  top: -25px;
-  font-size: 12px;
-  font-weight: 400;
+  top: -35px;
+  font-size: 11px;
+  font-weight: 700;
   color: var(--primary-color);
   text-align: center;
   width: 100px;
-  left: -40px;
+  left: -38px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
-/* Tablas */
+/* Tablas modernas */
 .transactions-table {
   width: 100%;
   border-collapse: collapse;
@@ -674,59 +823,84 @@ h1, h2, h3, h4, h5, h6 {
 
 .transactions-table th {
   text-align: left;
-  padding: 10px;
+  padding: 14px 12px;
   background-color: var(--light-gray);
-  border-bottom: 1px solid var(--border-color);
-  font-weight: 400;
+  border-bottom: 2px solid var(--border-color);
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--text-color);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .transactions-table td {
-  padding: 10px;
+  padding: 14px 12px;
   border-bottom: 1px solid var(--border-color);
+  font-size: 14px;
 }
 
 .transactions-table .text-success {
   color: var(--success-color);
+  font-weight: 600;
 }
 
 .transactions-table .text-danger {
   color: var(--error-color);
+  font-weight: 600;
 }
 
-/* Formularios */
+/* Formularios modernos */
 .form-group {
   margin-bottom: 20px;
 }
 
 .form-label {
   display: block;
-  margin-bottom: 5px;
-  font-weight: 400;
+  margin-bottom: 8px;
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--text-color);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .form-control {
   width: 100%;
-  padding: 10px;
-  border: 1px solid var(--border-color);
-  font-size: 16px;
+  padding: 14px 16px;
+  border: 2px solid var(--border-color);
+  font-size: 15px;
+  border-radius: 12px;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(0, 102, 179, 0.1);
 }
 
 .form-check {
-  margin-bottom: 10px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
 }
 
 .form-check-input {
   margin-right: 10px;
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+.form-check-label {
+  cursor: pointer;
+  font-size: 14px;
 }
 
 /* Utilidades */
-.text-center {
-  text-align: center;
-}
-
-.text-right {
-  text-align: right;
-}
+.text-center { text-align: center; }
+.text-right { text-align: right; }
 
 .mt-1 { margin-top: 10px; }
 .mt-2 { margin-top: 20px; }
@@ -737,12 +911,12 @@ h1, h2, h3, h4, h5, h6 {
 .mb-3 { margin-bottom: 30px; }
 .mb-4 { margin-bottom: 40px; }
 
-/* Footer */
+/* Footer limpio */
 .app-footer {
   background-color: #FFFFFF;
-  color: var(--primary-color);
-  padding: 15px 0;
-  margin-top: 50px;
+  color: var(--text-color);
+  padding: 24px 0;
+  margin-top: 60px;
   border-top: 1px solid var(--border-color);
 }
 
@@ -753,8 +927,9 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .copyright {
-  font-size: 14px;
-  font-weight: 300;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-light);
 }
 
 .demo-panel {
@@ -762,39 +937,37 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .btn-sm {
-  padding: 4px 8px;
-  font-size: 12px;
+  padding: 8px 16px;
+  font-size: 13px;
   width: auto;
+  border-radius: 8px;
 }
 
-/* Estilos para el botón de leaderboard */
+/* Estilos para el leaderboard */
 .leaderboard-link {
   background-color: var(--secondary-color);
   color: #FFF !important;
-  padding: 6px 10px !important;
+  padding: 8px 16px !important;
   border-radius: 20px;
-  font-weight: 500;
-  transition: all 0.3s ease;
+  font-weight: 600;
+  transition: all 0.2s ease;
   display: flex;
   align-items: center;
-}
-
-.leaderboard-link i {
-  margin-right: 5px;
+  gap: 6px;
 }
 
 .leaderboard-link:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  background-color: var(--accent-color);
+  box-shadow: 0 4px 12px rgba(0, 163, 224, 0.3);
+  background-color: #0092CC;
 }
 
-/* Estilos para la página de leaderboard */
+/* Página de leaderboard */
 .leaderboard-container {
-  background-color: #f9f9f9;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-  padding: 25px;
+  background-color: white;
+  border-radius: 20px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  padding: 32px;
   margin-bottom: 30px;
 }
 
@@ -804,37 +977,41 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .score-circle {
-  width: 150px;
-  height: 150px;
+  width: 160px;
+  height: 160px;
   border-radius: 50%;
   margin: 0 auto 20px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background: linear-gradient(135deg, var(--accent-color), var(--secondary-color));
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
   color: white;
-  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+  box-shadow: 0 12px 32px rgba(0, 102, 179, 0.25);
   animation: scoreAnimation 1s ease-out;
 }
 
 .score-value {
-  font-size: 48px;
+  font-size: 52px;
   font-weight: 700;
   line-height: 1;
+  letter-spacing: -2px;
 }
 
 .score-label {
-  font-size: 14px;
+  font-size: 12px;
   text-transform: uppercase;
-  margin-top: 5px;
+  margin-top: 8px;
+  font-weight: 600;
+  letter-spacing: 1px;
 }
 
 .engagement-level {
-  font-size: 24px;
-  font-weight: 600;
-  margin-top: 10px;
-  color: var(--accent-color);
+  font-size: 26px;
+  font-weight: 700;
+  margin-top: 12px;
+  color: var(--primary-color);
+  letter-spacing: -0.5px;
 }
 
 .score-details {
@@ -842,78 +1019,68 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .score-category {
-  margin-bottom: 15px;
+  margin-bottom: 20px;
 }
 
 .score-category-label {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 5px;
+  margin-bottom: 8px;
 }
 
 .score-category-name {
-  font-weight: 500;
+  font-weight: 600;
+  font-size: 14px;
 }
 
 .score-category-value {
   color: var(--text-light);
+  font-weight: 600;
+  font-size: 14px;
 }
 
 .score-progress-bar {
   height: 8px;
   background-color: var(--light-gray);
-  border-radius: 4px;
+  border-radius: 10px;
   overflow: hidden;
 }
 
 .score-progress-fill {
   height: 100%;
-  border-radius: 4px;
-  transition: width 0.5s ease;
+  border-radius: 10px;
+  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.progress-achievements {
-  background-color: var(--secondary-color);
-}
-
-.progress-levelPoints {
-  background-color: var(--accent-color);
-}
-
-.progress-rewardPoints {
-  background-color: var(--secondary-color);
-}
-
-.progress-tier {
-  background-color: var(--accent-color);
-}
-
-.progress-balance {
-  background-color: var(--primary-color);
-}
+.progress-achievements { background-color: var(--secondary-color); }
+.progress-levelPoints { background-color: var(--primary-color); }
+.progress-rewardPoints { background-color: var(--success-color); }
+.progress-tier { background-color: var(--accent-color); }
+.progress-balance { background-color: #9B59B6; }
 
 .submit-button {
   display: block;
   width: 100%;
-  max-width: 300px;
+  max-width: 320px;
   margin: 30px auto 0;
-  padding: 15px 25px;
-  background-color: var(--secondary-color);
+  padding: 16px 32px;
+  background-color: var(--primary-color);
   color: white;
   border: none;
-  border-radius: 30px;
-  font-size: 18px;
-  font-weight: 600;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 700;
   text-align: center;
   cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 16px rgba(0, 102, 179, 0.25);
+  letter-spacing: 0.3px;
 }
 
 .submit-button:hover {
   background-color: var(--accent-color);
   transform: translateY(-3px);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  box-shadow: 0 8px 24px rgba(0, 102, 179, 0.35);
 }
 
 .submit-button:disabled {
@@ -922,30 +1089,111 @@ h1, h2, h3, h4, h5, h6 {
   transform: none;
   box-shadow: none;
   cursor: not-allowed;
+  opacity: 0.6;
 }
 
 .confirmation-message {
   text-align: center;
   margin: 20px 0;
-  padding: 15px;
-  background-color: #e8f5e9;
-  border-radius: 8px;
-  border-left: 4px solid var(--secondary-color);
+  padding: 16px 20px;
+  background-color: #E8F8F5;
+  border-radius: 12px;
+  border-left: 4px solid var(--success-color);
+  font-weight: 500;
 }
 
 .leaderboard-explanation {
-  background-color: #fff;
-  border-radius: 8px;
-  padding: 20px;
+  background-color: white;
+  border-radius: 16px;
+  padding: 24px;
   margin-top: 30px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border: 1px solid var(--border-color);
+}
+
+.leaderboard-explanation h4 {
+  margin-bottom: 16px;
+}
+
+.leaderboard-explanation ul {
+  padding-left: 20px;
+}
+
+.leaderboard-explanation li {
+  margin-bottom: 12px;
+  line-height: 1.6;
 }
 
 /* Animación para la puntuación */
 @keyframes scoreAnimation {
   0% { transform: scale(0.8); opacity: 0; }
-  50% { transform: scale(1.1); }
+  50% { transform: scale(1.05); }
   100% { transform: scale(1); opacity: 1; }
+}
+
+/* Estilos adicionales para la página de registro */
+.welcome-bonus {
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 102, 179, 0.15);
+}
+
+.benefits-list h5 {
+  font-weight: 700;
+  margin-bottom: 16px;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.benefits-list ul li {
+  padding: 8px 0;
+  font-size: 14px;
+}
+
+.benefits-list i {
+  color: var(--success-color);
+}
+
+/* Alerts estilo moderno */
+.alert {
+  padding: 16px 20px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  border-left: 4px solid;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.alert-info {
+  background-color: #E8F4FD;
+  border-left-color: var(--primary-color);
+  color: var(--text-color);
+}
+
+.alert-danger {
+  background-color: #FFEBEE;
+  border-left-color: var(--error-color);
+  color: var(--text-color);
+}
+
+.alert-warning {
+  background-color: #FFF3E0;
+  border-left-color: #FF9800;
+  color: var(--text-color);
+}
+
+/* User info en navbar */
+.user-info {
+  display: flex;
+  align-items: center;
+  padding: 6px 12px;
+  background-color: var(--light-gray);
+  border-radius: 20px;
+  transition: all 0.2s ease;
+}
+
+.user-info:hover {
+  background-color: var(--mid-gray);
 }
 
 /* Responsive */
@@ -957,6 +1205,7 @@ h1, h2, h3, h4, h5, h6 {
   .member-summary {
     flex-direction: column;
     align-items: flex-start;
+    padding: 24px;
   }
   
   .tabs {
@@ -965,6 +1214,8 @@ h1, h2, h3, h4, h5, h6 {
   
   .tab {
     flex: 1 0 40%;
+    padding: 10px 16px;
+    font-size: 13px;
   }
   
   .navbar .container {
@@ -973,17 +1224,31 @@ h1, h2, h3, h4, h5, h6 {
   }
   
   .navbar-nav {
-    margin-top: 10px;
+    margin-top: 12px;
     width: 100%;
-    justify-content: space-between;
+    justify-content: flex-start;
+    flex-wrap: wrap;
   }
   
   .nav-link {
-    margin-left: 0;
-    font-size: 12px;
+    font-size: 13px;
+    padding: 6px 12px;
   }
   
-  .mr-4 {
-    margin-right: 0.5rem;
+  .page-title {
+    font-size: 28px;
+  }
+  
+  .leaderboard-container {
+    padding: 20px;
+  }
+  
+  .score-circle {
+    width: 140px;
+    height: 140px;
+  }
+  
+  .score-value {
+    font-size: 44px;
   }
 }

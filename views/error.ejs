@@ -5,18 +5,18 @@
     <div class="col-md-8 offset-md-2">
       <div class="card">
         <div class="card-header bg-danger text-white">
-          <h3 class="mb-0">Error</h3>
+          <h3 class="mb-0"><%= t('pages.error.title') %></h3>
         </div>
         <div class="card-body">
           <h4><%= message %></h4>
           <% if (error && error.stack) { %>
             <div class="mt-4">
-              <h5>Detalles técnicos:</h5>
+              <h5><%= locale === 'es' ? 'Detalles técnicos:' : 'Technical details:' %></h5>
               <pre class="bg-light p-3 mt-2"><%= error.stack %></pre>
             </div>
           <% } %>
           <div class="mt-4">
-            <a href="/" class="btn btn-primary">Volver a la página principal</a>
+            <a href="/" class="btn btn-primary"><%= t('pages.error.goHome') %></a>
           </div>
         </div>
       </div>

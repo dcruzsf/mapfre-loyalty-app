@@ -10,8 +10,8 @@
       <div class="demo-panel">
         <% if (typeof session !== 'undefined' && session.memberId) { %>
           <!-- Control para eliminar cuenta individual (solo si hay sesión activa) -->
-          <form method="POST" action="/reset-account" onsubmit="return confirm('¿Seguro que deseas eliminar tu cuenta y reiniciar la demo? Esta acción no se puede deshacer.')" style="display: inline-block;">
-            <button type="submit" class="btn btn-sm btn-warning">Eliminar mi cuenta y reiniciar demo</button>
+          <form method="POST" action="/reset-account" onsubmit="return confirm('<%= t('footer.confirmDelete') %>')" style="display: inline-block;">
+            <button type="submit" class="btn btn-sm btn-warning"><%= t('footer.deleteAccount') %></button>
           </form>
         <% } %>
       </div>
