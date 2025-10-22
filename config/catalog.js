@@ -150,7 +150,7 @@ module.exports = {
       name: 'Avios Iberia',
       points: 500,
       type: 'experience',
-      image: 'experiencia3.png',
+      image: 'experiencia1.png',
       codePrefix: 'AVIOS',
       description: 'Canjea tus Caixapoints por Avios de Iberia y vuela más cerca de tu próximo destino.'
     },
@@ -159,7 +159,7 @@ module.exports = {
       name: 'Acceso Sala VIP Aeropuerto',
       points: 800,
       type: 'experience',
-      image: 'experiencia4.png',
+      image: 'experiencia2.png',
       codePrefix: 'VIPROOM',
       description: 'Disfruta de acceso exclusivo a salas VIP en aeropuertos. Confort y tranquilidad antes de tu vuelo.'
     },
@@ -168,7 +168,7 @@ module.exports = {
       name: 'Donación Fundación "la Caixa"',
       points: 300,
       type: 'service',
-      image: 'experiencia5.png',
+      image: 'experiencia3.png',
       codePrefix: 'DONATION',
       description: 'Convierte tus Caixapoints en una donación de 30€ a la Fundación "la Caixa" para proyectos sociales.'
     },
@@ -177,7 +177,7 @@ module.exports = {
       name: 'Gift Card Amazon',
       points: 1000,
       type: 'service',
-      image: 'experiencia6.png',
+      image: 'experiencia4.png',
       codePrefix: 'AMAZON',
       description: 'Gift card de Amazon para que compres lo que quieras. Canjea tus puntos por productos y tecnología.'
     },
@@ -186,7 +186,7 @@ module.exports = {
       name: 'Asesoría Personalizada en Finanzas',
       points: 600,
       type: 'service',
-      image: 'experiencia7.png',
+      image: 'experiencia5.png',
       codePrefix: 'FINADVICE',
       description: 'Sesión personalizada con un asesor financiero experto. Planifica tu futuro con ayuda profesional.'
     },
@@ -195,7 +195,7 @@ module.exports = {
       name: 'Curso Regulación en Trading',
       points: 900,
       type: 'service',
-      image: 'experiencia8.png',
+      image: 'experiencia6.png',
       codePrefix: 'TRADECOURSE',
       description: 'Curso completo sobre trading y regulación financiera. Aprende a invertir de forma inteligente y segura.'
     },
@@ -204,7 +204,7 @@ module.exports = {
       name: 'Tarjeta de Crédito Sin Comisiones',
       points: 1200,
       type: 'product',
-      image: 'experiencia9.png',
+      image: 'experiencia7.png',
       codePrefix: 'CREDITFREE',
       description: 'Tarjeta de crédito premium sin comisiones durante 1 año. Límite ampliado y beneficios exclusivos.'
     }
