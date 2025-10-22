@@ -109,11 +109,11 @@ module.exports = {
     },
     {
       id: 5,
-      name: 'Vincular Apple/Google Wallet',
+      name: 'Desafío Quiz Financiero',
       points: 90,
       image: 'actividad1.png',
-      category: 'digital_wallet',
-      description: 'Añade tu tarjeta al móvil y paga sin sacarla del bolsillo.'
+      category: 'quiz',
+      description: 'Demuestra tus conocimientos financieros y gana Caixapoints. Pon a prueba tu cultura financiera.'
     },
     {
       id: 6,

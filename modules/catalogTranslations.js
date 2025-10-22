@@ -50,8 +50,8 @@ class CatalogTranslations {
             description: 'Máxima seguridad biométrica para tu app.'
           },
           5: {
-            name: 'Vincular Apple/Google Wallet',
-            description: 'Añade tu tarjeta al móvil y paga sin sacarla del bolsillo.'
+            name: 'Desafío Quiz Financiero',
+            description: 'Demuestra tus conocimientos financieros y gana Caixapoints. Pon a prueba tu cultura financiera.'
           },
           6: {
             name: 'Domiciliación de Nómina Digital',
@@ -201,8 +201,8 @@ class CatalogTranslations {
             description: 'Maximum biometric security for your app.'
           },
           5: {
-            name: 'Link Apple/Google Wallet',
-            description: 'Add your card to mobile and pay without taking it out of your pocket.'
+            name: 'Financial Quiz Challenge',
+            description: 'Demonstrate your financial knowledge and earn Caixapoints. Test your financial literacy.'
           },
           6: {
             name: 'Digital Payroll Direct Deposit',

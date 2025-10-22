@@ -69,7 +69,7 @@
             <div class="user-info ml-3" style="display: flex; align-items: center; font-size: 12px; color: <%= brand.colors.textLight %>;">
               <div style="text-align: right; margin-right: 10px;">
                 <div style="font-weight: 500; color: <%= brand.colors.textColor %>;"><%= member.name %></div>
-                <div style="font-size: 10px;"><%= member.levelPoints %> pts | <%= member.tier %></div>
+                <div style="font-size: 10px;"><%= member.levelPoints %> pts | <%= t('tiers.' + member.tier.toLowerCase()) %></div>
               </div>
               <div style="width: 35px; height: 35px; border-radius: 50%; background-color: <%= brand.colors.secondary %>; color: white; display: flex; align-items: center; justify-content: center; font-weight: 500;">
                 <%= member.name.split(' ').map(n => n.charAt(0).toUpperCase()).join('').substring(0, 2) %>

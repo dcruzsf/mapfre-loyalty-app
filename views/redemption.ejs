@@ -59,8 +59,8 @@
   <% }) %>
 </div>
 
-<!-- Sección de Servicios y Experiencias -->
-<h3 class="mt-4 mb-3"><%= locale === 'es' ? 'Servicios y Experiencias' : 'Services & Experiences' %></h3>
+<!-- Sección de Experiencias -->
+<h3 class="mt-4 mb-3"><%= locale === 'es' ? 'Experiencias' : 'Experiences' %></h3>
 
 <div class="reward-grid">
   <% rewards.filter(r => ['service', 'experience'].includes(r.type)).forEach((reward, index) => { %>
