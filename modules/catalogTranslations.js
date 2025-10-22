@@ -24,6 +24,10 @@ class CatalogTranslations {
           5: {
             name: 'Compra Online con Tarjeta Virtual',
             description: 'Crea tarjetas virtuales temporales para compras online ultra seguras. Máxima protección + Caixapoints.'
+          },
+          6: {
+            name: 'Contratar Seguro de Vida SegurCaixa',
+            description: 'Protege a los tuyos con un seguro de vida 100% digital. Contratación online en minutos + gran bonificación en Caixapoints.'
           }
         },
 
@@ -75,11 +79,23 @@ class CatalogTranslations {
           },
           5: {
             name: 'Donación Fundación "la Caixa"',
-            description: 'Convierte tus Caixapoints en una donación a la Fundación "la Caixa" para proyectos sociales.'
+            description: 'Convierte tus Caixapoints en una donación de 30€ a la Fundación "la Caixa" para proyectos sociales.'
           },
           6: {
             name: 'Gift Card Amazon',
             description: 'Gift card de Amazon para que compres lo que quieras. Canjea tus puntos por productos y tecnología.'
+          },
+          7: {
+            name: 'Asesoría Personalizada en Finanzas',
+            description: 'Sesión personalizada con un asesor financiero experto. Planifica tu futuro con ayuda profesional.'
+          },
+          8: {
+            name: 'Curso Regulación en Trading',
+            description: 'Curso completo sobre trading y regulación financiera. Aprende a invertir de forma inteligente y segura.'
+          },
+          9: {
+            name: 'Tarjeta de Crédito Sin Comisiones',
+            description: 'Tarjeta de crédito premium sin comisiones durante 1 año. Límite ampliado y beneficios exclusivos.'
           }
         },
 
@@ -159,6 +175,10 @@ class CatalogTranslations {
           5: {
             name: 'Online Purchase with Virtual Card',
             description: 'Create temporary virtual cards for ultra-secure online shopping. Maximum protection + Caixapoints.'
+          },
+          6: {
+            name: 'Contract Life Insurance SegurCaixa',
+            description: 'Protect your loved ones with 100% digital life insurance. Online contracting in minutes + great Caixapoints bonus.'
           }
         },
 
@@ -210,11 +230,23 @@ class CatalogTranslations {
           },
           5: {
             name: 'Donation to "la Caixa" Foundation',
-            description: 'Convert your Caixapoints into a donation to the "la Caixa" Foundation for social projects.'
+            description: 'Convert your Caixapoints into a €30 donation to the "la Caixa" Foundation for social projects.'
           },
           6: {
             name: 'Amazon Gift Card',
             description: 'Amazon gift card to buy whatever you want. Exchange your points for products and technology.'
+          },
+          7: {
+            name: 'Personalized Financial Advice',
+            description: 'Personalized session with an expert financial advisor. Plan your future with professional help.'
+          },
+          8: {
+            name: 'Trading Regulation Course',
+            description: 'Complete course on trading and financial regulation. Learn to invest intelligently and safely.'
+          },
+          9: {
+            name: 'Credit Card Without Fees',
+            description: 'Premium credit card with no fees for 1 year. Extended limit and exclusive benefits.'
           }
         },
 

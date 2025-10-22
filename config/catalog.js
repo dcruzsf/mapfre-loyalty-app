@@ -57,6 +57,17 @@ module.exports = {
       category: 'digital_banking',
       isPremium: false,
       digitalOnly: true
+    },
+    {
+      id: 6,
+      name: 'Contratar Seguro de Vida SegurCaixa',
+      price: 150,
+      points: 300,
+      image: 'compra3.png',
+      description: 'Protege a los tuyos con un seguro de vida 100% digital. Contratación online en minutos + gran bonificación en Caixapoints.',
+      category: 'insurance',
+      isPremium: false,
+      digitalOnly: true
     }
   ],
 
@@ -159,7 +170,7 @@ module.exports = {
       type: 'service',
       image: 'experiencia1.png',
       codePrefix: 'DONATION',
-      description: 'Convierte tus Caixapoints en una donación a la Fundación "la Caixa" para proyectos sociales.'
+      description: 'Convierte tus Caixapoints en una donación de 30€ a la Fundación "la Caixa" para proyectos sociales.'
     },
     {
       id: 6,
@@ -169,6 +180,33 @@ module.exports = {
       image: 'experiencia2.png',
       codePrefix: 'AMAZON',
       description: 'Gift card de Amazon para que compres lo que quieras. Canjea tus puntos por productos y tecnología.'
+    },
+    {
+      id: 7,
+      name: 'Asesoría Personalizada en Finanzas',
+      points: 600,
+      type: 'service',
+      image: 'experiencia1.png',
+      codePrefix: 'FINADVICE',
+      description: 'Sesión personalizada con un asesor financiero experto. Planifica tu futuro con ayuda profesional.'
+    },
+    {
+      id: 8,
+      name: 'Curso Regulación en Trading',
+      points: 900,
+      type: 'service',
+      image: 'experiencia2.png',
+      codePrefix: 'TRADECOURSE',
+      description: 'Curso completo sobre trading y regulación financiera. Aprende a invertir de forma inteligente y segura.'
+    },
+    {
+      id: 9,
+      name: 'Tarjeta de Crédito Sin Comisiones',
+      points: 1200,
+      type: 'product',
+      image: 'experiencia1.png',
+      codePrefix: 'CREDITFREE',
+      description: 'Tarjeta de crédito premium sin comisiones durante 1 año. Límite ampliado y beneficios exclusivos.'
     }
   ],
 
