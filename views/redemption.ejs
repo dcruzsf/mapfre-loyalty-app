@@ -59,32 +59,6 @@
   <% }) %>
 </div>
 
-<!-- Sección de Beneficios Premium -->
-<h3 class="mt-4 mb-3"><%= locale === 'es' ? 'Beneficios Premium' : 'Premium Benefits' %></h3>
-
-<div class="reward-grid">
-  <% rewards.filter(r => ['subscription', 'product'].includes(r.type)).forEach((reward, index) => { %>
-    <div class="reward-card animate-in <%= member.rewardPoints < reward.points ? 'unavailable' : '' %>">
-      <div class="reward-image" style="background-image: url('/img/<%= reward.image %>')">
-      </div>
-      <div class="reward-details">
-        <h3 class="reward-title"><%= reward.name %></h3>
-        <p class="reward-description"><%= reward.description %></p>
-        <p class="reward-points"><%= reward.points %> <%= t('pages.redemption.reward.points') %></p>
-        <form method="POST" action="/redemption/redeem/<%= reward.id %>" class="redeem-form">
-          <button
-            type="submit"
-            class="btn"
-            <%= member.rewardPoints < reward.points ? 'disabled' : '' %>
-          >
-            <%= member.rewardPoints < reward.points ? t('pages.redemption.reward.insufficientPoints') : t('pages.redemption.reward.redeem') %>
-          </button>
-        </form>
-      </div>
-    </div>
-  <% }) %>
-</div>
-
 <!-- Sección de Servicios y Experiencias -->
 <h3 class="mt-4 mb-3"><%= locale === 'es' ? 'Servicios y Experiencias' : 'Services & Experiences' %></h3>
 

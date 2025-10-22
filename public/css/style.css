@@ -801,6 +801,19 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: 600;
 }
 
+.tier-name-label {
+  position: absolute;
+  top: 52px;
+  font-size: 10px;
+  color: var(--text-color);
+  text-align: center;
+  width: 70px;
+  left: -35px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
 .you-are-here {
   position: absolute;
   top: -35px;

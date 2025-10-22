@@ -64,7 +64,7 @@ module.exports = {
   activities: [
     {
       id: 1,
-      name: 'Activar CaixaBankNow en tu móvil',
+      name: 'Descarga App CaixaBankNow',
       points: 150,
       image: 'actividad1.png',
       category: 'app',
@@ -136,39 +136,39 @@ module.exports = {
     },
     {
       id: 3,
-      name: 'Mes Premium GRATIS',
+      name: 'Avios Iberia',
       points: 500,
-      type: 'subscription',
+      type: 'experience',
       image: 'experiencia1.png',
-      codePrefix: 'PREMIUM30',
-      description: 'Un mes de beneficios Elite: sin comisiones, cashback máximo y gestor personal.'
+      codePrefix: 'AVIOS',
+      description: 'Canjea tus Caixapoints por Avios de Iberia y vuela más cerca de tu próximo destino.'
     },
     {
       id: 4,
-      name: 'Inversión Asistida por IA',
+      name: 'Acceso Sala VIP Aeropuerto',
       points: 800,
-      type: 'service',
+      type: 'experience',
       image: 'experiencia2.png',
-      codePrefix: 'AIINVEST',
-      description: 'Sesión de inversión personalizada con nuestro asistente de IA financiera.'
+      codePrefix: 'VIPROOM',
+      description: 'Disfruta de acceso exclusivo a salas VIP en aeropuertos. Confort y tranquilidad antes de tu vuelo.'
     },
     {
       id: 5,
-      name: 'Upgrade de Tarjeta a Premium',
-      points: 1000,
-      type: 'product',
+      name: 'Donación Fundación "la Caixa"',
+      points: 300,
+      type: 'service',
       image: 'experiencia1.png',
-      codePrefix: 'CARDPREM',
-      description: 'Mejora tu tarjeta a Premium con límites superiores y sin cuotas durante 1 año.'
+      codePrefix: 'DONATION',
+      description: 'Convierte tus Caixapoints en una donación a la Fundación "la Caixa" para proyectos sociales.'
     },
     {
       id: 6,
-      name: 'Acceso VIP a Eventos Exclusivos',
-      points: 1200,
-      type: 'experience',
+      name: 'Gift Card Amazon',
+      points: 1000,
+      type: 'service',
       image: 'experiencia2.png',
-      codePrefix: 'VIPEXP',
-      description: 'Entradas para eventos seleccionados: tecnología, finanzas, networking de élite.'
+      codePrefix: 'AMAZON',
+      description: 'Gift card de Amazon para que compres lo que quieras. Canjea tus puntos por productos y tecnología.'
     }
   ],
 
@@ -177,9 +177,9 @@ module.exports = {
     {
       id: 'digital_warrior',
       name: 'Guerrero Digital',
-      description: 'Realiza 5 operaciones completamente digitales (Bizum, pagos móviles, etc.)',
+      description: 'Realiza 3 operaciones completamente digitales (Bizum, pagos móviles, etc.)',
       reward: 100,
-      goal: 5,
+      goal: 3,
       type: 'digital_banking',
       triggerCategory: 'digital_banking'
     },
@@ -258,12 +258,12 @@ module.exports = {
     {
       id: 'challenge_digital_warrior',
       name: 'Guerrero Digital',
-      description: 'Completaste el reto de 5 operaciones digitales',
+      description: 'Completaste el reto de 3 operaciones digitales',
       points: 80,
       icon: 'bolt',
       category: 'challenge',
       hideWhenLocked: false,
-      hint: 'Realiza 5 operaciones digitales',
+      hint: 'Realiza 3 operaciones digitales',
       trigger: 'challenge_complete'
     },
     {

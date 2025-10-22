@@ -30,7 +30,7 @@ class CatalogTranslations {
         // Actividades digitales
         activities: {
           1: {
-            name: 'Activar CaixaBankNow en tu móvil',
+            name: 'Descarga App CaixaBankNow',
             description: 'Descarga la app y activa tu banca móvil. Tu banco en el bolsillo.'
           },
           2: {
@@ -66,20 +66,20 @@ class CatalogTranslations {
             description: 'Recompensa inmediata en tu saldo disponible.'
           },
           3: {
-            name: 'Mes Premium GRATIS',
-            description: 'Un mes de beneficios Elite: sin comisiones, cashback máximo y gestor personal.'
+            name: 'Avios Iberia',
+            description: 'Canjea tus Caixapoints por Avios de Iberia y vuela más cerca de tu próximo destino.'
           },
           4: {
-            name: 'Inversión Asistida por IA',
-            description: 'Sesión de inversión personalizada con nuestro asistente de IA financiera.'
+            name: 'Acceso Sala VIP Aeropuerto',
+            description: 'Disfruta de acceso exclusivo a salas VIP en aeropuertos. Confort y tranquilidad antes de tu vuelo.'
           },
           5: {
-            name: 'Upgrade de Tarjeta a Premium',
-            description: 'Mejora tu tarjeta a Premium con límites superiores y sin cuotas durante 1 año.'
+            name: 'Donación Fundación "la Caixa"',
+            description: 'Convierte tus Caixapoints en una donación a la Fundación "la Caixa" para proyectos sociales.'
           },
           6: {
-            name: 'Acceso VIP a Eventos Exclusivos',
-            description: 'Entradas para eventos seleccionados: tecnología, finanzas, networking de élite.'
+            name: 'Gift Card Amazon',
+            description: 'Gift card de Amazon para que compres lo que quieras. Canjea tus puntos por productos y tecnología.'
           }
         },
 
@@ -110,7 +110,7 @@ class CatalogTranslations {
             hint: 'Compra los dos accesorios disponibles (gorro y calcetines)'
           },
           challenge_profile_complete: {
-            name: 'Perfil Avanzado',
+            name: 'Experto en finanzas',
             description: 'Completaste el reto de perfil (4 veces)',
             hint: 'Completa toda la información de tu perfil 4 veces'
           },
@@ -165,7 +165,7 @@ class CatalogTranslations {
         // Digital activities
         activities: {
           1: {
-            name: 'Activate CaixaBankNow on your mobile',
+            name: 'Download CaixaBankNow App',
             description: 'Download the app and activate your mobile banking. Your bank in your pocket.'
           },
           2: {
@@ -201,20 +201,20 @@ class CatalogTranslations {
             description: 'Immediate reward in your available balance.'
           },
           3: {
-            name: 'FREE Premium Month',
-            description: 'One month of Elite benefits: no fees, maximum cashback and personal manager.'
+            name: 'Iberia Avios',
+            description: 'Exchange your Caixapoints for Iberia Avios and fly closer to your next destination.'
           },
           4: {
-            name: 'AI-Assisted Investment',
-            description: 'Personalized investment session with our AI financial assistant.'
+            name: 'Airport VIP Lounge Access',
+            description: 'Enjoy exclusive access to VIP lounges at airports. Comfort and tranquility before your flight.'
           },
           5: {
-            name: 'Premium Card Upgrade',
-            description: 'Upgrade your card to Premium with higher limits and no fees for 1 year.'
+            name: 'Donation to "la Caixa" Foundation',
+            description: 'Convert your Caixapoints into a donation to the "la Caixa" Foundation for social projects.'
           },
           6: {
-            name: 'VIP Access to Exclusive Events',
-            description: 'Tickets to selected events: technology, finance, elite networking.'
+            name: 'Amazon Gift Card',
+            description: 'Amazon gift card to buy whatever you want. Exchange your points for products and technology.'
           }
         },
 
@@ -245,7 +245,7 @@ class CatalogTranslations {
             hint: 'Buy both available accessories (hat and socks)'
           },
           challenge_profile_complete: {
-            name: 'Advanced Profile',
+            name: 'Finance Expert',
             description: 'You completed the profile challenge (4 times)',
             hint: 'Complete all your profile information 4 times'
           },

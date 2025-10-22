@@ -79,14 +79,16 @@
                 
                 <div class="level-point bronze <% if (member.tier !== 'Bronze') { %>completed<% } %>">
                   <div class="level-label">0 pts</div>
+                  <div class="tier-name-label"><%= t('tiers.bronze') %></div>
                 </div>
-                
+
                 <div class="level-point silver <% if (member.tier === 'Silver' || member.tier === 'Gold' || member.tier === 'Platinum') { %>completed<% } %>">
                   <div class="level-label">500 pts</div>
+                  <div class="tier-name-label"><%= t('tiers.silver') %></div>
                 </div>
-                
+
                 <% if (member.levelPoints > 0) { %>
-                  <% 
+                  <%
                     const positionPercent = Math.min(Math.max((member.levelPoints / 2000) * 100, 0), 100);
                   %>
                   <div class="level-point current user-position" data-position="<%= positionPercent %>">
@@ -94,13 +96,15 @@
                     <div class="level-label"><%= member.levelPoints %> pts</div>
                   </div>
                 <% } %>
-                
+
                 <div class="level-point gold <% if (member.tier === 'Gold' || member.tier === 'Platinum') { %>completed<% } %>">
                   <div class="level-label">1000 pts</div>
+                  <div class="tier-name-label"><%= t('tiers.gold') %></div>
                 </div>
-                
+
                 <div class="level-point platinum <% if (member.tier === 'Platinum') { %>completed<% } %>">
                   <div class="level-label">2000 pts</div>
+                  <div class="tier-name-label"><%= t('tiers.platinum') %></div>
                 </div>
               </div>
             </div>
