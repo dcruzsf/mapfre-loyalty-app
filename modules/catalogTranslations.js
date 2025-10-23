@@ -138,17 +138,17 @@ class CatalogTranslations {
           tier_plus: {
             name: 'Nivel Plus',
             description: 'Has alcanzado el nivel Plus',
-            hint: 'Alcanza 500 Caixapoints Status'
+            hint: 'Alcanza 500 Caixapoints'
           },
           tier_premium: {
             name: 'Nivel Premium',
             description: 'Has alcanzado el nivel Premium',
-            hint: 'Alcanza 1000 Caixapoints Status'
+            hint: 'Alcanza 1000 Caixapoints'
           },
           tier_elite: {
             name: 'Nivel Elite',
             description: 'Has alcanzado el nivel Elite',
-            hint: 'Alcanza 2000 Caixapoints Status'
+            hint: 'Alcanza 2000 Caixapoints'
           }
         }
       },
@@ -289,17 +289,17 @@ class CatalogTranslations {
           tier_plus: {
             name: 'Plus Level',
             description: 'You have reached Plus level',
-            hint: 'Reach 500 Caixapoints Status'
+            hint: 'Reach 500 Caixapoints'
           },
           tier_premium: {
             name: 'Premium Level',
             description: 'You have reached Premium level',
-            hint: 'Reach 1000 Caixapoints Status'
+            hint: 'Reach 1000 Caixapoints'
           },
           tier_elite: {
             name: 'Elite Level',
             description: 'You have reached Elite level',
-            hint: 'Reach 2000 Caixapoints Status'
+            hint: 'Reach 2000 Caixapoints'
           }
         }
       }

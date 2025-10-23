@@ -334,7 +334,7 @@ module.exports = {
       icon: 'award',
       category: 'tier',
       hideWhenLocked: false,
-      hint: 'Alcanza 500 Caixapoints Status',
+      hint: 'Alcanza 500 Caixapoints',
       trigger: 'tier_update',
       tierRequired: 'Silver'
     },
@@ -346,7 +346,7 @@ module.exports = {
       icon: 'crown',
       category: 'tier',
       hideWhenLocked: false,
-      hint: 'Alcanza 1000 Caixapoints Status',
+      hint: 'Alcanza 1000 Caixapoints',
       trigger: 'tier_update',
       tierRequired: 'Gold'
     },
@@ -358,7 +358,7 @@ module.exports = {
       icon: 'gem',
       category: 'tier',
       hideWhenLocked: false,
-      hint: 'Alcanza 2000 Caixapoints Status',
+      hint: 'Alcanza 2000 Caixapoints',
       trigger: 'tier_update',
       tierRequired: 'Platinum'
     }

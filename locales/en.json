@@ -32,10 +32,10 @@
     "name": "User",
     "email": "Email",
     "balance": "Balance",
-    "levelPoints": "Caixapoints Status",
-    "rewardPoints": "Caixapoints Rewards",
+    "levelPoints": "Caixapoints",
+    "rewardPoints": "Cashback",
     "tier": "Tier",
-    "pointsToNext": "Caixapoints Status to",
+    "pointsToNext": "Caixapoints to",
     "welcome": "Welcome"
   },
   "pages": {
@@ -78,7 +78,7 @@
     },
     "redemption": {
       "title": "Redeem Points",
-      "description": "Redeem your Caixapoints Rewards for exclusive rewards",
+      "description": "Redeem your Cashback for exclusive rewards",
       "breadcrumb": "Redeem Points",
       "reward": {
         "cost": "Cost",
@@ -179,8 +179,8 @@
       "date": "Date",
       "type": "Type",
       "description": "Description",
-      "levelPoints": "Caixapoints Status",
-      "rewardPoints": "Caixapoints Rewards"
+      "levelPoints": "Caixapoints",
+      "rewardPoints": "Cashback"
     }
   },
   "transactions": {

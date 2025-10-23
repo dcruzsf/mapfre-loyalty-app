@@ -32,10 +32,10 @@
     "name": "Usuario",
     "email": "Email",
     "balance": "Saldo",
-    "levelPoints": "Caixapoints Status",
-    "rewardPoints": "Caixapoints Rewards",
+    "levelPoints": "Caixapoints",
+    "rewardPoints": "Cashback",
     "tier": "Nivel",
-    "pointsToNext": "Caixapoints Status para",
+    "pointsToNext": "Caixapoints para",
     "welcome": "Bienvenido"
   },
   "pages": {
@@ -78,7 +78,7 @@
     },
     "redemption": {
       "title": "Canjear Puntos",
-      "description": "Canjea tus Caixapoints Rewards por recompensas exclusivas",
+      "description": "Canjea tu Cashback por recompensas exclusivas",
       "breadcrumb": "Canjear Puntos",
       "reward": {
         "cost": "Costo",
@@ -179,8 +179,8 @@
       "date": "Fecha",
       "type": "Tipo",
       "description": "Descripción",
-      "levelPoints": "Caixapoints Status",
-      "rewardPoints": "Caixapoints Rewards"
+      "levelPoints": "Caixapoints",
+      "rewardPoints": "Cashback"
     }
   },
   "transactions": {

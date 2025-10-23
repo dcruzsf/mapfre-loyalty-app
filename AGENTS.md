@@ -18,15 +18,15 @@
 
 El programa utiliza **dos tipos de puntos** con nomenclatura específica:
 
-1. **Caixapoints Status** (antes "levelPoints" o "Stars Totales")
+1. **Caixapoints** (antes "Caixapoints Status", "levelPoints" o "Stars Totales")
    - Son puntos de **nivel/estado**
    - Determinan la **categoría del usuario** (Basic, Plus, Premium, Elite)
    - Se acumulan pero **NO se canjean**
    - Funcionan como indicador de engagement
 
-2. **Caixapoints Rewards** (antes "rewardPoints" o "Stars Canjeables")
+2. **Cashback** (antes "Caixapoints Rewards", "rewardPoints" o "Stars Canjeables")
    - Son puntos de **consumo/canje**
-   - Se pueden **canjear por recompensas** (cashback, upgrades, experiencias)
+   - Se pueden **canjear por recompensas** (cashback instantáneo, upgrades, experiencias)
    - Se gastan al realizar canjes
 
 ### Niveles (Tiers)
@@ -219,13 +219,13 @@ requireAuth: Verifica que existe memberId en sesión
 ## 🔄 Flujo de Usuario
 
 1. **Registro**: Usuario se registra con nombre, email, intereses
-2. **Home**: Ve su tarjeta de miembro con Caixapoints Status y Rewards
+2. **Home**: Ve su tarjeta de miembro con Caixapoints y Cashback
 3. **Ganar Puntos**:
    - Realiza operaciones digitales (Tab "Operaciones")
    - Completa actividades (Tab "Actividades")
-4. **Canjear**: Usa Caixapoints Rewards para obtener recompensas
+4. **Canjear**: Usa Cashback para obtener recompensas
 5. **Logros**: Desbloquea achievements automáticamente
-6. **Progresión**: Acumula Caixapoints Status para subir de nivel
+6. **Progresión**: Acumula Caixapoints para subir de nivel
 
 ---
 
@@ -242,7 +242,7 @@ requireAuth: Verifica que existe memberId en sesión
 
 - **Estilo**: Tipo tarjeta bancaria premium
 - **Gradiente**: Primary → Accent
-- **Información**: Saldo, Caixapoints Status, Caixapoints Rewards, Nivel
+- **Información**: Saldo, Caixapoints, Cashback, Nivel
 - **Progreso**: Barra de progreso hacia siguiente nivel
 
 ### Pestañas (Tabs)
@@ -265,7 +265,7 @@ requireAuth: Verifica que existe memberId en sesión
 
 ### ✅ RESUELTO: Confusión entre tipos de puntos
 **Problema**: "Stars Totales" y "Stars Canjeables" no eran claros
-**Solución**: Renombrado a "Caixapoints Status" y "Caixapoints Rewards"
+**Solución**: Renombrado primero a "Caixapoints Status" y "Caixapoints Rewards", luego simplificado a "Caixapoints" y "Cashback"
 
 ### ✅ RESUELTO: Idioma se detectaba del navegador
 **Problema**: Usuario veía inglés si su navegador estaba en inglés
@@ -424,23 +424,24 @@ req.session.destroy();
 
 ## 🔄 Historial de Cambios Importantes
 
-### Última Actualización: 2025-10-20
+### Última Actualización: 2025-10-23
 
 1. **Rebranding completo**: Hang-in-there → CaixaBank Experience
-2. **Nuevo sistema de puntos**: Stars → Caixapoints Status/Rewards
+2. **Nuevo sistema de puntos**: Stars → Caixapoints Status/Rewards → **Caixapoints/Cashback**
 3. **Catálogo digital**: Productos retail → Operaciones bancarias digitales
 4. **Diseño modernizado**: Estilo Revolut con glassmorphism y animaciones
 5. **Niveles actualizados**: Bronze/Silver/Gold/Platinum → Basic/Plus/Premium/Elite (display names)
 6. **Traducciones**: Sistema i18n con español por defecto
 7. **Notificaciones**: Timeout ajustado a 2 segundos
-8. **Naming clarificado**: Distinción clara entre puntos de nivel y canje
+8. **Naming clarificado**: Distinción clara entre puntos de nivel (Caixapoints) y canje (Cashback)
 9. **Menú mejorado**: Selección activa más sutil y elegante con gradientes
-10. **Auto-fill registro**: Botón mágico para rellenar formulario de demo
+10. **Auto-fill registro**: Botón mágico para rellenar formulario de demo con email d.cruz+
 11. **Precios realistas**: Operaciones con costes en euros (10€-150€)
 12. **Domiciliación de Nómina**: Movida de operación a actividad
-13. **Recompensas visibles**: Todas las 6 recompensas organizadas en 3 categorías
+13. **Recompensas visibles**: Todas las recompensas organizadas en categorías (Cashback, Experiencias)
 14. **Logros alineados**: tier_plus, tier_premium, tier_elite con nombres correctos
-15. **Consistencia total**: "Caixapoints" en lugar de "Stars" en todo el código
+15. **Consistencia total**: "Caixapoints" y "Cashback" en todo el código y traducciones
+16. **Integración Salesforce**: OAuth password flow configurado con Connected App
 
 ---
 
