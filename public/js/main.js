@@ -153,12 +153,12 @@ document.addEventListener('DOMContentLoaded', function() {
       const apellido = apellidos[Math.floor(Math.random() * apellidos.length)];
       const nombreCompleto = `${nombre} ${apellido}`;
 
-      // Crear email en formato jaimegarcia+NombreApellido@salesforce.com (sin tildes)
+      // Crear email en formato d.cruz+NombreApellido@salesforce.com (sin tildes)
       const nombreApellidoJunto = (nombre + apellido)
         .toLowerCase()
         .normalize('NFD')
         .replace(/[\u0300-\u036f]/g, ''); // Eliminar tildes
-      const email = `jaimegarcia+${nombreApellidoJunto}@salesforce.com`;
+      const email = `d.cruz+${nombreApellidoJunto}@salesforce.com`;
 
       // Rellenar los campos
       document.getElementById('name').value = nombreCompleto;
