@@ -265,6 +265,7 @@ class SalesforceLoyalty {
 
   /**
    * Registra una transacción (accrual o redemption) en Salesforce Loyalty Management
+   * Usa la API REST estándar de Salesforce para crear objetos TransactionJournal directamente
    * @param {string} loyaltyProgramMemberId - ID del miembro en Salesforce
    * @param {string} transactionType - Tipo: 'Accrual' o 'Redemption'
    * @param {number} pointsChange - Cantidad de puntos (positivo o negativo)
@@ -281,10 +282,10 @@ class SalesforceLoyalty {
       }
 
       const instanceUrl = await salesforceAuth.getInstanceUrl();
-      const encodedProgramName = encodeURIComponent(this.loyaltyProgramName);
-      const url = `${instanceUrl}/services/data/${this.apiVersion}/loyalty-programs/${encodedProgramName}/program-processes`;
+      // Usar el endpoint de sobjects en lugar de program-processes
+      const url = `${instanceUrl}/services/data/${this.apiVersion}/sobjects/TransactionJournal`;
 
-      console.log(`📝 Registrando ${transactionType} en Salesforce...`);
+      console.log(`📝 Registrando ${transactionType} en Salesforce usando API REST estándar...`);
       console.log(`🔗 URL: ${url}`);
 
       // Determinar el nombre de la currency según el tipo
@@ -292,25 +293,16 @@ class SalesforceLoyalty {
         ? (process.env.SF_CURRENCY_QUALIFYING_NAME || 'Caixapoints')
         : (process.env.SF_CURRENCY_NONQUALIFYING_NAME || 'Cashback');
 
-      // Construir el payload para la transacción
+      // Construir el payload para crear el TransactionJournal directamente
       const payload = {
-        loyaltyProgramMemberId,
-        journalTypeName,
-        journalSubTypeName,
-        activityDate,
-        transactionJournals: [
-          {
-            loyaltyProgramMemberId,
-            journalTypeName,
-            journalSubTypeName,
-            activityDate,
-            transactionAmount: Math.abs(pointsChange),
-            memberCurrency: currencyName,
-            pointsChange: {
-              changeInPoints: pointsChange
-            }
-          }
-        ]
+        ActivityDate: activityDate,
+        JournalTypeName: journalTypeName,
+        JournalSubTypeName: journalSubTypeName,
+        LoyaltyProgramMemberId: loyaltyProgramMemberId,
+        MemberCurrency: currencyName,
+        PointsChange: pointsChange,
+        TransactionAmount: Math.abs(pointsChange),
+        Status: 'Pending'
       };
 
       console.log('📤 Payload:', JSON.stringify(payload, null, 2));
@@ -323,6 +315,7 @@ class SalesforceLoyalty {
       ]);
 
       console.log(`✅ ${transactionType} registrado correctamente en Salesforce`);
+      console.log(`🆔 TransactionJournal ID: ${response.data.id}`);
       return response.data;
 
     } catch (error) {
