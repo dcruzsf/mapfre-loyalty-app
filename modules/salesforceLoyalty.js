@@ -265,50 +265,82 @@ class SalesforceLoyalty {
 
   /**
    * Busca el ID de un TransactionJournalType por nombre
+   * Intenta múltiples nombres de objetos posibles
    * @param {string} typeName - Nombre del tipo de journal
    * @returns {Promise<string|null>} - ID del tipo o null si no existe
    */
   async getJournalTypeId(typeName) {
-    try {
-      const instanceUrl = await salesforceAuth.getInstanceUrl();
-      const query = `SELECT Id FROM TransactionJournalType WHERE Name = '${typeName}' LIMIT 1`;
-      const url = `${instanceUrl}/services/data/${this.apiVersion}/query?q=${encodeURIComponent(query)}`;
+    const instanceUrl = await salesforceAuth.getInstanceUrl();
+    const headers = await this.getHeaders();
 
-      const headers = await this.getHeaders();
-      const response = await axios.get(url, { headers, timeout: 10000 });
+    // Intentar con diferentes nombres de objetos
+    const possibleObjects = [
+      'TransactionJournalType',
+      'LoyaltyProgramTransactionJournalType',
+      'JournalType'
+    ];
 
-      if (response.data.records && response.data.records.length > 0) {
-        return response.data.records[0].Id;
+    for (const objectName of possibleObjects) {
+      try {
+        const query = `SELECT Id FROM ${objectName} WHERE Name = '${typeName}' LIMIT 1`;
+        const url = `${instanceUrl}/services/data/${this.apiVersion}/query?q=${encodeURIComponent(query)}`;
+
+        const response = await axios.get(url, { headers, timeout: 10000 });
+
+        if (response.data.records && response.data.records.length > 0) {
+          console.log(`✅ Encontrado ${objectName} con ID: ${response.data.records[0].Id}`);
+          return response.data.records[0].Id;
+        }
+      } catch (error) {
+        console.log(`❌ No existe objeto: ${objectName} (intentando siguiente...)`);
+        if (error.response?.data) {
+          console.log(`   Detalle: ${JSON.stringify(error.response.data)}`);
+        }
       }
-      return null;
-    } catch (error) {
-      console.error(`⚠️ Error buscando JournalType ${typeName}:`, error.message);
-      return null;
     }
+
+    console.error(`⚠️ No se encontró JournalType ${typeName} en ningún objeto conocido`);
+    return null;
   }
 
   /**
    * Busca el ID de un TransactionJournalSubtype por nombre
+   * Intenta múltiples nombres de objetos posibles
    * @param {string} subtypeName - Nombre del subtipo de journal
    * @returns {Promise<string|null>} - ID del subtipo o null si no existe
    */
   async getJournalSubTypeId(subtypeName) {
-    try {
-      const instanceUrl = await salesforceAuth.getInstanceUrl();
-      const query = `SELECT Id FROM TransactionJournalSubtype WHERE Name = '${subtypeName}' LIMIT 1`;
-      const url = `${instanceUrl}/services/data/${this.apiVersion}/query?q=${encodeURIComponent(query)}`;
+    const instanceUrl = await salesforceAuth.getInstanceUrl();
+    const headers = await this.getHeaders();
 
-      const headers = await this.getHeaders();
-      const response = await axios.get(url, { headers, timeout: 10000 });
+    // Intentar con diferentes nombres de objetos
+    const possibleObjects = [
+      'TransactionJournalSubtype',
+      'LoyaltyProgramTransactionJournalSubtype',
+      'JournalSubtype'
+    ];
 
-      if (response.data.records && response.data.records.length > 0) {
-        return response.data.records[0].Id;
+    for (const objectName of possibleObjects) {
+      try {
+        const query = `SELECT Id FROM ${objectName} WHERE Name = '${subtypeName}' LIMIT 1`;
+        const url = `${instanceUrl}/services/data/${this.apiVersion}/query?q=${encodeURIComponent(query)}`;
+
+        const response = await axios.get(url, { headers, timeout: 10000 });
+
+        if (response.data.records && response.data.records.length > 0) {
+          console.log(`✅ Encontrado ${objectName} con ID: ${response.data.records[0].Id}`);
+          return response.data.records[0].Id;
+        }
+      } catch (error) {
+        console.log(`❌ No existe objeto: ${objectName} (intentando siguiente...)`);
+        if (error.response?.data) {
+          console.log(`   Detalle: ${JSON.stringify(error.response.data)}`);
+        }
       }
-      return null;
-    } catch (error) {
-      console.error(`⚠️ Error buscando JournalSubType ${subtypeName}:`, error.message);
-      return null;
     }
+
+    console.error(`⚠️ No se encontró JournalSubType ${subtypeName} en ningún objeto conocido`);
+    return null;
   }
 
   /**
