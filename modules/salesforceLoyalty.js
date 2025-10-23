@@ -264,6 +264,54 @@ class SalesforceLoyalty {
   }
 
   /**
+   * Busca el ID de un TransactionJournalType por nombre
+   * @param {string} typeName - Nombre del tipo de journal
+   * @returns {Promise<string|null>} - ID del tipo o null si no existe
+   */
+  async getJournalTypeId(typeName) {
+    try {
+      const instanceUrl = await salesforceAuth.getInstanceUrl();
+      const query = `SELECT Id FROM TransactionJournalType WHERE Name = '${typeName}' LIMIT 1`;
+      const url = `${instanceUrl}/services/data/${this.apiVersion}/query?q=${encodeURIComponent(query)}`;
+
+      const headers = await this.getHeaders();
+      const response = await axios.get(url, { headers, timeout: 10000 });
+
+      if (response.data.records && response.data.records.length > 0) {
+        return response.data.records[0].Id;
+      }
+      return null;
+    } catch (error) {
+      console.error(`⚠️ Error buscando JournalType ${typeName}:`, error.message);
+      return null;
+    }
+  }
+
+  /**
+   * Busca el ID de un TransactionJournalSubtype por nombre
+   * @param {string} subtypeName - Nombre del subtipo de journal
+   * @returns {Promise<string|null>} - ID del subtipo o null si no existe
+   */
+  async getJournalSubTypeId(subtypeName) {
+    try {
+      const instanceUrl = await salesforceAuth.getInstanceUrl();
+      const query = `SELECT Id FROM TransactionJournalSubtype WHERE Name = '${subtypeName}' LIMIT 1`;
+      const url = `${instanceUrl}/services/data/${this.apiVersion}/query?q=${encodeURIComponent(query)}`;
+
+      const headers = await this.getHeaders();
+      const response = await axios.get(url, { headers, timeout: 10000 });
+
+      if (response.data.records && response.data.records.length > 0) {
+        return response.data.records[0].Id;
+      }
+      return null;
+    } catch (error) {
+      console.error(`⚠️ Error buscando JournalSubType ${subtypeName}:`, error.message);
+      return null;
+    }
+  }
+
+  /**
    * Registra una transacción (accrual o redemption) en Salesforce Loyalty Management
    * Usa la API REST estándar de Salesforce para crear objetos TransactionJournal directamente
    * @param {string} loyaltyProgramMemberId - ID del miembro en Salesforce
@@ -281,11 +329,24 @@ class SalesforceLoyalty {
         throw new Error('Se requiere el ID del miembro de loyalty');
       }
 
-      const instanceUrl = await salesforceAuth.getInstanceUrl();
-      // Usar el endpoint de sobjects en lugar de program-processes
-      const url = `${instanceUrl}/services/data/${this.apiVersion}/sobjects/TransactionJournal`;
-
       console.log(`📝 Registrando ${transactionType} en Salesforce usando API REST estándar...`);
+
+      // Buscar los IDs de JournalType y JournalSubType
+      console.log(`🔍 Buscando IDs de JournalType: ${journalTypeName} y JournalSubType: ${journalSubTypeName}...`);
+      const journalTypeId = await this.getJournalTypeId(journalTypeName);
+      const journalSubTypeId = await this.getJournalSubTypeId(journalSubTypeName);
+
+      if (!journalTypeId) {
+        throw new Error(`No se encontró TransactionJournalType con nombre: ${journalTypeName}`);
+      }
+      if (!journalSubTypeId) {
+        throw new Error(`No se encontró TransactionJournalSubtype con nombre: ${journalSubTypeName}`);
+      }
+
+      console.log(`✅ JournalType ID: ${journalTypeId}, JournalSubType ID: ${journalSubTypeId}`);
+
+      const instanceUrl = await salesforceAuth.getInstanceUrl();
+      const url = `${instanceUrl}/services/data/${this.apiVersion}/sobjects/TransactionJournal`;
       console.log(`🔗 URL: ${url}`);
 
       // Determinar el nombre de la currency según el tipo
@@ -293,12 +354,11 @@ class SalesforceLoyalty {
         ? (process.env.SF_CURRENCY_QUALIFYING_NAME || 'Caixapoints')
         : (process.env.SF_CURRENCY_NONQUALIFYING_NAME || 'Cashback');
 
-      // Construir el payload para crear el TransactionJournal directamente
-      // Los nombres de campos correctos según la API de Salesforce
+      // Construir el payload usando los IDs de las relaciones
       const payload = {
         ActivityDate: activityDate,
-        JournalType: journalTypeName,
-        JournalSubType: journalSubTypeName,
+        JournalTypeId: journalTypeId,
+        JournalSubTypeId: journalSubTypeId,
         LoyaltyProgramMemberId: loyaltyProgramMemberId,
         MemberCurrency: currencyName,
         Points: pointsChange,
