@@ -54,7 +54,8 @@ class SalesforceLoyalty {
       };
 
       // Construir la URL del endpoint
-      const url = `${instanceUrl}/services/data/${this.apiVersion}/loyalty-programs/${this.loyaltyProgramName}/individual-member-enrollments`;
+      const encodedProgramName = encodeURIComponent(this.loyaltyProgramName);
+      const url = `${instanceUrl}/services/data/${this.apiVersion}/loyalty-programs/${encodedProgramName}/individual-member-enrollments`;
       
       console.log('📤 Enviando solicitud de enrollment a Salesforce...');
       console.log('URL:', url);
@@ -136,8 +137,9 @@ class SalesforceLoyalty {
       }
 
       const instanceUrl = await salesforceAuth.getInstanceUrl();
-      const url = `${instanceUrl}/services/data/${this.apiVersion}/loyalty-programs/${this.loyaltyProgramName}/members?contactEmail=${email}`;
-      
+      const encodedProgramName = encodeURIComponent(this.loyaltyProgramName);
+      const url = `${instanceUrl}/services/data/${this.apiVersion}/loyalty-programs/${encodedProgramName}/members?contactEmail=${encodeURIComponent(email)}`;
+
       console.log('🔍 Buscando miembro por email en Salesforce:', email);
       
       const headers = await this.getHeaders();
@@ -181,9 +183,11 @@ class SalesforceLoyalty {
       }
 
       const instanceUrl = await salesforceAuth.getInstanceUrl();
-      const url = `${instanceUrl}/services/data/${this.apiVersion}/loyalty-programs/${this.loyaltyProgramName}/program-members/${loyaltyProgramMemberId}/member-currencies`;
+      const encodedProgramName = encodeURIComponent(this.loyaltyProgramName);
+      const url = `${instanceUrl}/services/data/${this.apiVersion}/loyalty-programs/${encodedProgramName}/program-members/${loyaltyProgramMemberId}/member-currencies`;
 
       console.log('💰 Obteniendo currencies del miembro desde Salesforce...');
+      console.log(`🔗 URL: ${url}`);
 
       const headers = await this.getHeaders();
 
@@ -277,9 +281,11 @@ class SalesforceLoyalty {
       }
 
       const instanceUrl = await salesforceAuth.getInstanceUrl();
-      const url = `${instanceUrl}/services/data/${this.apiVersion}/loyalty-programs/${this.loyaltyProgramName}/program-processes`;
+      const encodedProgramName = encodeURIComponent(this.loyaltyProgramName);
+      const url = `${instanceUrl}/services/data/${this.apiVersion}/loyalty-programs/${encodedProgramName}/program-processes`;
 
       console.log(`📝 Registrando ${transactionType} en Salesforce...`);
+      console.log(`🔗 URL: ${url}`);
 
       // Determinar el nombre de la currency según el tipo
       const currencyName = currencyType === 'qualifying'
