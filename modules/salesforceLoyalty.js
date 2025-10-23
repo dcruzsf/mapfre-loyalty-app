@@ -387,11 +387,12 @@ class SalesforceLoyalty {
         : (process.env.SF_CURRENCY_NONQUALIFYING_NAME || 'Cashback');
 
       // Construir el payload usando los IDs de las relaciones
+      // Campos correctos según la API de Salesforce Loyalty Management
       const payload = {
         ActivityDate: activityDate,
         JournalTypeId: journalTypeId,
         JournalSubTypeId: journalSubTypeId,
-        LoyaltyProgramMemberId: loyaltyProgramMemberId,
+        MemberId: loyaltyProgramMemberId,  // Cambio: MemberId en lugar de LoyaltyProgramMemberId
         MemberCurrency: currencyName,
         Points: pointsChange,
         TransactionAmount: Math.abs(pointsChange),
