@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Member = require('../models/member');
 const { requireAuth } = require('../middleware/auth');
+const salesforceLoyalty = require('../modules/salesforceLoyalty');
 
 // Importar configuración centralizada
 const catalogConfig = require('../config/catalog');
@@ -33,7 +34,7 @@ router.get('/', (req, res) => {
 });
 
 // Procesar compra
-router.post('/purchase/:id', (req, res) => {
+router.post('/purchase/:id', async (req, res) => {
   const productId = parseInt(req.params.id);
   const product = catalogConfig.products.find(p => p.id === productId);
   const locale = req.locale || 'es';
@@ -42,17 +43,48 @@ router.post('/purchase/:id', (req, res) => {
     const message = i18n.t('messages.productNotFound', locale);
     return res.redirect(`/accrual?message=${encodeURIComponent(message)}`);
   }
-  
+
   const member = req.member; // Viene del middleware requireAuth
-  
+
   try {
     // Reducir saldo
     member.reduceBalance(product.price, `Compra de ${product.name}`);
-    
+
     // Añadir puntos (a nivel y rewards)
     member.addPoints(product.points, `Puntos por compra de ${product.name}`);
-    
+
     console.log(`${member.name} compró ${product.name} por ${product.price}€ y ganó ${product.points} puntos`);
+
+    // Registrar accrual en Salesforce (PHASE 2)
+    if (member.salesforceId && process.env.USE_SALESFORCE === 'true') {
+      try {
+        const activityDate = new Date().toISOString();
+        // Registrar qualifying points (Caixapoints)
+        await salesforceLoyalty.processTransaction(
+          member.salesforceId,
+          'Accrual',
+          product.points,
+          'qualifying',
+          'Accrual',
+          'Purchase',
+          activityDate
+        );
+        // Registrar non-qualifying points (Cashback)
+        await salesforceLoyalty.processTransaction(
+          member.salesforceId,
+          'Accrual',
+          product.points,
+          'nonQualifying',
+          'Accrual',
+          'Purchase',
+          activityDate
+        );
+        console.log('✅ Accrual registrado en Salesforce');
+      } catch (sfError) {
+        console.warn('⚠️ No se pudo registrar accrual en Salesforce:', sfError.message);
+        // No bloquear el flujo, la transacción local ya se realizó
+      }
+    }
     
     // Verificar si hay nuevos logros
     const hasNewAchievement = member.achievements.some(a => 
@@ -80,7 +112,7 @@ router.post('/purchase/:id', (req, res) => {
 });
 
 // Procesar actividad
-router.post('/activity/:id', (req, res) => {
+router.post('/activity/:id', async (req, res) => {
   const activityId = parseInt(req.params.id);
   const activity = catalogConfig.activities.find(a => a.id === activityId);
   const locale = req.locale || 'es';
@@ -89,14 +121,45 @@ router.post('/activity/:id', (req, res) => {
     const message = i18n.t('messages.activityNotFound', locale);
     return res.redirect(`/accrual?message=${encodeURIComponent(message)}`);
   }
-  
+
   const member = req.member; // Viene del middleware requireAuth
-  
+
   try {
     // Añadir puntos (a nivel y rewards)
     member.addPoints(activity.points, `${activity.name}`);
-    
+
     console.log(`${member.name} completó actividad: ${activity.name} y ganó ${activity.points} puntos`);
+
+    // Registrar accrual en Salesforce (PHASE 2)
+    if (member.salesforceId && process.env.USE_SALESFORCE === 'true') {
+      try {
+        const activityDate = new Date().toISOString();
+        // Registrar qualifying points (Caixapoints)
+        await salesforceLoyalty.processTransaction(
+          member.salesforceId,
+          'Accrual',
+          activity.points,
+          'qualifying',
+          'Accrual',
+          'Activity',
+          activityDate
+        );
+        // Registrar non-qualifying points (Cashback)
+        await salesforceLoyalty.processTransaction(
+          member.salesforceId,
+          'Accrual',
+          activity.points,
+          'nonQualifying',
+          'Accrual',
+          'Activity',
+          activityDate
+        );
+        console.log('✅ Accrual de actividad registrado en Salesforce');
+      } catch (sfError) {
+        console.warn('⚠️ No se pudo registrar accrual en Salesforce:', sfError.message);
+        // No bloquear el flujo, la transacción local ya se realizó
+      }
+    }
     
     // Verificar si hay nuevos logros
     const hasNewAchievement = member.achievements.some(a => 

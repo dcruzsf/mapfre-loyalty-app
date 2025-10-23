@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Member = require('../models/member');
 const { requireAuth } = require('../middleware/auth');
+const salesforceLoyalty = require('../modules/salesforceLoyalty');
 
 // Importar configuración centralizada
 const catalogConfig = require('../config/catalog');
@@ -47,7 +48,7 @@ router.get('/', (req, res) => {
 });
 
 // Procesar redención
-router.post('/redeem/:id', (req, res) => {
+router.post('/redeem/:id', async (req, res) => {
   const rewardId = parseInt(req.params.id);
   const reward = catalogConfig.rewards.find(r => r.id === rewardId);
   const locale = req.locale || 'es';
@@ -56,17 +57,39 @@ router.post('/redeem/:id', (req, res) => {
     const message = i18n.t('messages.rewardNotFound', locale);
     return res.redirect(`/redemption?message=${encodeURIComponent(message)}`);
   }
-  
+
   const member = req.member; // Viene del middleware requireAuth
-  
+
   try {
     // Usar puntos de rewards
     member.usePoints(reward.points, `Redención: ${reward.name}`);
-    
+
     // Generar código usando el prefix configurado
     const redemptionCode = generateRedemptionCode(reward.codePrefix);
-    
+
     console.log(`${member.name} canjeó ${reward.name} por ${reward.points} puntos. Código: ${redemptionCode}`);
+
+    // Registrar redemption en Salesforce (PHASE 2)
+    if (member.salesforceId && process.env.USE_SALESFORCE === 'true') {
+      try {
+        const activityDate = new Date().toISOString();
+        // Registrar redemption de non-qualifying points (Cashback)
+        // Los redemptions solo afectan a non-qualifying points
+        await salesforceLoyalty.processTransaction(
+          member.salesforceId,
+          'Redemption',
+          -reward.points, // Negativo para redemption
+          'nonQualifying',
+          'Redemption',
+          'Reward',
+          activityDate
+        );
+        console.log('✅ Redemption registrado en Salesforce');
+      } catch (sfError) {
+        console.warn('⚠️ No se pudo registrar redemption en Salesforce:', sfError.message);
+        // No bloquear el flujo, la transacción local ya se realizó
+      }
+    }
     
     // Verificar si hay nuevos logros
     const hasNewAchievement = member.achievements.some(a => 

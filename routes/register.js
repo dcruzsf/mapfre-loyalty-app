@@ -75,7 +75,7 @@ router.post('/', redirectIfAuthenticated, async (req, res) => {
         console.log('⚠️ No se pudo determinar el ID del miembro en Salesforce.');
         console.log('📋 Respuesta completa:', JSON.stringify(sfResponse, null, 2));
       }
-      
+
     } catch (sfError) {
       console.error('❌ Error al registrar en Salesforce:', sfError.message);
       salesforceError = sfError.message;
@@ -90,14 +90,23 @@ router.post('/', redirectIfAuthenticated, async (req, res) => {
     // Crear nuevo miembro en nuestra aplicación local
     const newMember = new Member(name, email, preferences || []);
     
-    // Si hemos creado el miembro en Salesforce, guardar su ID
+    // Si hemos creado el miembro en Salesforce, guardar su ID y sincronizar currencies
     if (sfMemberId) {
       newMember.salesforceId = sfMemberId;
+
+      // Sincronizar currencies desde Salesforce (PHASE 2)
+      try {
+        await salesforceLoyalty.syncMemberPoints(newMember, sfMemberId);
+        console.log('✅ Currencies sincronizadas después del enrollment');
+      } catch (syncError) {
+        console.warn('⚠️ No se pudieron sincronizar currencies después del enrollment:', syncError.message);
+        // No bloquear el flujo, continuar con valores por defecto
+      }
     }
-    
+
     // Guardar miembro localmente
     Member.save(newMember);
-    
+
     // Crear sesión para el nuevo miembro
     req.session.memberId = newMember.id;
     
