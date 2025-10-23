@@ -294,13 +294,14 @@ class SalesforceLoyalty {
         : (process.env.SF_CURRENCY_NONQUALIFYING_NAME || 'Cashback');
 
       // Construir el payload para crear el TransactionJournal directamente
+      // Los nombres de campos correctos según la API de Salesforce
       const payload = {
         ActivityDate: activityDate,
-        JournalTypeName: journalTypeName,
-        JournalSubTypeName: journalSubTypeName,
+        JournalType: journalTypeName,
+        JournalSubType: journalSubTypeName,
         LoyaltyProgramMemberId: loyaltyProgramMemberId,
         MemberCurrency: currencyName,
-        PointsChange: pointsChange,
+        Points: pointsChange,
         TransactionAmount: Math.abs(pointsChange),
         Status: 'Pending'
       };
