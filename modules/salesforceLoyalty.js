@@ -173,6 +173,7 @@ class SalesforceLoyalty {
 
   /**
    * Obtiene las currencies de un miembro de loyalty desde Salesforce
+   * Usa query SOQL al objeto LoyaltyMemberCurrency
    * @param {string} loyaltyProgramMemberId - ID del miembro en Salesforce
    * @returns {Promise<Object>} - Objeto con currencies { qualifying: number, nonQualifying: number }
    */
@@ -183,13 +184,15 @@ class SalesforceLoyalty {
       }
 
       const instanceUrl = await salesforceAuth.getInstanceUrl();
-      const encodedProgramName = encodeURIComponent(this.loyaltyProgramName);
-      const url = `${instanceUrl}/services/data/${this.apiVersion}/loyalty-programs/${encodedProgramName}/program-members/${loyaltyProgramMemberId}/member-currencies`;
+      const headers = await this.getHeaders();
 
       console.log('💰 Obteniendo currencies del miembro desde Salesforce...');
-      console.log(`🔗 URL: ${url}`);
 
-      const headers = await this.getHeaders();
+      // Query SOQL para obtener LoyaltyMemberCurrency
+      const query = `SELECT Id, LoyaltyCurrency.Name, PointsBalance FROM LoyaltyMemberCurrency WHERE LoyaltyProgramMemberId = '${loyaltyProgramMemberId}'`;
+      const url = `${instanceUrl}/services/data/${this.apiVersion}/query?q=${encodeURIComponent(query)}`;
+
+      console.log(`🔗 Query: ${query}`);
 
       const response = await Promise.race([
         axios.get(url, { headers, timeout: 15000 }),
@@ -199,7 +202,7 @@ class SalesforceLoyalty {
       console.log('✅ Currencies obtenidas correctamente');
 
       // Procesar las currencies de la respuesta
-      const currencies = response.data.currencyBalances || [];
+      const currencies = response.data.records || [];
       const result = {
         qualifying: 0,
         nonQualifying: 0
@@ -210,10 +213,11 @@ class SalesforceLoyalty {
       const nonQualifyingName = process.env.SF_CURRENCY_NONQUALIFYING_NAME || 'Cashback';
 
       currencies.forEach(currency => {
-        if (currency.loyaltyMemberCurrencyName === qualifyingName) {
-          result.qualifying = currency.totalPoints || 0;
-        } else if (currency.loyaltyMemberCurrencyName === nonQualifyingName) {
-          result.nonQualifying = currency.totalPoints || 0;
+        const currencyName = currency.LoyaltyCurrency?.Name;
+        if (currencyName === qualifyingName) {
+          result.qualifying = currency.PointsBalance || 0;
+        } else if (currencyName === nonQualifyingName) {
+          result.nonQualifying = currency.PointsBalance || 0;
         }
       });
 

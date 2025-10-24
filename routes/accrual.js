@@ -60,27 +60,17 @@ router.post('/purchase/:id', async (req, res) => {
         const journalType = product.journalType || 'Accrual';
         const journalSubType = product.journalSubType || 'Purchase';
 
-        // Registrar qualifying points (Caixapoints)
+        // Registrar UN SOLO TransactionJournal (Salesforce gestiona las currencies internamente)
         await salesforceLoyalty.processTransaction(
           member.salesforceId,
           journalType,
           product.points,
-          'qualifying',
+          'qualifying', // Este parámetro ya no se usa, pero lo mantenemos por compatibilidad
           journalType,
           journalSubType,
           activityDate
         );
-        // Registrar non-qualifying points (Cashback)
-        await salesforceLoyalty.processTransaction(
-          member.salesforceId,
-          journalType,
-          product.points,
-          'nonQualifying',
-          journalType,
-          journalSubType,
-          activityDate
-        );
-        console.log(`✅ Accrual registrado en Salesforce (${journalType}/${journalSubType})`);
+        console.log(`✅ TransactionJournal registrado en Salesforce (${journalType}/${journalSubType})`);
 
         // Sincronizar puntos desde Salesforce después de registrar
         await salesforceLoyalty.syncMemberPoints(member, member.salesforceId);
@@ -142,7 +132,7 @@ router.post('/activity/:id', async (req, res) => {
     if (member.salesforceId && process.env.USE_SALESFORCE === 'true') {
       try {
         const activityDate = new Date().toISOString();
-        // Registrar qualifying points (Caixapoints)
+        // Registrar UN SOLO TransactionJournal (Salesforce gestiona las currencies internamente)
         await salesforceLoyalty.processTransaction(
           member.salesforceId,
           'Accrual',
@@ -152,17 +142,7 @@ router.post('/activity/:id', async (req, res) => {
           'Activity',
           activityDate
         );
-        // Registrar non-qualifying points (Cashback)
-        await salesforceLoyalty.processTransaction(
-          member.salesforceId,
-          'Accrual',
-          activity.points,
-          'nonQualifying',
-          'Accrual',
-          'Activity',
-          activityDate
-        );
-        console.log('✅ Accrual de actividad registrado en Salesforce');
+        console.log('✅ TransactionJournal de actividad registrado en Salesforce');
 
         // Sincronizar puntos desde Salesforce después de registrar
         await salesforceLoyalty.syncMemberPoints(member, member.salesforceId);
