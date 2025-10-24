@@ -56,27 +56,31 @@ router.post('/purchase/:id', async (req, res) => {
     if (member.salesforceId && process.env.USE_SALESFORCE === 'true') {
       try {
         const activityDate = new Date().toISOString();
+        // Usar journalType y journalSubType del catálogo
+        const journalType = product.journalType || 'Accrual';
+        const journalSubType = product.journalSubType || 'Purchase';
+
         // Registrar qualifying points (Caixapoints)
         await salesforceLoyalty.processTransaction(
           member.salesforceId,
-          'Accrual',
+          journalType,
           product.points,
           'qualifying',
-          'Accrual',
-          'Purchase',
+          journalType,
+          journalSubType,
           activityDate
         );
         // Registrar non-qualifying points (Cashback)
         await salesforceLoyalty.processTransaction(
           member.salesforceId,
-          'Accrual',
+          journalType,
           product.points,
           'nonQualifying',
-          'Accrual',
-          'Purchase',
+          journalType,
+          journalSubType,
           activityDate
         );
-        console.log('✅ Accrual registrado en Salesforce');
+        console.log(`✅ Accrual registrado en Salesforce (${journalType}/${journalSubType})`);
 
         // Sincronizar puntos desde Salesforce después de registrar
         await salesforceLoyalty.syncMemberPoints(member, member.salesforceId);

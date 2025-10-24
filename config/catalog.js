@@ -11,41 +11,48 @@ module.exports = {
       description: 'Envía dinero al instante con Bizum. Sin comisiones, 100% digital. Gana puntos por cada transacción.',
       category: 'digital_banking',
       isPremium: false,
-      digitalOnly: true
+      digitalOnly: true,
+      journalType: 'Accrual',
+      journalSubType: 'Bizum'
     },
     {
       id: 2,
-      name: 'Pago Contactless o Apple/Google Pay',
+      name: 'Contratación de Tarjeta',
       price: 25,
       points: 20,
       image: 'compra2.png',
-      description: 'Paga con tu móvil o tarjeta contactless. Rápido, seguro y sin contacto. Acumula puntos automáticamente.',
+      description: 'Contrata tu tarjeta de crédito 100% online. Rápido, seguro y sin papeleos. Acumula puntos automáticamente.',
       category: 'digital_banking',
       isPremium: false,
-      digitalOnly: true
+      digitalOnly: true,
+      journalType: 'Accrual',
+      journalSubType: 'Sign Credit Card'
     },
     {
       id: 3,
-      name: 'Inversión Automática en Fondos',
+      name: 'Redención de puntos en Facilitea',
       price: 100,
       points: 250,
       image: 'compra3.png',
-      description: 'Activa inversiones automáticas desde la app. Haz crecer tu dinero mientras duermes. Gran bonificación en puntos.',
-      category: 'investments',
-      isPremium: true,
-      premiumTrigger: 'Inversión Automática en Fondos',
-      digitalOnly: true
+      description: 'Canjea tus puntos por productos y servicios en Facilitea. Haz tu vida más fácil mientras usas tus puntos.',
+      category: 'redemption',
+      isPremium: false,
+      digitalOnly: true,
+      journalType: 'Redemption',
+      journalSubType: 'Purchase'
     },
     {
       id: 4,
-      name: 'Pago de Recibos desde la App',
+      name: 'Donación a Fundación Caixa',
       price: 50,
       points: 30,
       image: 'compra4.png',
-      description: 'Gestiona todos tus recibos desde la app móvil. Paga luz, agua, internet y gana puntos por cada uno.',
-      category: 'digital_banking',
+      description: 'Convierte tu operación en una donación solidaria a la Fundación "la Caixa". Haz el bien mientras acumulas puntos.',
+      category: 'donation',
       isPremium: false,
-      digitalOnly: true
+      digitalOnly: true,
+      journalType: 'Redemption',
+      journalSubType: 'Donation'
     },
     {
       id: 5,
@@ -56,7 +63,9 @@ module.exports = {
       description: 'Crea tarjetas virtuales temporales para compras online ultra seguras. Máxima protección + Caixapoints.',
       category: 'digital_banking',
       isPremium: false,
-      digitalOnly: true
+      digitalOnly: true,
+      journalType: 'Accrual',
+      journalSubType: 'Online purchase'
     },
     {
       id: 6,
@@ -67,7 +76,9 @@ module.exports = {
       description: 'Protege a los tuyos con un seguro de vida 100% digital. Contratación online en minutos + gran bonificación en Caixapoints.',
       category: 'insurance',
       isPremium: false,
-      digitalOnly: true
+      digitalOnly: true,
+      journalType: 'Accrual',
+      journalSubType: 'Life Insurance'
     }
   ],
 

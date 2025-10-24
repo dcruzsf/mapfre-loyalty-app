@@ -10,16 +10,16 @@ class CatalogTranslations {
             description: 'Envía dinero al instante con Bizum. Sin comisiones, 100% digital. Gana Caixapoints por cada transacción.'
           },
           2: {
-            name: 'Pago Contactless o Apple/Google Pay',
-            description: 'Paga con tu móvil o tarjeta contactless. Rápido, seguro y sin contacto. Acumula Caixapoints automáticamente.'
+            name: 'Contratación de Tarjeta',
+            description: 'Contrata tu tarjeta de crédito 100% online. Rápido, seguro y sin papeleos. Acumula Caixapoints automáticamente.'
           },
           3: {
-            name: 'Inversión Automática en Fondos',
-            description: 'Activa inversiones automáticas desde la app. Haz crecer tu dinero mientras duermes. Gran bonificación en Caixapoints.'
+            name: 'Redención de puntos en Facilitea',
+            description: 'Canjea tus puntos por productos y servicios en Facilitea. Haz tu vida más fácil mientras usas tus puntos.'
           },
           4: {
-            name: 'Pago de Recibos desde la App',
-            description: 'Gestiona todos tus recibos desde la app móvil. Paga luz, agua, internet y gana Caixapoints por cada uno.'
+            name: 'Donación a Fundación Caixa',
+            description: 'Convierte tu operación en una donación solidaria a la Fundación "la Caixa". Haz el bien mientras acumulas Caixapoints.'
           },
           5: {
             name: 'Compra Online con Tarjeta Virtual',
@@ -161,16 +161,16 @@ class CatalogTranslations {
             description: 'Send money instantly with Bizum. No fees, 100% digital. Earn Caixapoints with every transaction.'
           },
           2: {
-            name: 'Contactless or Apple/Google Pay',
-            description: 'Pay with your phone or contactless card. Fast, secure and contactless. Accumulate Caixapoints automatically.'
+            name: 'Credit Card Sign Up',
+            description: 'Sign up for your credit card 100% online. Fast, secure and paperless. Accumulate Caixapoints automatically.'
           },
           3: {
-            name: 'Automatic Fund Investment',
-            description: 'Activate automatic investments from the app. Grow your money while you sleep. Great Caixapoints bonus.'
+            name: 'Facilitea Points Redemption',
+            description: 'Redeem your points for products and services on Facilitea. Make your life easier while using your points.'
           },
           4: {
-            name: 'Bill Payment from App',
-            description: 'Manage all your bills from the mobile app. Pay electricity, water, internet and earn Caixapoints for each one.'
+            name: 'Donation to Caixa Foundation',
+            description: 'Turn your transaction into a charitable donation to "la Caixa" Foundation. Do good while earning Caixapoints.'
           },
           5: {
             name: 'Online Purchase with Virtual Card',
