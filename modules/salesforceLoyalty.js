@@ -189,7 +189,8 @@ class SalesforceLoyalty {
       console.log('💰 Obteniendo currencies del miembro desde Salesforce...');
 
       // Query SOQL para obtener LoyaltyMemberCurrency
-      const query = `SELECT Id, LoyaltyCurrency.Name, PointsBalance FROM LoyaltyMemberCurrency WHERE LoyaltyProgramMemberId = '${loyaltyProgramMemberId}'`;
+      // El campo Name contiene el nombre de la currency (ej: "Caixapoints", "Cashback")
+      const query = `SELECT Id, Name, PointsBalance FROM LoyaltyMemberCurrency WHERE LoyaltyMemberId = '${loyaltyProgramMemberId}'`;
       const url = `${instanceUrl}/services/data/${this.apiVersion}/query?q=${encodeURIComponent(query)}`;
 
       console.log(`🔗 Query: ${query}`);
@@ -213,7 +214,7 @@ class SalesforceLoyalty {
       const nonQualifyingName = process.env.SF_CURRENCY_NONQUALIFYING_NAME || 'Cashback';
 
       currencies.forEach(currency => {
-        const currencyName = currency.LoyaltyCurrency?.Name;
+        const currencyName = currency.Name; // El campo Name del LoyaltyMemberCurrency
         if (currencyName === qualifyingName) {
           result.qualifying = currency.PointsBalance || 0;
         } else if (currencyName === nonQualifyingName) {
