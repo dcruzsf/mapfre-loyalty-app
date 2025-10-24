@@ -274,41 +274,43 @@ class SalesforceLoyalty {
   }
 
   /**
-   * Obtiene las promociones del miembro (incluye cumulative promotions)
+   * Obtiene las promociones enrolladas del miembro usando program-processes
    * @param {string} salesforceMemberId - ID del LoyaltyProgramMember en Salesforce
-   * @returns {Promise<Array>} - Array de promociones con su estado y progreso
+   * @returns {Promise<Array>} - Array de promociones enrolladas
    */
-  async getMemberPromotions(salesforceMemberId) {
+  async getEnrolledPromotions(salesforceMemberId) {
     try {
       const instanceUrl = await salesforceAuth.getInstanceUrl();
       const encodedProgramName = encodeURIComponent(this.loyaltyProgramName);
 
-      // La API usa el Salesforce Member ID, NO el membershipNumber
-      const url = `${instanceUrl}/services/data/${this.apiVersion}/connect/loyalty/programs/${encodedProgramName}/members/${salesforceMemberId}/member-promotions`;
+      // API para obtener promociones del miembro usando program-processes
+      const url = `${instanceUrl}/services/data/${this.apiVersion}/connect/loyalty/programs/${encodedProgramName}/program-processes/View%20Promotions`;
 
-      console.log('🎯 Obteniendo promociones del miembro...');
+      const requestBody = {
+        processParameters: [
+          {
+            MemberId: salesforceMemberId
+          }
+        ]
+      };
+
+      console.log('🎯 Obteniendo promociones enrolladas del miembro...');
       console.log(`🔗 URL: ${url}`);
-      console.log(`🆔 Salesforce Member ID: ${salesforceMemberId}`);
+      console.log(`📋 Request body:`, JSON.stringify(requestBody, null, 2));
 
       const headers = await this.getHeaders();
 
-      const response = await axios.get(url, { headers, timeout: 15000 });
+      const response = await axios.post(url, requestBody, { headers, timeout: 15000 });
 
-      console.log('✅ Promociones obtenidas correctamente');
-      console.log(`📊 Total promociones: ${response.data.memberPromotions?.length || 0}`);
+      console.log('✅ Promociones enrolladas obtenidas correctamente');
 
-      // Filtrar solo las promociones de tipo cumulative
-      const allPromotions = response.data.memberPromotions || [];
-      const cumulativePromotions = allPromotions.filter(promo =>
-        promo.promotionType === 'Cumulative'
-      );
+      const promotions = response.data.outputParameters?.simpleOutputParameters?.Promotions || [];
+      console.log(`📊 Total promociones enrolladas: ${promotions.length}`);
 
-      console.log(`📊 Promociones cumulativas: ${cumulativePromotions.length}`);
-
-      return cumulativePromotions;
+      return promotions;
 
     } catch (error) {
-      console.error('❌ Error obteniendo promociones:', error.message);
+      console.error('❌ Error obteniendo promociones enrolladas:', error.message);
       if (error.response) {
         console.error('📋 Detalles del error:');
         console.error('- Status:', error.response.status);
@@ -317,6 +319,45 @@ class SalesforceLoyalty {
 
       // Si falla, devolver array vacío para no bloquear la UI
       return [];
+    }
+  }
+
+  /**
+   * Obtiene el engagement trail de una promoción específica
+   * @param {string} membershipNumber - MembershipNumber del miembro
+   * @param {string} promotionId - ID de la promoción
+   * @returns {Promise<Object|null>} - Engagement trail con milestones y progreso
+   */
+  async getEngagementTrail(membershipNumber, promotionId) {
+    try {
+      const instanceUrl = await salesforceAuth.getInstanceUrl();
+      const encodedProgramName = encodeURIComponent(this.loyaltyProgramName);
+      const encodedMembershipNumber = encodeURIComponent(membershipNumber);
+
+      // API para obtener engagement trail con promotionId como query param
+      const url = `${instanceUrl}/services/data/${this.apiVersion}/loyalty/programs/${encodedProgramName}/members/${encodedMembershipNumber}/engagement-trail?promotionId=${promotionId}`;
+
+      console.log('🎯 Obteniendo engagement trail...');
+      console.log(`🔗 URL: ${url}`);
+
+      const headers = await this.getHeaders();
+
+      const response = await axios.get(url, { headers, timeout: 15000 });
+
+      console.log('✅ Engagement trail obtenido correctamente');
+
+      return response.data;
+
+    } catch (error) {
+      console.error(`❌ Error obteniendo engagement trail para promoción ${promotionId}:`, error.message);
+      if (error.response) {
+        console.error('📋 Detalles del error:');
+        console.error('- Status:', error.response.status);
+        console.error('- Data:', JSON.stringify(error.response.data, null, 2));
+      }
+
+      // Si falla, devolver null
+      return null;
     }
   }
 
