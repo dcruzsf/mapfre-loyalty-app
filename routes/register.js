@@ -102,6 +102,17 @@ router.post('/', redirectIfAuthenticated, async (req, res) => {
         console.warn('⚠️ No se pudieron sincronizar currencies después del enrollment:', syncError.message);
         // No bloquear el flujo, continuar con valores por defecto
       }
+
+      // Enrollar en la promoción CaixaBank Hero (PHASE 3)
+      if (process.env.SF_PROMOTION_ID) {
+        try {
+          await salesforceLoyalty.enrollMemberInPromotion(sfMemberId, process.env.SF_PROMOTION_ID);
+          console.log('✅ Miembro enrollado en promoción CaixaBank Hero');
+        } catch (promoError) {
+          console.warn('⚠️ No se pudo enrollar en la promoción:', promoError.message);
+          // No bloquear el flujo
+        }
+      }
     }
 
     // Guardar miembro localmente

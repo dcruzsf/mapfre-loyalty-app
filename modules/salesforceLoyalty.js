@@ -320,6 +320,50 @@ class SalesforceLoyalty {
   }
 
   /**
+   * Enrolla a un miembro en una promoción
+   * @param {string} salesforceMemberId - ID del LoyaltyProgramMember
+   * @param {string} promotionId - ID de la promoción
+   * @returns {Promise<Object>} - Resultado del enrollment
+   */
+  async enrollMemberInPromotion(salesforceMemberId, promotionId) {
+    try {
+      const instanceUrl = await salesforceAuth.getInstanceUrl();
+      const headers = await this.getHeaders();
+
+      // Endpoint para enrollar en promoción
+      const url = `${instanceUrl}/services/data/${this.apiVersion}/sobjects/PromotionEnrollment`;
+
+      const enrollmentData = {
+        LoyaltyProgramMemberId: salesforceMemberId,
+        PromotionId: promotionId,
+        EnrollmentStatus: 'Enrolled'
+      };
+
+      console.log('🎁 Enrollando miembro en promoción...');
+      console.log(`🔗 URL: ${url}`);
+      console.log(`📋 Data:`, JSON.stringify(enrollmentData, null, 2));
+
+      const response = await axios.post(url, enrollmentData, { headers, timeout: 15000 });
+
+      console.log('✅ Miembro enrollado en promoción correctamente');
+      console.log(`🆔 Enrollment ID: ${response.data.id}`);
+
+      return response.data;
+
+    } catch (error) {
+      console.error('❌ Error enrollando en promoción:', error.message);
+      if (error.response) {
+        console.error('📋 Detalles del error:');
+        console.error('- Status:', error.response.status);
+        console.error('- Data:', JSON.stringify(error.response.data, null, 2));
+      }
+
+      // No bloquear el flujo si falla el enrollment
+      return null;
+    }
+  }
+
+  /**
    * Sincroniza los puntos de un miembro desde Salesforce hacia la app local
    * @param {Object} member - Objeto del miembro local
    * @param {string} salesforceMemberId - ID del miembro en Salesforce
