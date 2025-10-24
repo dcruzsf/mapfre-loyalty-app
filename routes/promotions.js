@@ -7,27 +7,27 @@ const salesforceLoyalty = require('../modules/salesforceLoyalty');
 // Aplicar middleware de autenticación a todas las rutas
 router.use(requireAuth);
 
-// Mostrar página de promociones (engagement trails)
+// Mostrar página de promociones (cumulative promotions)
 router.get('/', async (req, res) => {
   const member = req.member; // Viene del middleware requireAuth
   const locale = req.locale || 'es';
 
-  let engagementTrails = [];
+  let promotions = [];
   let errorMessage = null;
 
-  // Obtener engagement trails desde Salesforce si está disponible
+  // Obtener promociones desde Salesforce si está disponible
   if (member.salesforceId && process.env.USE_SALESFORCE === 'true') {
     try {
       // Primero obtener el membershipNumber
       const membershipNumber = await salesforceLoyalty.getMembershipNumber(member.salesforceId);
       console.log(`📝 MembershipNumber obtenido: ${membershipNumber}`);
 
-      // Luego obtener los engagement trails
-      engagementTrails = await salesforceLoyalty.getMemberEngagementTrail(membershipNumber);
-      console.log(`📊 Total trails obtenidos: ${engagementTrails.length}`);
+      // Luego obtener las promociones (filtradas por tipo cumulative)
+      promotions = await salesforceLoyalty.getMemberPromotions(membershipNumber);
+      console.log(`📊 Total promociones cumulativas: ${promotions.length}`);
 
     } catch (error) {
-      console.error('⚠️ Error obteniendo engagement trails:', error.message);
+      console.error('⚠️ Error obteniendo promociones:', error.message);
       errorMessage = 'No se pudieron cargar las promociones. Inténtalo más tarde.';
     }
   } else {
@@ -37,7 +37,7 @@ router.get('/', async (req, res) => {
 
   res.render('promotions', {
     member,
-    engagementTrails,
+    promotions,
     errorMessage,
     locale
   });

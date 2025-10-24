@@ -274,32 +274,40 @@ class SalesforceLoyalty {
   }
 
   /**
-   * Obtiene las promociones engagement trail (cumulative) del miembro
+   * Obtiene las promociones del miembro (incluye cumulative promotions)
    * @param {string} membershipNumber - MembershipNumber del miembro
-   * @returns {Promise<Array>} - Array de engagement trails con milestones y progreso
+   * @returns {Promise<Array>} - Array de promociones con su estado y progreso
    */
-  async getMemberEngagementTrail(membershipNumber) {
+  async getMemberPromotions(membershipNumber) {
     try {
       const instanceUrl = await salesforceAuth.getInstanceUrl();
       const encodedProgramName = encodeURIComponent(this.loyaltyProgramName);
       const encodedMembershipNumber = encodeURIComponent(membershipNumber);
 
-      const url = `${instanceUrl}/services/data/${this.apiVersion}/connect/loyalty/programs/${encodedProgramName}/members/${encodedMembershipNumber}/member-engagement-trail`;
+      const url = `${instanceUrl}/services/data/${this.apiVersion}/connect/loyalty/programs/${encodedProgramName}/members/${encodedMembershipNumber}/member-promotions`;
 
-      console.log('🎯 Obteniendo engagement trails del miembro...');
+      console.log('🎯 Obteniendo promociones del miembro...');
       console.log(`🔗 URL: ${url}`);
 
       const headers = await this.getHeaders();
 
       const response = await axios.get(url, { headers, timeout: 15000 });
 
-      console.log('✅ Engagement trails obtenidos correctamente');
-      console.log(`📊 Trails encontrados: ${response.data.outputParameters?.engagementTrails?.length || 0}`);
+      console.log('✅ Promociones obtenidas correctamente');
+      console.log(`📊 Total promociones: ${response.data.memberPromotions?.length || 0}`);
 
-      return response.data.outputParameters?.engagementTrails || [];
+      // Filtrar solo las promociones de tipo cumulative
+      const allPromotions = response.data.memberPromotions || [];
+      const cumulativePromotions = allPromotions.filter(promo =>
+        promo.promotionType === 'Cumulative'
+      );
+
+      console.log(`📊 Promociones cumulativas: ${cumulativePromotions.length}`);
+
+      return cumulativePromotions;
 
     } catch (error) {
-      console.error('❌ Error obteniendo engagement trails:', error.message);
+      console.error('❌ Error obteniendo promociones:', error.message);
       if (error.response) {
         console.error('📋 Detalles del error:');
         console.error('- Status:', error.response.status);

@@ -42,32 +42,43 @@
   </div>
 <% } %>
 
-<!-- Mostrar Engagement Trails -->
-<% if (engagementTrails && engagementTrails.length > 0) { %>
-  <% engagementTrails.forEach(function(trail) { %>
+<!-- Mostrar Promociones -->
+<% if (promotions && promotions.length > 0) { %>
+  <% promotions.forEach(function(promo) { %>
     <div class="promotion-trail-card mt-4">
       <div class="promotion-trail-header">
         <h2 class="promotion-trail-title">
-          <i class="fas fa-trophy"></i> <%= trail.promotionName %>
+          <i class="fas fa-trophy"></i> <%= promo.promotionName %>
         </h2>
-        <% if (trail.trailRewardLimit && trail.trailRewardLimit > 0) { %>
+        <% if (promo.enrollmentEndDate) { %>
           <div class="promotion-trail-limit">
-            <i class="fas fa-clock"></i>
-            <%= locale === 'es' ? 'Límite' : 'Limit' %>: <%= trail.trailRewardLimit %>
-            <%= locale === 'es' ? 'vez' : 'time' %><%= trail.trailRewardLimit > 1 ? (locale === 'es' ? 'es' : 's') : '' %>
+            <i class="fas fa-calendar-alt"></i>
+            <%= locale === 'es' ? 'Válida hasta' : 'Valid until' %>: <%= new Date(promo.enrollmentEndDate).toLocaleDateString(locale) %>
           </div>
         <% } %>
       </div>
 
-      <!-- Trail Progress Stepper -->
+      <!-- Promotion Status -->
+      <% if (promo.promotionEnrollmentStatus) { %>
+        <div class="promotion-status mb-3">
+          <span class="badge badge-<%= promo.promotionEnrollmentStatus === 'Enrolled' ? 'success' : 'secondary' %>">
+            <%= promo.promotionEnrollmentStatus %>
+          </span>
+        </div>
+      <% } %>
+
+      <!-- Promotion Progress Stepper -->
       <div class="promotion-stepper">
-        <% if (trail.milestones && trail.milestones.length > 0) { %>
-          <% trail.milestones.forEach(function(milestone, index) { %>
+        <% if (promo.segments && promo.segments.length > 0) { %>
+          <% promo.segments.forEach(function(segment, index) { %>
             <%
-              const isCompleted = milestone.currentValue >= milestone.targetValue;
-              const isCurrent = !isCompleted && milestone.currentValue > 0;
-              const progress = milestone.targetValue > 0
-                ? Math.min((milestone.currentValue / milestone.targetValue) * 100, 100)
+              // Segments tienen currentCount y targetCount
+              const currentValue = segment.currentCount || 0;
+              const targetValue = segment.targetCount || 1;
+              const isCompleted = currentValue >= targetValue;
+              const isCurrent = !isCompleted && currentValue > 0;
+              const progress = targetValue > 0
+                ? Math.min((currentValue / targetValue) * 100, 100)
                 : 0;
             %>
 
@@ -83,35 +94,35 @@
 
               <!-- Step Content -->
               <div class="step-content">
-                <div class="step-title"><%= milestone.milestoneName %></div>
+                <div class="step-title"><%= segment.segmentName || segment.name || ('Paso ' + (index + 1)) %></div>
                 <div class="step-progress-bar">
                   <div class="step-progress-fill" style="width: <%= progress %>%"></div>
                 </div>
                 <div class="step-values">
-                  <span class="current-value"><%= Math.round(milestone.currentValue) %></span> /
-                  <span class="target-value"><%= Math.round(milestone.targetValue) %></span>
+                  <span class="current-value"><%= Math.round(currentValue) %></span> /
+                  <span class="target-value"><%= Math.round(targetValue) %></span>
                 </div>
               </div>
 
               <!-- Connector Line (not for last item) -->
-              <% if (index < trail.milestones.length - 1) { %>
+              <% if (index < promo.segments.length - 1) { %>
                 <div class="step-connector <%= isCompleted ? 'completed' : '' %>"></div>
               <% } %>
             </div>
           <% }); %>
 
-          <!-- Trail Rewards -->
-          <% if (trail.rewards && trail.rewards.length > 0) { %>
+          <!-- Promotion Rewards -->
+          <% if (promo.promotionRewards && promo.promotionRewards.length > 0) { %>
             <div class="promotion-rewards mt-4">
               <h4 class="rewards-title">
                 <i class="fas fa-gift"></i>
                 <%= locale === 'es' ? 'Recompensas al completar' : 'Rewards upon completion' %>
               </h4>
               <div class="rewards-list">
-                <% trail.rewards.forEach(function(reward) { %>
+                <% promo.promotionRewards.forEach(function(reward) { %>
                   <div class="reward-badge">
                     <i class="fas fa-medal"></i>
-                    <span><%= reward.rewardDescription || reward.rewardName %></span>
+                    <span><%= reward.rewardDefinitionName || reward.name || 'Recompensa' %></span>
                   </div>
                 <% }); %>
               </div>
