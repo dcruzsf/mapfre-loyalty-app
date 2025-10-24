@@ -275,19 +275,20 @@ class SalesforceLoyalty {
 
   /**
    * Obtiene las promociones del miembro (incluye cumulative promotions)
-   * @param {string} membershipNumber - MembershipNumber del miembro
+   * @param {string} salesforceMemberId - ID del LoyaltyProgramMember en Salesforce
    * @returns {Promise<Array>} - Array de promociones con su estado y progreso
    */
-  async getMemberPromotions(membershipNumber) {
+  async getMemberPromotions(salesforceMemberId) {
     try {
       const instanceUrl = await salesforceAuth.getInstanceUrl();
       const encodedProgramName = encodeURIComponent(this.loyaltyProgramName);
-      const encodedMembershipNumber = encodeURIComponent(membershipNumber);
 
-      const url = `${instanceUrl}/services/data/${this.apiVersion}/connect/loyalty/programs/${encodedProgramName}/members/${encodedMembershipNumber}/member-promotions`;
+      // La API usa el Salesforce Member ID, NO el membershipNumber
+      const url = `${instanceUrl}/services/data/${this.apiVersion}/connect/loyalty/programs/${encodedProgramName}/members/${salesforceMemberId}/member-promotions`;
 
       console.log('🎯 Obteniendo promociones del miembro...');
       console.log(`🔗 URL: ${url}`);
+      console.log(`🆔 Salesforce Member ID: ${salesforceMemberId}`);
 
       const headers = await this.getHeaders();
 

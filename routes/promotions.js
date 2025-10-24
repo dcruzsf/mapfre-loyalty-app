@@ -18,12 +18,9 @@ router.get('/', async (req, res) => {
   // Obtener promociones desde Salesforce si está disponible
   if (member.salesforceId && process.env.USE_SALESFORCE === 'true') {
     try {
-      // Primero obtener el membershipNumber
-      const membershipNumber = await salesforceLoyalty.getMembershipNumber(member.salesforceId);
-      console.log(`📝 MembershipNumber obtenido: ${membershipNumber}`);
-
-      // Luego obtener las promociones (filtradas por tipo cumulative)
-      promotions = await salesforceLoyalty.getMemberPromotions(membershipNumber);
+      // Obtener las promociones usando el Salesforce Member ID directamente
+      console.log(`📝 Salesforce Member ID: ${member.salesforceId}`);
+      promotions = await salesforceLoyalty.getMemberPromotions(member.salesforceId);
       console.log(`📊 Total promociones cumulativas: ${promotions.length}`);
 
     } catch (error) {
