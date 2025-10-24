@@ -17,7 +17,7 @@ const indexRoutes = require('./routes/index');
 const registerRoutes = require('./routes/register');
 const accrualRoutes = require('./routes/accrual');
 const redemptionRoutes = require('./routes/redemption');
-const achievementsRoutes = require('./routes/achievements');
+const promotionsRoutes = require('./routes/promotions');
 const leaderboardRoutes = require('./routes/leaderboard');
 
 // Inicializar app
@@ -132,7 +132,7 @@ app.use('/', indexRoutes);
 app.use('/register', registerRoutes);
 app.use('/accrual', accrualRoutes);
 app.use('/redemption', redemptionRoutes);
-app.use('/achievements', achievementsRoutes);
+app.use('/promotions', promotionsRoutes);
 app.use('/leaderboard', leaderboardRoutes);
 
 // Ruta para cerrar sesión

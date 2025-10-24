@@ -1,0 +1,380 @@
+<%- include('partials/header', {currentPage: 'promotions'}) %>
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/"><%= t('navigation.home') %></a></li>
+    <li class="breadcrumb-item active"><%= t('navigation.promotions') %></li>
+  </ol>
+</nav>
+
+<div class="page-header-space">
+  <h1 class="page-title"><%= t('pages.promotions.title') %></h1>
+  <p class="page-subtitle"><%= t('pages.promotions.subtitle') %></p>
+</div>
+
+<!-- Resumen de member -->
+<div class="member-summary">
+  <div class="member-stat">
+    <div class="member-stat-label"><%= t('member.name') %></div>
+    <div class="member-stat-value"><%= member.name %></div>
+  </div>
+
+  <div class="member-stat">
+    <div class="member-stat-label"><%= t('member.levelPoints') %></div>
+    <div class="member-stat-value"><%= member.levelPoints %></div>
+  </div>
+
+  <div class="member-stat">
+    <div class="member-stat-label"><%= t('member.rewardPoints') %></div>
+    <div class="member-stat-value"><%= member.rewardPoints %></div>
+  </div>
+
+  <div class="member-stat">
+    <div class="member-stat-label"><%= t('member.tier') %></div>
+    <div class="member-stat-value tier-<%= member.tier.toLowerCase() %>"><%= t('tiers.' + member.tier.toLowerCase()) %></div>
+  </div>
+</div>
+
+<!-- Mensaje de error si hay -->
+<% if (errorMessage) { %>
+  <div class="alert alert-info mt-4">
+    <i class="fas fa-info-circle"></i> <%= errorMessage %>
+  </div>
+<% } %>
+
+<!-- Mostrar Engagement Trails -->
+<% if (engagementTrails && engagementTrails.length > 0) { %>
+  <% engagementTrails.forEach(function(trail) { %>
+    <div class="promotion-trail-card mt-4">
+      <div class="promotion-trail-header">
+        <h2 class="promotion-trail-title">
+          <i class="fas fa-trophy"></i> <%= trail.promotionName %>
+        </h2>
+        <% if (trail.trailRewardLimit && trail.trailRewardLimit > 0) { %>
+          <div class="promotion-trail-limit">
+            <i class="fas fa-clock"></i>
+            <%= locale === 'es' ? 'Límite' : 'Limit' %>: <%= trail.trailRewardLimit %>
+            <%= locale === 'es' ? 'vez' : 'time' %><%= trail.trailRewardLimit > 1 ? (locale === 'es' ? 'es' : 's') : '' %>
+          </div>
+        <% } %>
+      </div>
+
+      <!-- Trail Progress Stepper -->
+      <div class="promotion-stepper">
+        <% if (trail.milestones && trail.milestones.length > 0) { %>
+          <% trail.milestones.forEach(function(milestone, index) { %>
+            <%
+              const isCompleted = milestone.currentValue >= milestone.targetValue;
+              const isCurrent = !isCompleted && milestone.currentValue > 0;
+              const progress = milestone.targetValue > 0
+                ? Math.min((milestone.currentValue / milestone.targetValue) * 100, 100)
+                : 0;
+            %>
+
+            <div class="promotion-step <%= isCompleted ? 'completed' : '' %> <%= isCurrent ? 'current' : '' %>">
+              <!-- Step Circle -->
+              <div class="step-circle">
+                <% if (isCompleted) { %>
+                  <i class="fas fa-check"></i>
+                <% } else { %>
+                  <span><%= index + 1 %></span>
+                <% } %>
+              </div>
+
+              <!-- Step Content -->
+              <div class="step-content">
+                <div class="step-title"><%= milestone.milestoneName %></div>
+                <div class="step-progress-bar">
+                  <div class="step-progress-fill" style="width: <%= progress %>%"></div>
+                </div>
+                <div class="step-values">
+                  <span class="current-value"><%= Math.round(milestone.currentValue) %></span> /
+                  <span class="target-value"><%= Math.round(milestone.targetValue) %></span>
+                </div>
+              </div>
+
+              <!-- Connector Line (not for last item) -->
+              <% if (index < trail.milestones.length - 1) { %>
+                <div class="step-connector <%= isCompleted ? 'completed' : '' %>"></div>
+              <% } %>
+            </div>
+          <% }); %>
+
+          <!-- Trail Rewards -->
+          <% if (trail.rewards && trail.rewards.length > 0) { %>
+            <div class="promotion-rewards mt-4">
+              <h4 class="rewards-title">
+                <i class="fas fa-gift"></i>
+                <%= locale === 'es' ? 'Recompensas al completar' : 'Rewards upon completion' %>
+              </h4>
+              <div class="rewards-list">
+                <% trail.rewards.forEach(function(reward) { %>
+                  <div class="reward-badge">
+                    <i class="fas fa-medal"></i>
+                    <span><%= reward.rewardDescription || reward.rewardName %></span>
+                  </div>
+                <% }); %>
+              </div>
+            </div>
+          <% } %>
+        <% } else { %>
+          <div class="alert alert-secondary">
+            <%= locale === 'es' ? 'No hay milestones definidos para esta promoción.' : 'No milestones defined for this promotion.' %>
+          </div>
+        <% } %>
+      </div>
+    </div>
+  <% }); %>
+<% } else if (!errorMessage) { %>
+  <div class="alert alert-info mt-4">
+    <i class="fas fa-info-circle"></i>
+    <%= locale === 'es' ? 'No hay promociones activas en este momento.' : 'No active promotions at this time.' %>
+  </div>
+<% } %>
+
+<!-- Botón de recarga -->
+<div class="text-center mt-5">
+  <a href="/promotions" class="btn btn-outline-primary">
+    <i class="fas fa-sync-alt"></i> <%= locale === 'es' ? 'Actualizar promociones' : 'Refresh promotions' %>
+  </a>
+</div>
+
+<style>
+/* Promotion Trail Card */
+.promotion-trail-card {
+  background: white;
+  border-radius: 20px;
+  padding: 30px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  margin-bottom: 30px;
+}
+
+.promotion-trail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.promotion-trail-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin: 0;
+}
+
+.promotion-trail-title i {
+  color: #ffd700;
+  margin-right: 10px;
+}
+
+.promotion-trail-limit {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+/* Stepper Container */
+.promotion-stepper {
+  padding: 20px 0;
+}
+
+/* Step */
+.promotion-step {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 40px;
+  opacity: 0.6;
+  transition: all 0.3s ease;
+}
+
+.promotion-step.completed,
+.promotion-step.current {
+  opacity: 1;
+}
+
+/* Step Circle */
+.step-circle {
+  flex-shrink: 0;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: #e0e0e0;
+  border: 3px solid #e0e0e0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #999;
+  z-index: 2;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.promotion-step.current .step-circle {
+  background: white;
+  border-color: #3498db;
+  color: #3498db;
+  box-shadow: 0 0 0 4px rgba(52, 152, 219, 0.2);
+  animation: pulse 2s infinite;
+}
+
+.promotion-step.completed .step-circle {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-color: #667eea;
+  color: white;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 4px rgba(52, 152, 219, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(52, 152, 219, 0.1);
+  }
+}
+
+/* Step Content */
+.step-content {
+  flex: 1;
+  margin-left: 20px;
+  margin-top: 5px;
+}
+
+.step-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 10px;
+}
+
+.promotion-step.completed .step-title {
+  color: #667eea;
+}
+
+/* Step Progress Bar */
+.step-progress-bar {
+  width: 100%;
+  height: 8px;
+  background: #f0f0f0;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.step-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #3498db 0%, #2ecc71 100%);
+  border-radius: 10px;
+  transition: width 0.5s ease;
+}
+
+.promotion-step.completed .step-progress-fill {
+  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+}
+
+/* Step Values */
+.step-values {
+  font-size: 0.95rem;
+  color: #7f8c8d;
+}
+
+.current-value {
+  font-weight: 700;
+  color: #3498db;
+}
+
+.promotion-step.completed .current-value {
+  color: #667eea;
+}
+
+/* Step Connector */
+.step-connector {
+  position: absolute;
+  left: 24px;
+  top: 50px;
+  width: 3px;
+  height: calc(100% + 40px);
+  background: #e0e0e0;
+  z-index: 1;
+}
+
+.step-connector.completed {
+  background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+}
+
+/* Rewards Section */
+.promotion-rewards {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+  padding: 20px;
+  border-radius: 15px;
+  margin-top: 20px;
+}
+
+.rewards-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 15px;
+}
+
+.rewards-title i {
+  color: #667eea;
+  margin-right: 8px;
+}
+
+.rewards-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.reward-badge {
+  background: white;
+  color: #667eea;
+  padding: 10px 20px;
+  border-radius: 25px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.reward-badge i {
+  color: #ffd700;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .promotion-trail-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+
+  .step-content {
+    margin-left: 15px;
+  }
+
+  .step-circle {
+    width: 40px;
+    height: 40px;
+    font-size: 1rem;
+  }
+
+  .step-connector {
+    left: 19px;
+    top: 40px;
+  }
+}
+</style>
+
+<%- include('partials/footer') %>

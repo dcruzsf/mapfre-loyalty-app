@@ -4,7 +4,7 @@
     "register": "Get Started",
     "earnPoints": "Earn Points",
     "redeemPoints": "Redeem Points",
-    "achievements": "Achievements",
+    "promotions": "Promotions",
     "leaderboard": "Ranking"
   },
   "common": {
@@ -91,22 +91,10 @@
         "pointsRedeemed": "points redeemed"
       }
     },
-    "achievements": {
-      "title": "Achievements",
-      "description": "Your earned achievements and badges",
-      "breadcrumb": "Achievements",
-      "earnedCount": "achievements earned",
-      "totalCount": "total achievements",
-      "categories": {
-        "all": "All",
-        "earned": "Earned",
-        "pending": "Pending"
-      },
-      "status": {
-        "earned": "EARNED!",
-        "pending": "Pending",
-        "progress": "Progress"
-      }
+    "promotions": {
+      "title": "Active Promotions",
+      "subtitle": "Discover your cumulative promotions and track your progress in each one",
+      "breadcrumb": "Promotions"
     },
     "leaderboard": {
       "title": "Leaderboard",

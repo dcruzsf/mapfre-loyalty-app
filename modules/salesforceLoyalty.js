@@ -248,6 +248,70 @@ class SalesforceLoyalty {
   }
 
   /**
+   * Obtiene el membershipNumber de un LoyaltyProgramMember
+   * @param {string} salesforceMemberId - ID del miembro en Salesforce
+   * @returns {Promise<string>} - MembershipNumber del miembro
+   */
+  async getMembershipNumber(salesforceMemberId) {
+    try {
+      const instanceUrl = await salesforceAuth.getInstanceUrl();
+      const headers = await this.getHeaders();
+
+      const query = `SELECT MembershipNumber FROM LoyaltyProgramMember WHERE Id = '${salesforceMemberId}' LIMIT 1`;
+      const url = `${instanceUrl}/services/data/${this.apiVersion}/query?q=${encodeURIComponent(query)}`;
+
+      const response = await axios.get(url, { headers, timeout: 10000 });
+
+      if (response.data.records && response.data.records.length > 0) {
+        return response.data.records[0].MembershipNumber;
+      }
+
+      throw new Error('No se encontró MembershipNumber para este miembro');
+    } catch (error) {
+      console.error('❌ Error obteniendo MembershipNumber:', error.message);
+      throw error;
+    }
+  }
+
+  /**
+   * Obtiene las promociones engagement trail (cumulative) del miembro
+   * @param {string} membershipNumber - MembershipNumber del miembro
+   * @returns {Promise<Array>} - Array de engagement trails con milestones y progreso
+   */
+  async getMemberEngagementTrail(membershipNumber) {
+    try {
+      const instanceUrl = await salesforceAuth.getInstanceUrl();
+      const encodedProgramName = encodeURIComponent(this.loyaltyProgramName);
+      const encodedMembershipNumber = encodeURIComponent(membershipNumber);
+
+      const url = `${instanceUrl}/services/data/${this.apiVersion}/connect/loyalty/programs/${encodedProgramName}/members/${encodedMembershipNumber}/member-engagement-trail`;
+
+      console.log('🎯 Obteniendo engagement trails del miembro...');
+      console.log(`🔗 URL: ${url}`);
+
+      const headers = await this.getHeaders();
+
+      const response = await axios.get(url, { headers, timeout: 15000 });
+
+      console.log('✅ Engagement trails obtenidos correctamente');
+      console.log(`📊 Trails encontrados: ${response.data.outputParameters?.engagementTrails?.length || 0}`);
+
+      return response.data.outputParameters?.engagementTrails || [];
+
+    } catch (error) {
+      console.error('❌ Error obteniendo engagement trails:', error.message);
+      if (error.response) {
+        console.error('📋 Detalles del error:');
+        console.error('- Status:', error.response.status);
+        console.error('- Data:', JSON.stringify(error.response.data, null, 2));
+      }
+
+      // Si falla, devolver array vacío para no bloquear la UI
+      return [];
+    }
+  }
+
+  /**
    * Sincroniza los puntos de un miembro desde Salesforce hacia la app local
    * @param {Object} member - Objeto del miembro local
    * @param {string} salesforceMemberId - ID del miembro en Salesforce

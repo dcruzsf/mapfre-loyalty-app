@@ -4,7 +4,7 @@
     "register": "Comenzar",
     "earnPoints": "Ganar Puntos",
     "redeemPoints": "Canjear Puntos",
-    "achievements": "Logros",
+    "promotions": "Promociones",
     "leaderboard": "Ranking"
   },
   "common": {
@@ -91,22 +91,10 @@
         "pointsRedeemed": "puntos canjeados"
       }
     },
-    "achievements": {
-      "title": "Logros",
-      "description": "Tus logros y badges conseguidos",
-      "breadcrumb": "Logros",
-      "earnedCount": "logros conseguidos",
-      "totalCount": "logros totales",
-      "categories": {
-        "all": "Todos",
-        "earned": "Conseguidos",
-        "pending": "Pendientes"
-      },
-      "status": {
-        "earned": "¡CONSEGUIDO!",
-        "pending": "Pendiente",
-        "progress": "Progreso"
-      }
+    "promotions": {
+      "title": "Promociones Activas",
+      "subtitle": "Descubre tus promociones acumulativas y sigue tu progreso en cada una",
+      "breadcrumb": "Promociones"
     },
     "leaderboard": {
       "title": "Leaderboard",
