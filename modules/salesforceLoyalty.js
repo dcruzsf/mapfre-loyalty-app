@@ -344,6 +344,33 @@ class SalesforceLoyalty {
   }
 
   /**
+   * Obtiene el ID del Loyalty Program mediante query SOQL
+   * @returns {Promise<string>} - ID del programa de loyalty
+   */
+  async getLoyaltyProgramId() {
+    try {
+      const instanceUrl = await salesforceAuth.getInstanceUrl();
+      const headers = await this.getHeaders();
+
+      const query = `SELECT Id FROM LoyaltyProgram WHERE Name = '${this.loyaltyProgramName}' LIMIT 1`;
+      const url = `${instanceUrl}/services/data/${this.apiVersion}/query?q=${encodeURIComponent(query)}`;
+
+      const response = await axios.get(url, { headers, timeout: 10000 });
+
+      if (response.data.records && response.data.records.length > 0) {
+        const programId = response.data.records[0].Id;
+        console.log(`✅ LoyaltyProgram ID encontrado: ${programId}`);
+        return programId;
+      }
+
+      throw new Error(`No se encontró LoyaltyProgram con nombre: ${this.loyaltyProgramName}`);
+    } catch (error) {
+      console.error('❌ Error obteniendo LoyaltyProgram ID:', error.message);
+      throw error;
+    }
+  }
+
+  /**
    * Registra una transacción (accrual o redemption) en Salesforce Loyalty Management
    * Usa la API REST estándar de Salesforce para crear objetos TransactionJournal directamente
    * @param {string} loyaltyProgramMemberId - ID del miembro en Salesforce
@@ -363,32 +390,37 @@ class SalesforceLoyalty {
 
       console.log(`📝 Registrando ${transactionType} en Salesforce usando API REST estándar...`);
 
-      // Buscar los IDs de JournalType y JournalSubType
-      console.log(`🔍 Buscando IDs de JournalType: ${journalTypeName} y JournalSubType: ${journalSubTypeName}...`);
+      // Buscar los IDs necesarios: LoyaltyProgram, JournalType y JournalSubType
+      console.log(`🔍 Obteniendo IDs necesarios para TransactionJournal...`);
+      const loyaltyProgramId = await this.getLoyaltyProgramId();
       const journalTypeId = await this.getJournalTypeId(journalTypeName);
       const journalSubTypeId = await this.getJournalSubTypeId(journalSubTypeName);
 
+      if (!loyaltyProgramId) {
+        throw new Error(`No se encontró LoyaltyProgram: ${this.loyaltyProgramName}`);
+      }
       if (!journalTypeId) {
-        throw new Error(`No se encontró TransactionJournalType con nombre: ${journalTypeName}`);
+        throw new Error(`No se encontró JournalType: ${journalTypeName}`);
       }
       if (!journalSubTypeId) {
-        throw new Error(`No se encontró TransactionJournalSubtype con nombre: ${journalSubTypeName}`);
+        throw new Error(`No se encontró JournalSubType: ${journalSubTypeName}`);
       }
 
-      console.log(`✅ JournalType ID: ${journalTypeId}, JournalSubType ID: ${journalSubTypeId}`);
+      console.log(`✅ IDs obtenidos - Program: ${loyaltyProgramId}, JournalType: ${journalTypeId}, JournalSubType: ${journalSubTypeId}`);
 
       const instanceUrl = await salesforceAuth.getInstanceUrl();
       const url = `${instanceUrl}/services/data/${this.apiVersion}/sobjects/TransactionJournal`;
       console.log(`🔗 URL: ${url}`);
 
       // Construir el payload usando los IDs de las relaciones
-      // Campos correctos según la API de Salesforce Loyalty Management
+      // Campos correctos según la documentación oficial de Salesforce Loyalty Management
+      // Los puntos NO van aquí - Salesforce los calcula internamente mediante procesos
       const payload = {
         ActivityDate: activityDate,
         JournalTypeId: journalTypeId,
         JournalSubTypeId: journalSubTypeId,
+        LoyaltyProgramId: loyaltyProgramId,
         MemberId: loyaltyProgramMemberId,
-        Points: pointsChange,
         TransactionAmount: Math.abs(pointsChange),
         Status: 'Pending'
       };
