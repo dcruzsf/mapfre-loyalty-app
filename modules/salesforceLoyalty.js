@@ -226,6 +226,11 @@ class SalesforceLoyalty {
 
     } catch (error) {
       console.error('❌ Error al obtener currencies:', error.message);
+      if (error.response) {
+        console.error('📋 Detalles del error:');
+        console.error('- Status:', error.response.status);
+        console.error('- Data:', JSON.stringify(error.response.data, null, 2));
+      }
 
       if (error.message.includes('Timeout')) {
         console.error('⏰ Timeout obteniendo currencies - usando valores por defecto');
