@@ -61,15 +61,12 @@ router.post('/redeem/:id', async (req, res) => {
   const member = req.member; // Viene del middleware requireAuth
 
   try {
-    // Usar puntos de rewards
-    member.usePoints(reward.points, `Redención: ${reward.name}`);
-
     // Generar código usando el prefix configurado
     const redemptionCode = generateRedemptionCode(reward.codePrefix);
 
     console.log(`${member.name} canjeó ${reward.name} por ${reward.points} puntos. Código: ${redemptionCode}`);
 
-    // Registrar redemption en Salesforce (PHASE 2)
+    // MODO SALESFORCE: Registrar en SF y sincronizar puntos desde allí
     if (member.salesforceId && process.env.USE_SALESFORCE === 'true') {
       try {
         const activityDate = new Date().toISOString();
@@ -85,10 +82,20 @@ router.post('/redeem/:id', async (req, res) => {
           activityDate
         );
         console.log('✅ Redemption registrado en Salesforce');
+
+        // Sincronizar puntos desde Salesforce después de registrar
+        await salesforceLoyalty.syncMemberPoints(member, member.salesforceId);
+        Member.save(member);
+        console.log('✅ Puntos sincronizados desde Salesforce después del redemption');
       } catch (sfError) {
         console.warn('⚠️ No se pudo registrar redemption en Salesforce:', sfError.message);
-        // No bloquear el flujo, la transacción local ya se realizó
+        // Si falla SF, no restamos puntos localmente - el usuario deberá reintentar
+        throw new Error('Error registrando la operación. Por favor, inténtalo de nuevo.');
       }
+    } else {
+      // MODO DEMO: Usar puntos localmente
+      member.usePoints(reward.points, `Redención: ${reward.name}`);
+      console.log(`✅ ${member.name} usó ${reward.points} puntos (modo demo)`);
     }
     
     // Verificar si hay nuevos logros

@@ -50,12 +50,9 @@ router.post('/purchase/:id', async (req, res) => {
     // Reducir saldo
     member.reduceBalance(product.price, `Compra de ${product.name}`);
 
-    // Añadir puntos (a nivel y rewards)
-    member.addPoints(product.points, `Puntos por compra de ${product.name}`);
+    console.log(`${member.name} compró ${product.name} por ${product.price}€`);
 
-    console.log(`${member.name} compró ${product.name} por ${product.price}€ y ganó ${product.points} puntos`);
-
-    // Registrar accrual en Salesforce (PHASE 2)
+    // MODO SALESFORCE: Registrar en SF y sincronizar puntos desde allí
     if (member.salesforceId && process.env.USE_SALESFORCE === 'true') {
       try {
         const activityDate = new Date().toISOString();
@@ -80,10 +77,20 @@ router.post('/purchase/:id', async (req, res) => {
           activityDate
         );
         console.log('✅ Accrual registrado en Salesforce');
+
+        // Sincronizar puntos desde Salesforce después de registrar
+        await salesforceLoyalty.syncMemberPoints(member, member.salesforceId);
+        Member.save(member);
+        console.log('✅ Puntos sincronizados desde Salesforce después del accrual');
       } catch (sfError) {
         console.warn('⚠️ No se pudo registrar accrual en Salesforce:', sfError.message);
-        // No bloquear el flujo, la transacción local ya se realizó
+        // Si falla SF, no sumamos puntos localmente - el usuario deberá reintentar
+        throw new Error('Error registrando la operación. Por favor, inténtalo de nuevo.');
       }
+    } else {
+      // MODO DEMO: Añadir puntos localmente
+      member.addPoints(product.points, `Puntos por compra de ${product.name}`);
+      console.log(`✅ ${member.name} ganó ${product.points} puntos (modo demo)`);
     }
     
     // Verificar si hay nuevos logros
@@ -125,12 +132,9 @@ router.post('/activity/:id', async (req, res) => {
   const member = req.member; // Viene del middleware requireAuth
 
   try {
-    // Añadir puntos (a nivel y rewards)
-    member.addPoints(activity.points, `${activity.name}`);
+    console.log(`${member.name} completó actividad: ${activity.name}`);
 
-    console.log(`${member.name} completó actividad: ${activity.name} y ganó ${activity.points} puntos`);
-
-    // Registrar accrual en Salesforce (PHASE 2)
+    // MODO SALESFORCE: Registrar en SF y sincronizar puntos desde allí
     if (member.salesforceId && process.env.USE_SALESFORCE === 'true') {
       try {
         const activityDate = new Date().toISOString();
@@ -155,10 +159,20 @@ router.post('/activity/:id', async (req, res) => {
           activityDate
         );
         console.log('✅ Accrual de actividad registrado en Salesforce');
+
+        // Sincronizar puntos desde Salesforce después de registrar
+        await salesforceLoyalty.syncMemberPoints(member, member.salesforceId);
+        Member.save(member);
+        console.log('✅ Puntos sincronizados desde Salesforce después del accrual de actividad');
       } catch (sfError) {
         console.warn('⚠️ No se pudo registrar accrual en Salesforce:', sfError.message);
-        // No bloquear el flujo, la transacción local ya se realizó
+        // Si falla SF, no sumamos puntos localmente - el usuario deberá reintentar
+        throw new Error('Error registrando la operación. Por favor, inténtalo de nuevo.');
       }
+    } else {
+      // MODO DEMO: Añadir puntos localmente
+      member.addPoints(activity.points, `${activity.name}`);
+      console.log(`✅ ${member.name} ganó ${activity.points} puntos (modo demo)`);
     }
     
     // Verificar si hay nuevos logros
