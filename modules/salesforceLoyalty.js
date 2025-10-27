@@ -388,41 +388,25 @@ class SalesforceLoyalty {
       console.log('✅ Query 1 completado');
       console.log('📋 Resultado:', JSON.stringify(promotionResponse.data, null, 2));
 
-      // Query 2: Obtener enrollment del miembro en la promoción
-      const enrollmentQuery = `SELECT Id, PromotionId, LoyaltyProgramMemberId, EnrollmentStatus, EnrollmentDate
-        FROM PromotionEnrollment
-        WHERE LoyaltyProgramMemberId = '${salesforceMemberId}'
-        AND PromotionId = '${promotionId}'`;
-
-      console.log('🔍 SOQL Query 2 - Enrollment del miembro:');
-      console.log(enrollmentQuery);
-
-      const enrollmentUrl = `${instanceUrl}/services/data/${this.apiVersion}/query?q=${encodeURIComponent(enrollmentQuery)}`;
-      const enrollmentResponse = await axios.get(enrollmentUrl, { headers, timeout: 15000 });
-
-      console.log('✅ Query 2 completado');
-      console.log('📋 Resultado:', JSON.stringify(enrollmentResponse.data, null, 2));
-
-      // Query 3: Obtener atributos/milestones del miembro para esta promoción
+      // Query 2: Obtener atributos/milestones del miembro para esta promoción
       const attributesQuery = `SELECT Id, AttributeName, AttributeValue, LastModifiedDate
         FROM LoyaltyPgmMbrAttributeVal
         WHERE LoyaltyProgramMemberId = '${salesforceMemberId}'`;
 
-      console.log('🔍 SOQL Query 3 - Atributos del miembro (milestones):');
+      console.log('🔍 SOQL Query 2 - Atributos del miembro (milestones):');
       console.log(attributesQuery);
 
       const attributesUrl = `${instanceUrl}/services/data/${this.apiVersion}/query?q=${encodeURIComponent(attributesQuery)}`;
       const attributesResponse = await axios.get(attributesUrl, { headers, timeout: 15000 });
 
-      console.log('✅ Query 3 completado');
+      console.log('✅ Query 2 completado');
       console.log('📋 Resultado:', JSON.stringify(attributesResponse.data, null, 2));
 
       // Combinar resultados
       return {
         promotion: promotionResponse.data.records[0] || null,
-        enrollment: enrollmentResponse.data.records[0] || null,
         attributes: attributesResponse.data.records || [],
-        totalQueries: 3
+        totalQueries: 2
       };
 
     } catch (error) {
