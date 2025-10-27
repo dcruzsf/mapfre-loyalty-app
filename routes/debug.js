@@ -90,4 +90,96 @@ router.get('/query-attribute/:id', async (req, res) => {
   }
 });
 
+// Ruta temporal para query de engagement attribute (el milestone)
+router.get('/query-engagement-attribute/:id', async (req, res) => {
+  try {
+    const instanceUrl = await salesforceAuth.getInstanceUrl();
+    const token = await salesforceAuth.getAccessToken();
+
+    // Primero obtener los campos disponibles
+    const describeUrl = `${instanceUrl}/services/data/v61.0/sobjects/LoyaltyPgmEngmtAttribute/describe`;
+    const describeResponse = await axios.get(describeUrl, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      timeout: 15000
+    });
+
+    // Construir query con TODOS los campos
+    const fieldNames = describeResponse.data.fields
+      .map(f => f.name)
+      .filter(name => !name.includes('.')) // Excluir campos de relación
+      .join(', ');
+
+    const query = `SELECT ${fieldNames} FROM LoyaltyPgmEngmtAttribute WHERE Id = '${req.params.id}'`;
+
+    console.log('🔍 Query completa:', query);
+
+    const queryUrl = `${instanceUrl}/services/data/v61.0/query?q=${encodeURIComponent(query)}`;
+    const queryResponse = await axios.get(queryUrl, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      timeout: 15000
+    });
+
+    res.json({
+      query: query,
+      result: queryResponse.data
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      error: error.message,
+      details: error.response?.data
+    });
+  }
+});
+
+// Ruta para query completo de milestones de una promoción
+router.get('/query-promotion-milestones/:memberId/:promotionId', async (req, res) => {
+  try {
+    const instanceUrl = await salesforceAuth.getInstanceUrl();
+    const token = await salesforceAuth.getAccessToken();
+
+    // Query completo con JOIN
+    const query = `
+      SELECT Id, Name, CurrentValue, CumulativeValue, StartDate, EndDate,
+             LoyaltyPgmEngmtAttributeId,
+             LoyaltyPgmEngmtAttribute.Name,
+             LoyaltyPgmEngmtAttribute.TargetValue,
+             LoyaltyPgmEngmtAttribute.Description,
+             LoyaltyPgmEngmtAttribute.AttributeStatus,
+             LoyaltyPgmEngmtAttribute.PromotionId
+      FROM LoyaltyPgmMbrAttributeVal
+      WHERE LoyaltyProgramMemberId = '${req.params.memberId}'
+      AND LoyaltyPgmEngmtAttribute.PromotionId = '${req.params.promotionId}'
+    `;
+
+    console.log('🔍 Query con JOIN:', query);
+
+    const queryUrl = `${instanceUrl}/services/data/v61.0/query?q=${encodeURIComponent(query)}`;
+    const queryResponse = await axios.get(queryUrl, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      timeout: 15000
+    });
+
+    res.json({
+      query: query,
+      result: queryResponse.data
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      error: error.message,
+      details: error.response?.data
+    });
+  }
+});
+
 module.exports = router;
