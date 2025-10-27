@@ -69,17 +69,19 @@
 
       <!-- Promotion Progress Stepper -->
       <div class="promotion-stepper">
-        <% if (promo.segments && promo.segments.length > 0) { %>
-          <% promo.segments.forEach(function(segment, index) { %>
+        <% if (promo.milestones && promo.milestones.length > 0) { %>
+          <% promo.milestones.forEach(function(milestone, index) { %>
             <%
-              // Segments tienen currentCount y targetCount
-              const currentValue = segment.currentCount || 0;
-              const targetValue = segment.targetCount || 1;
-              const isCompleted = currentValue >= targetValue;
+              // Milestones tienen currentValue y targetValue
+              const currentValue = milestone.currentValue || 0;
+              const targetValue = milestone.targetValue || null;
+              const isCompleted = milestone.completed || false;
               const isCurrent = !isCompleted && currentValue > 0;
-              const progress = targetValue > 0
+
+              // Si no hay targetValue, mostrar solo el progreso actual
+              const progress = targetValue && targetValue > 0
                 ? Math.min((currentValue / targetValue) * 100, 100)
-                : 0;
+                : (currentValue > 0 ? 100 : 0);
             %>
 
             <div class="promotion-step <%= isCompleted ? 'completed' : '' %> <%= isCurrent ? 'current' : '' %>">
@@ -94,18 +96,22 @@
 
               <!-- Step Content -->
               <div class="step-content">
-                <div class="step-title"><%= segment.segmentName || segment.name || ('Paso ' + (index + 1)) %></div>
+                <div class="step-title"><%= milestone.name || milestone.description || ('Milestone ' + (index + 1)) %></div>
                 <div class="step-progress-bar">
                   <div class="step-progress-fill" style="width: <%= progress %>%"></div>
                 </div>
                 <div class="step-values">
-                  <span class="current-value"><%= Math.round(currentValue) %></span> /
-                  <span class="target-value"><%= Math.round(targetValue) %></span>
+                  <span class="current-value"><%= Math.round(currentValue) %></span>
+                  <% if (targetValue) { %>
+                    / <span class="target-value"><%= Math.round(targetValue) %></span>
+                  <% } else { %>
+                    <span class="text-muted">(<%= locale === 'es' ? 'en progreso' : 'in progress' %>)</span>
+                  <% } %>
                 </div>
               </div>
 
               <!-- Connector Line (not for last item) -->
-              <% if (index < promo.segments.length - 1) { %>
+              <% if (index < promo.milestones.length - 1) { %>
                 <div class="step-connector <%= isCompleted ? 'completed' : '' %>"></div>
               <% } %>
             </div>

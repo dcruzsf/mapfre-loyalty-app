@@ -48,10 +48,14 @@ router.get('/', async (req, res) => {
 
           if (soqlData) {
             console.log('✅ Datos obtenidos via SOQL');
+            console.log(`📊 Milestones encontrados: ${soqlData.milestones?.length || 0}`);
             // Combinar datos de programa-processes con datos SOQL
             promotionsWithTrails.push({
-              ...promo,
-              soqlData: soqlData,
+              promotionId: promo.promotionId,
+              promotionName: promo.promotionName || soqlData.promotion?.Name,
+              startDate: promo.startDate || soqlData.promotion?.StartDate,
+              endDate: promo.endDate || soqlData.promotion?.EndDate,
+              milestones: soqlData.milestones || [],
               dataSource: 'SOQL'
             });
           } else {

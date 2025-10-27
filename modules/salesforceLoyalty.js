@@ -414,25 +414,51 @@ class SalesforceLoyalty {
       console.log('✅ Query 1 completado');
       console.log('📋 Resultado:', JSON.stringify(promotionResponse.data, null, 2));
 
-      // Query 2: Obtener atributos/milestones del miembro para esta promoción
-      // Usando solo campos básicos para evitar errores de nombres de campo
-      const attributesQuery = `SELECT Id, Name, LoyaltyProgramMemberId
+      // Query 2: Obtener milestones con JOIN a LoyaltyPgmEngmtAttribute
+      const milestonesQuery = `
+        SELECT Id, Name, CurrentValue, CumulativeValue, StartDate, EndDate,
+               LoyaltyPgmEngmtAttributeId,
+               LoyaltyPgmEngmtAttribute.Name,
+               LoyaltyPgmEngmtAttribute.TargetValue,
+               LoyaltyPgmEngmtAttribute.DefaultValue,
+               LoyaltyPgmEngmtAttribute.Description,
+               LoyaltyPgmEngmtAttribute.Status
         FROM LoyaltyPgmMbrAttributeVal
-        WHERE LoyaltyProgramMemberId = '${salesforceMemberId}'`;
+        WHERE LoyaltyProgramMemberId = '${salesforceMemberId}'
+      `.trim();
 
-      console.log('🔍 SOQL Query 2 - Atributos del miembro (milestones):');
-      console.log(attributesQuery);
+      console.log('🔍 SOQL Query 2 - Milestones del miembro con JOIN:');
+      console.log(milestonesQuery);
 
-      const attributesUrl = `${instanceUrl}/services/data/${this.apiVersion}/query?q=${encodeURIComponent(attributesQuery)}`;
-      const attributesResponse = await axios.get(attributesUrl, { headers, timeout: 15000 });
+      const milestonesUrl = `${instanceUrl}/services/data/${this.apiVersion}/query?q=${encodeURIComponent(milestonesQuery)}`;
+      const milestonesResponse = await axios.get(milestonesUrl, { headers, timeout: 15000 });
 
       console.log('✅ Query 2 completado');
-      console.log('📋 Resultado:', JSON.stringify(attributesResponse.data, null, 2));
+      console.log('📋 Resultado:', JSON.stringify(milestonesResponse.data, null, 2));
+
+      // Transformar los datos para que sean más fáciles de usar en la vista
+      const milestones = milestonesResponse.data.records.map(record => ({
+        id: record.Id,
+        name: record.LoyaltyPgmEngmtAttribute?.Name || record.Name,
+        currentValue: parseFloat(record.CurrentValue) || 0,
+        targetValue: record.LoyaltyPgmEngmtAttribute?.TargetValue ?
+                     parseFloat(record.LoyaltyPgmEngmtAttribute.TargetValue) : null,
+        defaultValue: parseFloat(record.LoyaltyPgmEngmtAttribute?.DefaultValue || 0),
+        description: record.LoyaltyPgmEngmtAttribute?.Description,
+        status: record.LoyaltyPgmEngmtAttribute?.Status,
+        startDate: record.StartDate,
+        endDate: record.EndDate,
+        completed: record.LoyaltyPgmEngmtAttribute?.TargetValue ?
+                   parseFloat(record.CurrentValue) >= parseFloat(record.LoyaltyPgmEngmtAttribute.TargetValue) :
+                   false
+      }));
+
+      console.log(`📊 Total milestones procesados: ${milestones.length}`);
 
       // Combinar resultados
       return {
         promotion: promotionResponse.data.records[0] || null,
-        attributes: attributesResponse.data.records || [],
+        milestones: milestones,
         totalQueries: 2
       };
 
