@@ -19,6 +19,7 @@ const accrualRoutes = require('./routes/accrual');
 const redemptionRoutes = require('./routes/redemption');
 const promotionsRoutes = require('./routes/promotions');
 const leaderboardRoutes = require('./routes/leaderboard');
+const debugRoutes = require('./routes/debug');
 
 // Inicializar app
 const app = express();
@@ -134,6 +135,7 @@ app.use('/accrual', accrualRoutes);
 app.use('/redemption', redemptionRoutes);
 app.use('/promotions', promotionsRoutes);
 app.use('/leaderboard', leaderboardRoutes);
+app.use('/debug', debugRoutes);
 
 // Ruta para cerrar sesión
 app.post('/logout', (req, res) => {
