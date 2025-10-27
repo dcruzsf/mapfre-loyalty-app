@@ -331,36 +331,62 @@ class SalesforceLoyalty {
    * @returns {Promise<Object|null>} - Engagement trail con milestones y progreso
    */
   async getEngagementTrail(membershipNumber, promotionId) {
-    try {
-      const instanceUrl = await salesforceAuth.getInstanceUrl();
-      const encodedProgramName = encodeURIComponent(this.loyaltyProgramName);
-      const encodedMembershipNumber = encodeURIComponent(membershipNumber);
+    const instanceUrl = await salesforceAuth.getInstanceUrl();
+    const encodedProgramName = encodeURIComponent(this.loyaltyProgramName);
+    const encodedMembershipNumber = encodeURIComponent(membershipNumber);
+    const headers = await this.getHeaders();
 
-      // API para obtener engagement trail con promotionId como query param
-      const url = `${instanceUrl}/services/data/${this.apiVersion}/loyalty/programs/${encodedProgramName}/members/${encodedMembershipNumber}/engagement-trail?promotionId=${promotionId}`;
+    // Definir múltiples variaciones de endpoints posibles
+    const endpointVariations = [
+      // Variación 1: Connect API con engagement-attributes
+      `/services/data/${this.apiVersion}/connect/loyalty/programs/${encodedProgramName}/members/${encodedMembershipNumber}/engagement-attributes?promotionId=${promotionId}`,
 
-      console.log('🎯 Obteniendo engagement trail...');
-      console.log(`🔗 URL: ${url}`);
+      // Variación 2: Sin Connect API, con engagement-attributes
+      `/services/data/${this.apiVersion}/loyalty/programs/${encodedProgramName}/members/${encodedMembershipNumber}/engagement-attributes?promotionId=${promotionId}`,
 
-      const headers = await this.getHeaders();
+      // Variación 3: Con member-engagement-attributes
+      `/services/data/${this.apiVersion}/loyalty/programs/${encodedProgramName}/members/${encodedMembershipNumber}/member-engagement-attributes?promotionId=${promotionId}`,
 
-      const response = await axios.get(url, { headers, timeout: 15000 });
+      // Variación 4: Original engagement-trail
+      `/services/data/${this.apiVersion}/loyalty/programs/${encodedProgramName}/members/${encodedMembershipNumber}/engagement-trail?promotionId=${promotionId}`,
 
-      console.log('✅ Engagement trail obtenido correctamente');
+      // Variación 5: Promotions endpoint con member
+      `/services/data/${this.apiVersion}/loyalty/programs/${encodedProgramName}/promotions/${promotionId}/members/${encodedMembershipNumber}/engagement`,
 
-      return response.data;
+      // Variación 6: Connect API + engagement-trail
+      `/services/data/${this.apiVersion}/connect/loyalty/programs/${encodedProgramName}/members/${encodedMembershipNumber}/engagement-trail?promotionId=${promotionId}`
+    ];
 
-    } catch (error) {
-      console.error(`❌ Error obteniendo engagement trail para promoción ${promotionId}:`, error.message);
-      if (error.response) {
-        console.error('📋 Detalles del error:');
-        console.error('- Status:', error.response.status);
-        console.error('- Data:', JSON.stringify(error.response.data, null, 2));
+    // Intentar cada variación hasta que una funcione
+    for (let i = 0; i < endpointVariations.length; i++) {
+      const endpoint = endpointVariations[i];
+      const url = `${instanceUrl}${endpoint}`;
+
+      try {
+        console.log(`\n🎯 Intentando variación ${i + 1}/${endpointVariations.length}...`);
+        console.log(`🔗 URL: ${url}`);
+
+        const response = await axios.get(url, { headers, timeout: 15000 });
+
+        console.log(`✅ ¡ÉXITO! Variación ${i + 1} funcionó correctamente`);
+        console.log(`📋 Respuesta:`, JSON.stringify(response.data, null, 2));
+
+        return response.data;
+
+      } catch (error) {
+        console.error(`❌ Variación ${i + 1} falló: ${error.response?.status || error.message}`);
+        if (error.response?.status === 404) {
+          console.log(`   → Endpoint no existe, probando siguiente...`);
+        } else if (error.response) {
+          console.error(`   → Status: ${error.response.status}`);
+          console.error(`   → Data:`, JSON.stringify(error.response.data, null, 2));
+        }
       }
-
-      // Si falla, devolver null
-      return null;
     }
+
+    // Si todas las variaciones fallaron
+    console.error(`\n❌ Todas las ${endpointVariations.length} variaciones de endpoint fallaron`);
+    return null;
   }
 
   /**
