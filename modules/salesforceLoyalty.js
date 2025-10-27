@@ -284,7 +284,7 @@ class SalesforceLoyalty {
       const encodedProgramName = encodeURIComponent(this.loyaltyProgramName);
 
       // API para obtener promociones del miembro usando program-processes
-      const url = `${instanceUrl}/services/data/${this.apiVersion}/connect/loyalty/programs/${encodedProgramName}/program-processes/View%20Promotions`;
+      const url = `${instanceUrl}/services/data/${this.apiVersion}/connect/loyalty/programs/${encodedProgramName}/program-processes/Get%20Promotions`;
 
       const requestBody = {
         processParameters: [
