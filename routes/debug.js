@@ -144,18 +144,18 @@ router.get('/query-promotion-milestones/:memberId/:promotionId', async (req, res
     const instanceUrl = await salesforceAuth.getInstanceUrl();
     const token = await salesforceAuth.getAccessToken();
 
-    // Query completo con JOIN
+    // Query completo con JOIN usando los campos correctos
     const query = `
       SELECT Id, Name, CurrentValue, CumulativeValue, StartDate, EndDate,
              LoyaltyPgmEngmtAttributeId,
              LoyaltyPgmEngmtAttribute.Name,
              LoyaltyPgmEngmtAttribute.TargetValue,
+             LoyaltyPgmEngmtAttribute.DefaultValue,
              LoyaltyPgmEngmtAttribute.Description,
-             LoyaltyPgmEngmtAttribute.AttributeStatus,
-             LoyaltyPgmEngmtAttribute.PromotionId
+             LoyaltyPgmEngmtAttribute.Status,
+             LoyaltyPgmEngmtAttribute.LoyaltyProgramId
       FROM LoyaltyPgmMbrAttributeVal
       WHERE LoyaltyProgramMemberId = '${req.params.memberId}'
-      AND LoyaltyPgmEngmtAttribute.PromotionId = '${req.params.promotionId}'
     `;
 
     console.log('🔍 Query con JOIN:', query);
