@@ -453,14 +453,28 @@ class SalesforceLoyalty {
         };
       });
 
+      // Mapeo de targets hardcodeados (no disponibles en Salesforce API)
+      const targetMap = {
+        'Contratación de tarjeta': 1,
+        'Contratacion de tarjeta': 1,
+        'Compra en Facilitea': 1,
+        'Pago con Bizum': 2,
+        'Contratación seguro': 1,
+        'Contratacion seguro': 1
+      };
+
       // Combinar todos los attributes con el progreso del miembro
       const milestones = allAttributesResponse.data.records.map(attribute => {
         const progress = progressMap[attribute.Id] || { currentValue: 0, cumulativeValue: 0 };
-        const targetValue = attribute.TargetValue ? parseFloat(attribute.TargetValue) : null;
         const currentValue = progress.currentValue;
 
         // Limpiar el nombre del attribute (quitar el sufijo técnico)
         const cleanName = attribute.Name.split('__')[0].replace(/_/g, ' ');
+
+        // Obtener target del mapa hardcodeado (fallback a TargetValue de Salesforce si existe)
+        const targetValue = attribute.TargetValue
+          ? parseFloat(attribute.TargetValue)
+          : (targetMap[cleanName] || 1); // Default a 1 si no está en el mapa
 
         return {
           id: attribute.Id,
@@ -472,7 +486,7 @@ class SalesforceLoyalty {
           status: attribute.Status,
           startDate: attribute.StartDate,
           endDate: attribute.EndDate,
-          completed: targetValue ? currentValue >= targetValue : currentValue > 0
+          completed: currentValue >= targetValue
         };
       });
 
