@@ -182,4 +182,44 @@ router.get('/query-promotion-milestones/:memberId/:promotionId', async (req, res
   }
 });
 
+// Ruta para obtener TODOS los engagement attributes de una promoción
+router.get('/query-all-promotion-attributes/:promotionId', async (req, res) => {
+  try {
+    const instanceUrl = await salesforceAuth.getInstanceUrl();
+    const token = await salesforceAuth.getAccessToken();
+
+    // Query para obtener TODOS los engagement attributes de la promoción
+    const query = `
+      SELECT Id, Name, TargetValue, DefaultValue, Description, Status, StartDate, EndDate
+      FROM LoyaltyPgmEngmtAttribute
+      WHERE LoyaltyProgramId IN (
+        SELECT LoyaltyProgramId FROM Promotion WHERE Id = '${req.params.promotionId}'
+      )
+      ORDER BY Name
+    `.trim();
+
+    console.log('🔍 Query de todos los attributes:', query);
+
+    const queryUrl = `${instanceUrl}/services/data/v61.0/query?q=${encodeURIComponent(query)}`;
+    const queryResponse = await axios.get(queryUrl, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      timeout: 15000
+    });
+
+    res.json({
+      query: query,
+      result: queryResponse.data
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      error: error.message,
+      details: error.response?.data
+    });
+  }
+});
+
 module.exports = router;
