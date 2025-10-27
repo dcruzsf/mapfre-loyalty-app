@@ -60,64 +60,40 @@ router.post('/redeem/:id', async (req, res) => {
 
   const member = req.member; // Viene del middleware requireAuth
 
+  // VALIDACIÓN: Solo funciona en modo Salesforce
+  if (!member.salesforceId || process.env.USE_SALESFORCE !== 'true') {
+    const message = 'Las redenciones solo están disponibles en modo Salesforce.';
+    return res.redirect(`/redemption?message=${encodeURIComponent(message)}`);
+  }
+
   try {
     // Generar código usando el prefix configurado
     const redemptionCode = generateRedemptionCode(reward.codePrefix);
 
     console.log(`${member.name} canjeó ${reward.name} por ${reward.points} puntos. Código: ${redemptionCode}`);
 
-    // MODO SALESFORCE: Registrar en SF y sincronizar puntos desde allí
-    if (member.salesforceId && process.env.USE_SALESFORCE === 'true') {
-      try {
-        const activityDate = new Date().toISOString();
-        // Registrar redemption de non-qualifying points (Cashback)
-        // Los redemptions solo afectan a non-qualifying points
-        await salesforceLoyalty.processTransaction(
-          member.salesforceId,
-          'Redemption',
-          -reward.points, // Negativo para redemption
-          'nonQualifying',
-          'Redemption',
-          'Reward',
-          activityDate
-        );
-        console.log('✅ Redemption registrado en Salesforce');
-
-        // Sincronizar puntos desde Salesforce después de registrar
-        await salesforceLoyalty.syncMemberPoints(member, member.salesforceId);
-        Member.save(member);
-        console.log('✅ Puntos sincronizados desde Salesforce después del redemption');
-      } catch (sfError) {
-        console.warn('⚠️ No se pudo registrar redemption en Salesforce:', sfError.message);
-        // Si falla SF, no restamos puntos localmente - el usuario deberá reintentar
-        throw new Error('Error registrando la operación. Por favor, inténtalo de nuevo.');
-      }
-    } else {
-      // MODO DEMO: Usar puntos localmente
-      member.usePoints(reward.points, `Redención: ${reward.name}`);
-      console.log(`✅ ${member.name} usó ${reward.points} puntos (modo demo)`);
-    }
-    
-    // Verificar si hay nuevos logros
-    const hasNewAchievement = member.achievements.some(a => 
-      a.unlockedAt && 
-      (new Date() - a.unlockedAt) < 5000 &&
-      !req.query.newAchievement
+    // Registrar redemption de non-qualifying points (Cashback) en Salesforce
+    const activityDate = new Date().toISOString();
+    await salesforceLoyalty.processTransaction(
+      member.salesforceId,
+      'Redemption',
+      -reward.points, // Negativo para redemption
+      'nonQualifying',
+      'Redemption',
+      'Reward',
+      activityDate
     );
-    
-    if (hasNewAchievement) {
-      // Obtener el último logro desbloqueado
-      const newAchievement = member.achievements
-        .filter(a => (new Date() - a.unlockedAt) < 5000)
-        .sort((a, b) => b.unlockedAt - a.unlockedAt)[0];
-        
-      const message = `${i18n.t('messages.redemptionSuccess', locale)}: ${reward.name}`;
-      return res.redirect(`/redemption?message=${encodeURIComponent(message)}&points=${reward.points}&code=${redemptionCode}&rewardId=${reward.id}&newAchievement=true&achievementName=${newAchievement.name}&achievementPoints=${newAchievement.points}`);
-    }
+    console.log('✅ Redemption registrado en Salesforce');
+
+    // Sincronizar puntos desde Salesforce después de registrar
+    await salesforceLoyalty.syncMemberPoints(member, member.salesforceId);
+    Member.save(member);
+    console.log('✅ Puntos sincronizados desde Salesforce después del redemption');
 
     const message = `${i18n.t('messages.redemptionSuccess', locale)}: ${reward.name}`;
     res.redirect(`/redemption?message=${encodeURIComponent(message)}&points=${reward.points}&code=${redemptionCode}&rewardId=${reward.id}`);
   } catch (error) {
+    console.error('⚠️ Error al registrar redención:', error.message);
     const message = `${i18n.t('messages.error', locale)}: ${error.message}`;
     res.redirect(`/redemption?message=${encodeURIComponent(message)}`);
   }

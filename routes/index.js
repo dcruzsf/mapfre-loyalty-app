@@ -19,7 +19,7 @@ router.get('/', async (req, res) => {
   // El miembro actual viene del middleware
   const member = req.member;
 
-  // Sincronizar currencies desde Salesforce si está disponible (PHASE 2)
+  // Sincronizar currencies desde Salesforce si está disponible
   if (member && member.salesforceId && process.env.USE_SALESFORCE === 'true') {
     try {
       await salesforceLoyalty.syncMemberPoints(member, member.salesforceId);
@@ -32,18 +32,8 @@ router.get('/', async (req, res) => {
     }
   }
 
-  // Traducir transacciones si hay un miembro
-  if (member && member.transactions) {
-    member.translatedTransactions = member.transactions.map(tx =>
-      transactionTranslations.translateTransaction(tx, locale)
-    );
-  }
-
   res.render('index', {
     member: member || null,
-    newAchievement,
-    achievementName,
-    achievementPoints,
     message: message || null
   });
 });
