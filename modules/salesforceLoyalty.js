@@ -303,8 +303,10 @@ class SalesforceLoyalty {
       const response = await axios.post(url, requestBody, { headers, timeout: 15000 });
 
       console.log('✅ Promociones enrolladas obtenidas correctamente');
+      console.log('📋 Respuesta completa:', JSON.stringify(response.data, null, 2));
 
-      const promotions = response.data.outputParameters?.simpleOutputParameters?.Promotions || [];
+      // La estructura real es: outputParameters.outputParameters.results
+      const promotions = response.data.outputParameters?.outputParameters?.results || [];
       console.log(`📊 Total promociones enrolladas: ${promotions.length}`);
 
       return promotions;
