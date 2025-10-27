@@ -412,54 +412,80 @@ class SalesforceLoyalty {
       const promotionResponse = await axios.get(promotionUrl, { headers, timeout: 15000 });
 
       console.log('✅ Query 1 completado');
-      console.log('📋 Resultado:', JSON.stringify(promotionResponse.data, null, 2));
 
-      // Query 2: Obtener milestones con JOIN a LoyaltyPgmEngmtAttribute
-      const milestonesQuery = `
-        SELECT Id, Name, CurrentValue, CumulativeValue, StartDate, EndDate,
-               LoyaltyPgmEngmtAttributeId,
-               LoyaltyPgmEngmtAttribute.Name,
-               LoyaltyPgmEngmtAttribute.TargetValue,
-               LoyaltyPgmEngmtAttribute.DefaultValue,
-               LoyaltyPgmEngmtAttribute.Description,
-               LoyaltyPgmEngmtAttribute.Status
+      // Query 2: Obtener TODOS los engagement attributes de la promoción
+      const allAttributesQuery = `
+        SELECT Id, Name, TargetValue, DefaultValue, Description, Status, StartDate, EndDate
+        FROM LoyaltyPgmEngmtAttribute
+        WHERE LoyaltyProgramId IN (
+          SELECT LoyaltyProgramId FROM Promotion WHERE Id = '${promotionId}'
+        )
+        ORDER BY Name
+      `.trim();
+
+      console.log('🔍 SOQL Query 2 - Todos los engagement attributes de la promoción:');
+
+      const allAttributesUrl = `${instanceUrl}/services/data/${this.apiVersion}/query?q=${encodeURIComponent(allAttributesQuery)}`;
+      const allAttributesResponse = await axios.get(allAttributesUrl, { headers, timeout: 15000 });
+
+      console.log(`✅ Query 2 completado - Total attributes: ${allAttributesResponse.data.records.length}`);
+
+      // Query 3: Obtener progreso del miembro en estos attributes
+      const memberProgressQuery = `
+        SELECT Id, CurrentValue, CumulativeValue, LoyaltyPgmEngmtAttributeId
         FROM LoyaltyPgmMbrAttributeVal
         WHERE LoyaltyProgramMemberId = '${salesforceMemberId}'
       `.trim();
 
-      console.log('🔍 SOQL Query 2 - Milestones del miembro con JOIN:');
-      console.log(milestonesQuery);
+      console.log('🔍 SOQL Query 3 - Progreso del miembro:');
 
-      const milestonesUrl = `${instanceUrl}/services/data/${this.apiVersion}/query?q=${encodeURIComponent(milestonesQuery)}`;
-      const milestonesResponse = await axios.get(milestonesUrl, { headers, timeout: 15000 });
+      const memberProgressUrl = `${instanceUrl}/services/data/${this.apiVersion}/query?q=${encodeURIComponent(memberProgressQuery)}`;
+      const memberProgressResponse = await axios.get(memberProgressUrl, { headers, timeout: 15000 });
 
-      console.log('✅ Query 2 completado');
-      console.log('📋 Resultado:', JSON.stringify(milestonesResponse.data, null, 2));
+      console.log(`✅ Query 3 completado - Total progress records: ${memberProgressResponse.data.records.length}`);
 
-      // Transformar los datos para que sean más fáciles de usar en la vista
-      const milestones = milestonesResponse.data.records.map(record => ({
-        id: record.Id,
-        name: record.LoyaltyPgmEngmtAttribute?.Name || record.Name,
-        currentValue: parseFloat(record.CurrentValue) || 0,
-        targetValue: record.LoyaltyPgmEngmtAttribute?.TargetValue ?
-                     parseFloat(record.LoyaltyPgmEngmtAttribute.TargetValue) : null,
-        defaultValue: parseFloat(record.LoyaltyPgmEngmtAttribute?.DefaultValue || 0),
-        description: record.LoyaltyPgmEngmtAttribute?.Description,
-        status: record.LoyaltyPgmEngmtAttribute?.Status,
-        startDate: record.StartDate,
-        endDate: record.EndDate,
-        completed: record.LoyaltyPgmEngmtAttribute?.TargetValue ?
-                   parseFloat(record.CurrentValue) >= parseFloat(record.LoyaltyPgmEngmtAttribute.TargetValue) :
-                   false
-      }));
+      // Crear un mapa de progreso del miembro por attributeId
+      const progressMap = {};
+      memberProgressResponse.data.records.forEach(record => {
+        progressMap[record.LoyaltyPgmEngmtAttributeId] = {
+          currentValue: parseFloat(record.CurrentValue) || 0,
+          cumulativeValue: record.CumulativeValue || 0
+        };
+      });
+
+      // Combinar todos los attributes con el progreso del miembro
+      const milestones = allAttributesResponse.data.records.map(attribute => {
+        const progress = progressMap[attribute.Id] || { currentValue: 0, cumulativeValue: 0 };
+        const targetValue = attribute.TargetValue ? parseFloat(attribute.TargetValue) : null;
+        const currentValue = progress.currentValue;
+
+        // Limpiar el nombre del attribute (quitar el sufijo técnico)
+        const cleanName = attribute.Name.split('__')[0].replace(/_/g, ' ');
+
+        return {
+          id: attribute.Id,
+          name: cleanName,
+          currentValue: currentValue,
+          targetValue: targetValue,
+          defaultValue: parseFloat(attribute.DefaultValue || 0),
+          description: attribute.Description,
+          status: attribute.Status,
+          startDate: attribute.StartDate,
+          endDate: attribute.EndDate,
+          completed: targetValue ? currentValue >= targetValue : currentValue > 0
+        };
+      });
 
       console.log(`📊 Total milestones procesados: ${milestones.length}`);
+      milestones.forEach(m => {
+        console.log(`   - ${m.name}: ${m.currentValue}${m.targetValue ? '/' + m.targetValue : ''} ${m.completed ? '✅' : '⭕'}`);
+      });
 
       // Combinar resultados
       return {
         promotion: promotionResponse.data.records[0] || null,
         milestones: milestones,
-        totalQueries: 2
+        totalQueries: 3
       };
 
     } catch (error) {
