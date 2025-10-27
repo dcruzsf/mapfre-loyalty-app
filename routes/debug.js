@@ -222,4 +222,92 @@ router.get('/query-all-promotion-attributes/:promotionId', async (req, res) => {
   }
 });
 
+// Ruta para explorar objetos relacionados con Promotion
+router.get('/describe-promotion-objects', async (req, res) => {
+  try {
+    const instanceUrl = await salesforceAuth.getInstanceUrl();
+    const token = await salesforceAuth.getAccessToken();
+
+    // Describir varios objetos que pueden contener targets
+    const objectsToDescribe = [
+      'PromotionSegment',
+      'PromotionSegmentSalesStore',
+      'PromotionTarget',
+      'PromotionMarketSegment'
+    ];
+
+    const results = {};
+
+    for (const objectName of objectsToDescribe) {
+      try {
+        const url = `${instanceUrl}/services/data/v61.0/sobjects/${objectName}/describe`;
+        const response = await axios.get(url, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          timeout: 10000
+        });
+
+        results[objectName] = {
+          exists: true,
+          label: response.data.label,
+          fieldCount: response.data.fields.length
+        };
+      } catch (error) {
+        results[objectName] = {
+          exists: false,
+          error: error.response?.status === 404 ? 'Object not found' : error.message
+        };
+      }
+    }
+
+    res.json(results);
+
+  } catch (error) {
+    res.status(500).json({
+      error: error.message,
+      details: error.response?.data
+    });
+  }
+});
+
+// Ruta para query de PromotionSegment si existe
+router.get('/query-promotion-segments/:promotionId', async (req, res) => {
+  try {
+    const instanceUrl = await salesforceAuth.getInstanceUrl();
+    const token = await salesforceAuth.getAccessToken();
+
+    const query = `
+      SELECT Id, Name, SegmentName, PromotionId, MaximumPromotionRewardValue,
+             SequenceNumber
+      FROM PromotionSegment
+      WHERE PromotionId = '${req.params.promotionId}'
+      ORDER BY SequenceNumber
+    `.trim();
+
+    console.log('🔍 Query promotion segments:', query);
+
+    const queryUrl = `${instanceUrl}/services/data/v61.0/query?q=${encodeURIComponent(query)}`;
+    const queryResponse = await axios.get(queryUrl, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      timeout: 15000
+    });
+
+    res.json({
+      query: query,
+      result: queryResponse.data
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      error: error.message,
+      details: error.response?.data
+    });
+  }
+});
+
 module.exports = router;
