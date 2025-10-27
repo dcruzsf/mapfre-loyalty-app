@@ -375,7 +375,7 @@ class SalesforceLoyalty {
       const headers = await this.getHeaders();
 
       // Query 1: Obtener información básica de la promoción
-      const promotionQuery = `SELECT Id, Name, StartDate, EndDate, Type
+      const promotionQuery = `SELECT Id, Name, StartDate, EndDate
         FROM Promotion
         WHERE Id = '${promotionId}'`;
 
