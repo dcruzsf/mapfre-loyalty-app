@@ -389,7 +389,8 @@ class SalesforceLoyalty {
       console.log('📋 Resultado:', JSON.stringify(promotionResponse.data, null, 2));
 
       // Query 2: Obtener atributos/milestones del miembro para esta promoción
-      const attributesQuery = `SELECT Id, AttributeName, AttributeValue, LastModifiedDate
+      // Usando solo campos básicos para evitar errores de nombres de campo
+      const attributesQuery = `SELECT Id, Name, LoyaltyProgramMemberId
         FROM LoyaltyPgmMbrAttributeVal
         WHERE LoyaltyProgramMemberId = '${salesforceMemberId}'`;
 
