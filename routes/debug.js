@@ -310,4 +310,52 @@ router.get('/query-promotion-segments/:promotionId', async (req, res) => {
   }
 });
 
+// Ruta para query de PromotionTarget
+router.get('/query-promotion-targets/:promotionId', async (req, res) => {
+  try {
+    const instanceUrl = await salesforceAuth.getInstanceUrl();
+    const token = await salesforceAuth.getAccessToken();
+
+    // Primero describir PromotionTarget para ver todos los campos
+    const describeUrl = `${instanceUrl}/services/data/v61.0/sobjects/PromotionTarget/describe`;
+    const describeResponse = await axios.get(describeUrl, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      timeout: 15000
+    });
+
+    const fields = describeResponse.data.fields.map(f => f.name).filter(name => !name.includes('.')).join(', ');
+
+    const query = `
+      SELECT ${fields}
+      FROM PromotionTarget
+      WHERE PromotionId = '${req.params.promotionId}'
+    `.trim();
+
+    console.log('🔍 Query promotion targets:', query);
+
+    const queryUrl = `${instanceUrl}/services/data/v61.0/query?q=${encodeURIComponent(query)}`;
+    const queryResponse = await axios.get(queryUrl, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      timeout: 15000
+    });
+
+    res.json({
+      query: query,
+      result: queryResponse.data
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      error: error.message,
+      details: error.response?.data
+    });
+  }
+});
+
 module.exports = router;
