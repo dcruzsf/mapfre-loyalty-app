@@ -1,16 +1,32 @@
 <!-- Barra de progreso de Tiers -->
 <%
+  // Normalizar tier antes de usar
+  const tierNormalization = {
+    'Basic': 'Bronze',
+    'Bronze': 'Bronze',
+    'Bronce': 'Bronze',
+    'Plus': 'Silver',
+    'Silver': 'Silver',
+    'Plata': 'Silver',
+    'Premium': 'Gold',
+    'Gold': 'Gold',
+    'Oro': 'Gold',
+    'Elite': 'Platinum',
+    'Platinum': 'Platinum',
+    'Platino': 'Platinum'
+  };
+
   // Definir rangos de tiers
   const tierRanges = {
-    'Bronze': { min: 0, max: 499, next: 'Plata' },
-    'Silver': { min: 500, max: 999, next: 'Oro' },
-    'Gold': { min: 1000, max: 1999, next: 'Platino' },
+    'Bronze': { min: 0, max: 499, next: locale === 'es' ? 'Plata' : 'Silver' },
+    'Silver': { min: 500, max: 999, next: locale === 'es' ? 'Oro' : 'Gold' },
+    'Gold': { min: 1000, max: 1999, next: locale === 'es' ? 'Platino' : 'Platinum' },
     'Platinum': { min: 2000, max: null, next: null }
   };
 
   // Normalizar el tier del miembro
-  const currentTierKey = member.tier;
-  const tierRange = tierRanges[currentTierKey] || tierRanges['Bronze'];
+  const normalizedTier = tierNormalization[member.tier] || 'Bronze';
+  const tierRange = tierRanges[normalizedTier];
 
   // Calcular progreso
   let progressPercent = 0;
