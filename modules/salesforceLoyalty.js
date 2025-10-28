@@ -573,47 +573,23 @@ class SalesforceLoyalty {
       member.levelPoints = currencies.qualifying;
       member.rewardPoints = currencies.nonQualifying;
 
-      // Obtener el tier desde Salesforce
-      const instanceUrl = await salesforceAuth.getInstanceUrl();
-      const headers = await this.getHeaders();
-      const query = `SELECT MemberTier FROM LoyaltyProgramMember WHERE Id = '${salesforceMemberId}' LIMIT 1`;
-      const url = `${instanceUrl}/services/data/${this.apiVersion}/query?q=${encodeURIComponent(query)}`;
+      // Calcular el tier localmente basándose en Caixapoints (qualifying currency)
+      // Rangos: Bronze (0-499), Silver (500-999), Gold (1000-1999), Platinum (2000+)
+      const points = member.levelPoints;
+      let calculatedTier;
 
-      console.log(`🔍 Ejecutando query tier para member ID: ${salesforceMemberId}`);
-      console.log(`🔗 Query: ${query}`);
-
-      const tierResponse = await axios.get(url, { headers, timeout: 10000 });
-
-      if (tierResponse.data.records && tierResponse.data.records.length > 0) {
-        const sfTier = tierResponse.data.records[0].MemberTier;
-        console.log(`🔍 Tier recibido desde Salesforce: "${sfTier}" para member ${member.name}`);
-        console.log(`🔍 Puntos del member: Caixapoints=${member.levelPoints}, Cashback=${member.rewardPoints}`);
-
-        if (sfTier) {
-          // Normalizar tier names de Salesforce a los esperados por la app
-          const tierMapping = {
-            'Bronze': 'Bronze',
-            'Bronce': 'Bronze',
-            'Silver': 'Silver',
-            'Plata': 'Silver',
-            'Gold': 'Gold',
-            'Oro': 'Gold',
-            'Platinum': 'Platinum',
-            'Platino': 'Platinum',
-            'Basic': 'Bronze',
-            'Plus': 'Silver',
-            'Premium': 'Gold',
-            'Elite': 'Platinum'
-          };
-          const normalizedTier = tierMapping[sfTier] || sfTier;
-          member.tier = normalizedTier;
-          console.log(`✅ Tier sincronizado y normalizado: "${sfTier}" → "${member.tier}"`);
-        } else {
-          console.log(`⚠️ MemberTier está vacío en Salesforce`);
-        }
+      if (points >= 2000) {
+        calculatedTier = 'Platinum';
+      } else if (points >= 1000) {
+        calculatedTier = 'Gold';
+      } else if (points >= 500) {
+        calculatedTier = 'Silver';
       } else {
-        console.log(`⚠️ No se encontró LoyaltyProgramMember con ID ${salesforceMemberId}`);
+        calculatedTier = 'Bronze';
       }
+
+      member.tier = calculatedTier;
+      console.log(`✅ Tier calculado basado en ${points} Caixapoints: ${calculatedTier}`);
 
       console.log('✅ Puntos y tier sincronizados correctamente');
       return member;
