@@ -28,11 +28,6 @@
 <!-- Resumen del miembro -->
 <div class="member-summary">
   <div class="member-stat">
-    <div class="member-stat-label"><%= t('member.balance') %></div>
-    <div class="member-stat-value"><%= member.balance.toFixed(2) %> €</div>
-  </div>
-
-  <div class="member-stat">
     <div class="member-stat-label"><%= t('member.levelPoints') %></div>
     <div class="member-stat-value"><%= member.levelPoints %></div>
   </div>
@@ -46,17 +41,6 @@
     <div class="member-stat-label"><%= t('member.tier') %></div>
     <div class="member-stat-value tier-<%= member.tier.toLowerCase() %>"><%= t('tiers.' + member.tier.toLowerCase()) %></div>
   </div>
-  
-  <% if (member.getNextTier()) { %>
-    <div class="tier-progress-container">
-      <div class="tier-progress-bar">
-        <div class="tier-progress-fill" data-width="<%= member.getProgressToNextTier() %>"></div>
-      </div>
-      <div class="tier-progress-text">
-        <%= member.levelPoints %>/<%= member.getPointsForNextTier() %> <%= t('member.pointsToNext') %> <%= t('tiers.' + member.getNextTier().toLowerCase()) %>
-      </div>
-    </div>
-  <% } %>
 </div>
 
 <!-- Pestañas -->
@@ -69,7 +53,7 @@
 <div id="purchases-content" class="tab-content" style="display: block;">
   <div class="product-grid">
     <% products.forEach(product => { %>
-      <div class="product-card animate-in <%= member.balance < product.price ? 'unavailable' : '' %>">
+      <div class="product-card animate-in">
         <div class="product-image" style="background-image: url('/img/<%= product.image %>')">
           <% if (!product.image.includes('.jpg') && !product.image.includes('.png')) { %>
             <span>Imagen: <%= product.name %></span>
@@ -81,12 +65,8 @@
           <p class="product-points">+<%= product.points %> <%= t('pages.accrual.product.points') %></p>
           <p class="product-description" style="font-size: 12px; color: #666;"><%= product.description %></p>
           <form method="POST" action="/accrual/purchase/<%= product.id %>" class="purchase-form">
-            <button
-              type="submit"
-              class="btn"
-              <%= member.balance < product.price ? 'disabled' : '' %>
-            >
-              <%= member.balance < product.price ? t('pages.accrual.product.insufficientBalance') : t('pages.accrual.product.buy') %>
+            <button type="submit" class="btn">
+              <%= t('pages.accrual.product.buy') %>
             </button>
           </form>
         </div>
