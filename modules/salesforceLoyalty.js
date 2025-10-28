@@ -565,7 +565,7 @@ class SalesforceLoyalty {
    */
   async syncMemberPoints(member, salesforceMemberId) {
     try {
-      console.log('🔄 Sincronizando puntos desde Salesforce...');
+      console.log('🔄 Sincronizando puntos y tier desde Salesforce...');
 
       const currencies = await this.getMemberCurrencies(salesforceMemberId);
 
@@ -573,7 +573,23 @@ class SalesforceLoyalty {
       member.levelPoints = currencies.qualifying;
       member.rewardPoints = currencies.nonQualifying;
 
-      console.log('✅ Puntos sincronizados correctamente');
+      // Obtener el tier desde Salesforce
+      const instanceUrl = await salesforceAuth.getInstanceUrl();
+      const headers = await this.getHeaders();
+      const query = `SELECT MemberTier FROM LoyaltyProgramMember WHERE Id = '${salesforceMemberId}' LIMIT 1`;
+      const url = `${instanceUrl}/services/data/${this.apiVersion}/query?q=${encodeURIComponent(query)}`;
+
+      const tierResponse = await axios.get(url, { headers, timeout: 10000 });
+
+      if (tierResponse.data.records && tierResponse.data.records.length > 0) {
+        const sfTier = tierResponse.data.records[0].MemberTier;
+        if (sfTier) {
+          member.tier = sfTier;
+          console.log(`✅ Tier sincronizado: ${sfTier}`);
+        }
+      }
+
+      console.log('✅ Puntos y tier sincronizados correctamente');
       return member;
 
     } catch (error) {
