@@ -120,20 +120,26 @@ router.post('/', redirectIfAuthenticated, async (req, res) => {
 
     // Crear sesión para el nuevo miembro
     req.session.memberId = newMember.id;
-    
+
     console.log(`✅ Nuevo miembro registrado localmente: ${newMember.name} (ID: ${newMember.id})`);
-    
+
     // Determinar mensaje de bienvenida basado en si hubo error de Salesforce
     let welcomeMessage = brandConfig.messages.welcome;
     let redirectUrl = `/?message=${encodeURIComponent(welcomeMessage)}&newAchievement=true&achievementName=Bienvenida&achievementPoints=25`;
-    
+
     if (salesforceError) {
       // Agregar información sobre el problema de Salesforce
       const warningMessage = `${welcomeMessage} (Nota: Hubo un problema conectando con Salesforce, pero tu cuenta se creó correctamente en modo local)`;
       redirectUrl = `/?message=${encodeURIComponent(warningMessage)}&newAchievement=true&achievementName=Bienvenida&achievementPoints=25`;
     }
-    
-    res.redirect(redirectUrl);
+
+    // IMPORTANTE: Guardar la sesión ANTES del redirect para asegurar que persiste
+    req.session.save((err) => {
+      if (err) {
+        console.error('Error guardando sesión:', err);
+      }
+      res.redirect(redirectUrl);
+    });
     
   } catch (error) {
     console.error('❌ Error al registrar miembro localmente:', error);
