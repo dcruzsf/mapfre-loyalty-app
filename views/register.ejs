@@ -108,4 +108,19 @@
   </div>
 </div>
 
+<script>
+// Guardar email en localStorage al registrarse exitosamente
+document.addEventListener('DOMContentLoaded', function() {
+  const form = document.querySelector('form');
+  if (form) {
+    form.addEventListener('submit', function() {
+      const emailInput = document.getElementById('email');
+      if (emailInput && emailInput.value) {
+        localStorage.setItem('caixabank_user_email', emailInput.value);
+      }
+    });
+  }
+});
+</script>
+
 <%- include('partials/footer') %>

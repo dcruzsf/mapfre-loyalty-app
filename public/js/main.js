@@ -185,4 +185,40 @@ document.addEventListener('DOMContentLoaded', function() {
       }, 2000);
     });
   }
+
+  // Auto-login: Intentar restaurar sesión desde localStorage
+  async function tryAutoLogin() {
+    const savedEmail = localStorage.getItem('caixabank_user_email');
+
+    // Solo intentar auto-login si no estamos en la página de registro
+    // y si hay un email guardado
+    if (savedEmail && !window.location.pathname.includes('/register')) {
+      try {
+        const response = await fetch('/register/auto-login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ email: savedEmail })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          console.log('✅ Auto-login exitoso');
+          // Si estamos en una página protegida y el auto-login fue exitoso,
+          // no necesitamos hacer nada, ya estamos logueados
+        } else if (response.status === 404) {
+          // Usuario no encontrado, limpiar localStorage
+          localStorage.removeItem('caixabank_user_email');
+          console.log('⚠️ Usuario no encontrado, localStorage limpiado');
+        }
+      } catch (error) {
+        console.error('Error en auto-login:', error);
+      }
+    }
+  }
+
+  // Ejecutar auto-login
+  tryAutoLogin();
 });
