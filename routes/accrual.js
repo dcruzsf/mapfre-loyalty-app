@@ -51,16 +51,26 @@ router.post('/purchase/:id', async (req, res) => {
     const journalType = product.journalType || 'Accrual';
     const journalSubType = product.journalSubType || 'Purchase';
 
+    // TransactionAmount personalizado por producto
+    let transactionAmount = product.points;
+    if (product.id === 2) {
+      // Contratación de Tarjeta
+      transactionAmount = 550;
+    } else if (product.id === 6) {
+      // Contratar Seguro de Vida
+      transactionAmount = 500;
+    }
+
     await salesforceLoyalty.processTransaction(
       member.salesforceId,
       journalType,
-      product.points,
+      transactionAmount,
       'qualifying',
       journalType,
       journalSubType,
       activityDate
     );
-    console.log(`✅ TransactionJournal registrado en Salesforce (${journalType}/${journalSubType})`);
+    console.log(`✅ TransactionJournal registrado en Salesforce (${journalType}/${journalSubType}, amount: ${transactionAmount})`);
 
     // Sincronizar puntos desde Salesforce después de registrar
     await salesforceLoyalty.syncMemberPoints(member, member.salesforceId);

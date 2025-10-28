@@ -31,6 +31,68 @@
               <div class="member-stat-value tier-<%= member.tier.toLowerCase() %>"><%= t('tiers.' + member.tier.toLowerCase()) %></div>
             </div>
           </div>
+
+          <!-- Barra de progreso de Tiers -->
+          <%
+            // Definir rangos de tiers
+            const tierRanges = {
+              'Bronze': { min: 0, max: 499, next: 'Plata' },
+              'Silver': { min: 500, max: 999, next: 'Oro' },
+              'Gold': { min: 1000, max: 1999, next: 'Platino' },
+              'Platinum': { min: 2000, max: null, next: null }
+            };
+
+            // Normalizar el tier del miembro
+            const currentTierKey = member.tier;
+            const tierRange = tierRanges[currentTierKey] || tierRanges['Bronze'];
+
+            // Calcular progreso
+            let progressPercent = 0;
+            let pointsNeeded = 0;
+            let nextTierName = tierRange.next;
+
+            if (tierRange.max !== null) {
+              const pointsInRange = member.levelPoints - tierRange.min;
+              const rangeSize = tierRange.max - tierRange.min + 1;
+              progressPercent = Math.min(Math.max((pointsInRange / rangeSize) * 100, 0), 100);
+              pointsNeeded = tierRange.max + 1 - member.levelPoints;
+            } else {
+              progressPercent = 100; // Tier máximo alcanzado
+            }
+          %>
+
+          <% if (nextTierName) { %>
+            <div class="tier-progress-section mt-4">
+              <h5 class="mb-3" style="text-align: center;"><%= locale === 'es' ? 'Progreso al siguiente nivel' : 'Progress to next tier' %></h5>
+              <div class="tier-progress-container">
+                <div class="tier-progress-bar">
+                  <div class="tier-progress-fill" data-width="<%= progressPercent %>"></div>
+                </div>
+                <div class="tier-progress-text">
+                  <%= member.levelPoints %>/<%= tierRange.max + 1 %> <%= t('member.pointsToNext') %> <%= nextTierName %>
+                  <% if (pointsNeeded > 0) { %>
+                    (<%= pointsNeeded %> <%= locale === 'es' ? 'puntos restantes' : 'points remaining' %>)
+                  <% } %>
+                </div>
+              </div>
+            </div>
+          <% } else { %>
+            <div class="tier-progress-section mt-4" style="text-align: center;">
+              <h5 class="mb-3">🏆 <%= locale === 'es' ? '¡Nivel máximo alcanzado!' : 'Maximum tier reached!' %></h5>
+            </div>
+          <% } %>
+
+          <script>
+            document.addEventListener('DOMContentLoaded', function() {
+              const progressBars = document.querySelectorAll('.tier-progress-fill[data-width]');
+              progressBars.forEach(bar => {
+                const width = bar.getAttribute('data-width');
+                if (width) {
+                  bar.style.width = width + '%';
+                }
+              });
+            });
+          </script>
           
           <!-- Sección de acciones destacada -->
           <div class="action-section">
