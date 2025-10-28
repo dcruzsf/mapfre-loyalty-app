@@ -17,11 +17,6 @@
 
           <div class="member-summary">
             <div class="member-stat">
-              <div class="member-stat-label"><%= t('member.balance') %></div>
-              <div class="member-stat-value"><%= member.balance.toFixed(2) %> €</div>
-            </div>
-
-            <div class="member-stat">
               <div class="member-stat-label"><%= t('member.levelPoints') %></div>
               <div class="member-stat-value"><%= member.levelPoints %></div>
             </div>
@@ -35,136 +30,23 @@
               <div class="member-stat-label"><%= t('member.tier') %></div>
               <div class="member-stat-value tier-<%= member.tier.toLowerCase() %>"><%= t('tiers.' + member.tier.toLowerCase()) %></div>
             </div>
-            
-            <% if (member.getNextTier()) { %>
-              <div class="tier-progress-container">
-                <div class="tier-progress-bar">
-                  <div class="tier-progress-fill" data-width="<%= member.getProgressToNextTier() %>"></div>
-                </div>
-                <div class="tier-progress-text">
-                  <%= member.levelPoints %>/<%= member.getPointsForNextTier() %> <%= t('member.pointsToNext') %> <%= t('tiers.' + member.getNextTier().toLowerCase()) %>
-                </div>
-              </div>
-            <% } %>
           </div>
           
           <!-- Sección de acciones destacada -->
           <div class="action-section">
             <h4><%= t('home.whatToDo') %></h4>
             <div class="row">
-              <div class="col-md-4 mb-3">
+              <div class="col-md-6 mb-3">
                 <a href="/accrual" class="btn action-btn">
                   <i class="fas fa-coins"></i> <%= t('navigation.earnPoints') %>
                 </a>
               </div>
-              <div class="col-md-4 mb-3">
+              <div class="col-md-6 mb-3">
                 <a href="/redemption" class="btn action-btn">
                   <i class="fas fa-gift"></i> <%= t('navigation.redeemPoints') %>
                 </a>
               </div>
-              <div class="col-md-4 mb-3">
-                <a href="/achievements" class="btn action-btn">
-                  <i class="fas fa-trophy"></i> <%= t('navigation.achievements') %>
-                </a>
-              </div>
             </div>
-          </div>
-          
-          <!-- Camino al siguiente nivel - Sección mejorada con sombreado y espacio adicional -->
-          <% if (member.getNextTier()) { %>
-            <div class="level-progression-section mt-5 mb-5 p-4" style="background-color: #f9f9f9; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
-              <h4 class="mb-4"><%= t('home.pathToLevel') %> <%= t('tiers.' + member.getNextTier().toLowerCase()) %></h4>
-              <div class="level-timeline">
-                <div class="level-timeline-line"></div>
-                
-                <div class="level-point bronze <% if (member.tier !== 'Bronze') { %>completed<% } %>">
-                  <div class="level-label">0 pts</div>
-                  <div class="tier-name-label"><%= t('tiers.bronze') %></div>
-                </div>
-
-                <div class="level-point silver <% if (member.tier === 'Silver' || member.tier === 'Gold' || member.tier === 'Platinum') { %>completed<% } %>">
-                  <div class="level-label">500 pts</div>
-                  <div class="tier-name-label"><%= t('tiers.silver') %></div>
-                </div>
-
-                <% if (member.levelPoints > 0) { %>
-                  <%
-                    const positionPercent = Math.min(Math.max((member.levelPoints / 2000) * 100, 0), 100);
-                  %>
-                  <div class="level-point current user-position" data-position="<%= positionPercent %>">
-                    <div class="you-are-here"><%= t('home.youAreHere') %></div>
-                    <div class="level-label"><%= member.levelPoints %> pts</div>
-                  </div>
-                <% } %>
-
-                <div class="level-point gold <% if (member.tier === 'Gold' || member.tier === 'Platinum') { %>completed<% } %>">
-                  <div class="level-label">1000 pts</div>
-                  <div class="tier-name-label"><%= t('tiers.gold') %></div>
-                </div>
-
-                <div class="level-point platinum <% if (member.tier === 'Platinum') { %>completed<% } %>">
-                  <div class="level-label">2000 pts</div>
-                  <div class="tier-name-label"><%= t('tiers.platinum') %></div>
-                </div>
-              </div>
-            </div>
-            
-            <!-- Script para posicionar el punto de "Estás aquí" correctamente -->
-            <script>
-              document.addEventListener('DOMContentLoaded', function() {
-                const userPositionElement = document.querySelector('.user-position');
-                if (userPositionElement) {
-                  const position = userPositionElement.getAttribute('data-position');
-                  userPositionElement.style.left = position + '%';
-                }
-              });
-            </script>
-          <% } %>
-          
-          <!-- Transacciones recientes -->
-          <div class="mt-5">
-            <h4><%= t('home.recentTransactions') %></h4>
-            <% if (member.transactions.length === 0) { %>
-              <p><%= t('home.noTransactions') %></p>
-            <% } else { %>
-              <table class="transactions-table">
-                <thead>
-                  <tr>
-                    <th><%= t('home.transactionColumns.date') %></th>
-                    <th><%= t('home.transactionColumns.type') %></th>
-                    <th><%= t('home.transactionColumns.description') %></th>
-                    <th><%= t('home.transactionColumns.levelPoints') %></th>
-                    <th><%= t('home.transactionColumns.rewardPoints') %></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <%
-                    // Usar transacciones ya traducidas desde el controlador
-                    const translatedTransactions = member.translatedTransactions || member.transactions || [];
-
-                    // Filtrar transacciones que no aportan (ambos valores son 0)
-                    const relevantTransactions = translatedTransactions.filter(tx =>
-                      tx.levelPointsAmount !== 0 || tx.rewardPointsAmount !== 0
-                    );
-
-                    for (let i = 0; i < Math.min(5, relevantTransactions.length); i++) {
-                      const tx = relevantTransactions[relevantTransactions.length - 1 - i];
-                  %>
-                    <tr>
-                      <td><%= tx.timestamp.toLocaleString() %></td>
-                      <td><%= tx.type %></td>
-                      <td><%= tx.description %></td>
-                      <td class="<%= tx.levelPointsAmount >= 0 ? 'text-success' : 'text-danger' %>">
-                        <%= tx.levelPointsAmount > 0 ? '+' : '' %><%= tx.levelPointsAmount %>
-                      </td>
-                      <td class="<%= tx.rewardPointsAmount >= 0 ? 'text-success' : 'text-danger' %>">
-                        <%= tx.rewardPointsAmount > 0 ? '+' : '' %><%= tx.rewardPointsAmount %>
-                      </td>
-                    </tr>
-                  <% } %>
-                </tbody>
-              </table>
-            <% } %>
           </div>
         </div>
       </div>
