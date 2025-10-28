@@ -9,6 +9,11 @@ const salesforceLoyalty = require('../modules/salesforceLoyalty');
 router.use(getCurrentMember);
 
 router.get('/', async (req, res) => {
+  // Desabilitar caché para asegurar que siempre se cargue la página con la sesión actualizada
+  res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+  res.set('Pragma', 'no-cache');
+  res.set('Expires', '0');
+
   // Si hay un parámetro de nuevo logro, marcarlo para mostrar notificación
   const newAchievement = req.query.newAchievement === 'true';
   const achievementName = req.query.achievementName;
