@@ -576,7 +576,7 @@ class SalesforceLoyalty {
       // Obtener el tier desde LoyaltyMemberTier usando LoyaltyMemberId
       const instanceUrl = await salesforceAuth.getInstanceUrl();
       const headers = await this.getHeaders();
-      const tierQuery = `SELECT Id, TierGroupName, EffectiveDate FROM LoyaltyMemberTier WHERE LoyaltyMemberId = '${salesforceMemberId}' ORDER BY EffectiveDate DESC LIMIT 1`;
+      const tierQuery = `SELECT Id, TierGroup.Name, EffectiveDate FROM LoyaltyMemberTier WHERE LoyaltyMemberId = '${salesforceMemberId}' ORDER BY EffectiveDate DESC LIMIT 1`;
       const tierUrl = `${instanceUrl}/services/data/${this.apiVersion}/query?q=${encodeURIComponent(tierQuery)}`;
 
       console.log(`🔍 Obteniendo tier desde LoyaltyMemberTier para member ID: ${salesforceMemberId}`);
@@ -586,7 +586,7 @@ class SalesforceLoyalty {
 
       if (tierResponse.data.records && tierResponse.data.records.length > 0) {
         const tierRecord = tierResponse.data.records[0];
-        const sfTierName = tierRecord.TierGroupName;
+        const sfTierName = tierRecord.TierGroup?.Name;
         console.log(`🔍 Tier recibido desde Salesforce: "${sfTierName}" (EffectiveDate: ${tierRecord.EffectiveDate})`);
         console.log(`🔍 Puntos del member: Caixapoints=${member.levelPoints}, Cashback=${member.rewardPoints}`);
 
