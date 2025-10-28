@@ -133,14 +133,9 @@ router.post('/', redirectIfAuthenticated, async (req, res) => {
       redirectUrl = `/?message=${encodeURIComponent(warningMessage)}&newAchievement=true&achievementName=Bienvenida&achievementPoints=25`;
     }
 
-    // IMPORTANTE: Guardar la sesión ANTES del redirect para asegurar que persiste
-    req.session.save((err) => {
-      if (err) {
-        console.error('Error guardando sesión:', err);
-      }
-      res.redirect(redirectUrl);
-    });
-    
+    // Redirigir al dashboard con mensaje de bienvenida
+    res.redirect(redirectUrl);
+
   } catch (error) {
     console.error('❌ Error al registrar miembro localmente:', error);
     
@@ -156,38 +151,6 @@ router.post('/', redirectIfAuthenticated, async (req, res) => {
       currentPage: 'register'
     });
   }
-});
-
-// Ruta de auto-login para usuarios que recargan la página
-router.post('/auto-login', async (req, res) => {
-  const { email } = req.body;
-
-  if (!email) {
-    return res.status(400).json({ success: false, message: 'Email requerido' });
-  }
-
-  // Buscar miembro por email
-  const member = Member.findByEmail(email);
-
-  if (!member) {
-    return res.status(404).json({ success: false, message: 'Usuario no encontrado' });
-  }
-
-  // Sincronizar puntos y tier desde Salesforce si está disponible
-  if (member.salesforceId && process.env.USE_SALESFORCE === 'true') {
-    try {
-      await salesforceLoyalty.syncMemberPoints(member, member.salesforceId);
-      Member.save(member);
-      console.log(`✅ Auto-login: Currencies y tier sincronizados para ${member.name}`);
-    } catch (error) {
-      console.error(`⚠️ Auto-login: Error sincronizando para ${member.name}:`, error.message);
-    }
-  }
-
-  // Guardar en sesión
-  req.session.memberId = member.id;
-
-  return res.json({ success: true, message: 'Auto-login exitoso' });
 });
 
 module.exports = router;
