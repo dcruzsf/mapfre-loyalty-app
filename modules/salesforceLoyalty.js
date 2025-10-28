@@ -579,6 +579,9 @@ class SalesforceLoyalty {
       const query = `SELECT MemberTier FROM LoyaltyProgramMember WHERE Id = '${salesforceMemberId}' LIMIT 1`;
       const url = `${instanceUrl}/services/data/${this.apiVersion}/query?q=${encodeURIComponent(query)}`;
 
+      console.log(`🔍 Ejecutando query tier para member ID: ${salesforceMemberId}`);
+      console.log(`🔗 Query: ${query}`);
+
       const tierResponse = await axios.get(url, { headers, timeout: 10000 });
 
       if (tierResponse.data.records && tierResponse.data.records.length > 0) {
@@ -617,6 +620,10 @@ class SalesforceLoyalty {
 
     } catch (error) {
       console.error('⚠️ Error sincronizando puntos, usando valores locales:', error.message);
+      if (error.response) {
+        console.error('📋 Error response status:', error.response.status);
+        console.error('📋 Error response data:', JSON.stringify(error.response.data));
+      }
       // No bloquear el flujo, usar los valores locales existentes
       return member;
     }
