@@ -10,9 +10,20 @@ const salesforceLoyalty = require('../modules/salesforceLoyalty');
 router.use(requireAuth);
 
 // Mostrar página de accrual (Ganar Puntos)
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
   const member = req.member; // Viene del middleware requireAuth
   const locale = req.locale || 'es';
+
+  // Sincronizar puntos y tier desde Salesforce antes de mostrar la página
+  if (member.salesforceId && process.env.USE_SALESFORCE === 'true') {
+    try {
+      await salesforceLoyalty.syncMemberPoints(member, member.salesforceId);
+      Member.save(member);
+      console.log('✅ Currencies y tier sincronizados al cargar página de accrual');
+    } catch (error) {
+      console.error('⚠️ Error sincronizando en página accrual:', error.message);
+    }
+  }
 
   res.render('accrual', {
     member,

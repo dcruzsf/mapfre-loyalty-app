@@ -3,29 +3,41 @@ const router = express.Router();
 const Member = require('../models/member');
 const leaderboard = require('../modules/leaderboard');
 const { requireAuth } = require('../middleware/auth');
+const salesforceLoyalty = require('../modules/salesforceLoyalty');
 
 // Aplicar middleware de autenticación a todas las rutas
 router.use(requireAuth);
 
 // Mostrar página de leaderboard
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
   const member = req.member; // Viene del middleware requireAuth
-  
+
+  // Sincronizar puntos y tier desde Salesforce antes de mostrar la página
+  if (member.salesforceId && process.env.USE_SALESFORCE === 'true') {
+    try {
+      await salesforceLoyalty.syncMemberPoints(member, member.salesforceId);
+      Member.save(member);
+      console.log('✅ Currencies y tier sincronizados al cargar página de leaderboard');
+    } catch (error) {
+      console.error('⚠️ Error sincronizando en página leaderboard:', error.message);
+    }
+  }
+
   // Calcular el scoring sin enviarlo aún a Salesforce (solo para mostrar)
   const scorePreview = leaderboard.calculatePreview(member);
-  
+
   // Verificar si ya se ha enviado al leaderboard
   const hasSubmitted = member.leaderboardSubmitted || false;
-  
+
   // Verificar si hay mensaje de confirmación o error
   const successMessage = req.query.success ? 'Tu scoring ha sido enviado al leaderboard exitosamente' : null;
   const errorMessage = req.query.error || null;
-  
+
   // Verificar si el miembro tiene salesforceId (solo en modo Salesforce)
   const useSalesforce = process.env.USE_SALESFORCE === 'true';
   const missingId = useSalesforce && !member.salesforceId;
-  
-  res.render('leaderboard', { 
+
+  res.render('leaderboard', {
     member,
     scorePreview,
     hasSubmitted,

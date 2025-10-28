@@ -43,6 +43,8 @@
   </div>
 </div>
 
+<%- include('partials/tier-progress', {member: member, locale: locale}) %>
+
 <!-- Pestañas -->
 <div class="tabs">
   <button class="tab active" data-target="purchases-content"><%= t('pages.accrual.tabs.purchases') %></button>

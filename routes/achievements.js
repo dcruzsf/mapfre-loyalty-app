@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Member = require('../models/member');
 const { requireAuth } = require('../middleware/auth');
+const salesforceLoyalty = require('../modules/salesforceLoyalty');
 
 // Importar configuraciones centralizadas
 const brandConfig = require('../config/brand');
@@ -12,9 +13,20 @@ const catalogTranslations = require('../modules/catalogTranslations');
 router.use(requireAuth);
 
 // Mostrar página de logros
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
   const member = req.member; // Viene del middleware requireAuth
   const locale = req.locale || 'es';
+
+  // Sincronizar puntos y tier desde Salesforce antes de mostrar la página
+  if (member.salesforceId && process.env.USE_SALESFORCE === 'true') {
+    try {
+      await salesforceLoyalty.syncMemberPoints(member, member.salesforceId);
+      Member.save(member);
+      console.log('✅ Currencies y tier sincronizados al cargar página de achievements');
+    } catch (error) {
+      console.error('⚠️ Error sincronizando en página achievements:', error.message);
+    }
+  }
 
   // Verificar si hay nueva notificación de logro
   const newAchievement = req.query.newAchievement === 'true';

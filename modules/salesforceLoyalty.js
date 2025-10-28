@@ -583,6 +583,9 @@ class SalesforceLoyalty {
 
       if (tierResponse.data.records && tierResponse.data.records.length > 0) {
         const sfTier = tierResponse.data.records[0].MemberTier;
+        console.log(`🔍 Tier recibido desde Salesforce: "${sfTier}" para member ${member.name}`);
+        console.log(`🔍 Puntos del member: Caixapoints=${member.levelPoints}, Cashback=${member.rewardPoints}`);
+
         if (sfTier) {
           // Normalizar tier names de Salesforce a los esperados por la app
           const tierMapping = {
@@ -599,9 +602,14 @@ class SalesforceLoyalty {
             'Premium': 'Gold',
             'Elite': 'Platinum'
           };
-          member.tier = tierMapping[sfTier] || sfTier;
-          console.log(`✅ Tier sincronizado: ${sfTier} → ${member.tier}`);
+          const normalizedTier = tierMapping[sfTier] || sfTier;
+          member.tier = normalizedTier;
+          console.log(`✅ Tier sincronizado y normalizado: "${sfTier}" → "${member.tier}"`);
+        } else {
+          console.log(`⚠️ MemberTier está vacío en Salesforce`);
         }
+      } else {
+        console.log(`⚠️ No se encontró LoyaltyProgramMember con ID ${salesforceMemberId}`);
       }
 
       console.log('✅ Puntos y tier sincronizados correctamente');

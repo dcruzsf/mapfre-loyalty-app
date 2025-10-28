@@ -34,6 +34,8 @@
   </div>
 </div>
 
+<%- include('partials/tier-progress', {member: member, locale: locale}) %>
+
 <!-- Contador de logros y barra de progreso -->
 <div class="achievements-progress text-center mt-4 mb-4">
   <h3 class="mb-3"><%= t('pages.achievements.status.earned') %>: <%= member.achievements.length %> / 10</h3>

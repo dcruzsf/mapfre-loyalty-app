@@ -23,9 +23,20 @@ const generateRedemptionCode = (prefix) => {
 };
 
 // Mostrar página de redención
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
   const member = req.member; // Viene del middleware requireAuth
   const locale = req.locale || 'es';
+
+  // Sincronizar puntos y tier desde Salesforce antes de mostrar la página
+  if (member.salesforceId && process.env.USE_SALESFORCE === 'true') {
+    try {
+      await salesforceLoyalty.syncMemberPoints(member, member.salesforceId);
+      Member.save(member);
+      console.log('✅ Currencies y tier sincronizados al cargar página de redemption');
+    } catch (error) {
+      console.error('⚠️ Error sincronizando en página redemption:', error.message);
+    }
+  }
 
   // Verificar si hay mensaje de éxito y puntos canjeados
   const message = req.query.message;
