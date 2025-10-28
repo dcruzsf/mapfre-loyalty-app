@@ -3,19 +3,6 @@ module.exports = {
   // Operaciones digitales para acumulación de puntos (enfoque 100% digital)
   products: [
     {
-      id: 1,
-      name: 'Transferencia Inmediata Bizum',
-      price: 10,
-      points: 15,
-      image: 'compra1.png',
-      description: 'Envía dinero al instante con Bizum. Sin comisiones, 100% digital. Gana puntos por cada transacción.',
-      category: 'digital_banking',
-      isPremium: false,
-      digitalOnly: true,
-      journalType: 'Accrual',
-      journalSubType: 'Bizum'
-    },
-    {
       id: 2,
       name: 'Contratación de Tarjeta',
       price: 25,
@@ -27,6 +14,19 @@ module.exports = {
       digitalOnly: true,
       journalType: 'Accrual',
       journalSubType: 'Sign Credit Card'
+    },
+    {
+      id: 1,
+      name: 'Pago con Tarjeta en Comercio',
+      price: 10,
+      points: 15,
+      image: 'compra1.png',
+      description: 'Paga con tu tarjeta CaixaBank en cualquier comercio físico. Acumula puntos con cada compra.',
+      category: 'digital_banking',
+      isPremium: false,
+      digitalOnly: true,
+      journalType: 'Accrual',
+      journalSubType: 'Card Payment'
     },
     {
       id: 3,

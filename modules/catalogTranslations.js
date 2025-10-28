@@ -6,8 +6,8 @@ class CatalogTranslations {
         // Operaciones digitales (productos)
         products: {
           1: {
-            name: 'Transferencia Inmediata Bizum',
-            description: 'Envía dinero al instante con Bizum. Sin comisiones, 100% digital. Gana Caixapoints por cada transacción.'
+            name: 'Pago con Tarjeta en Comercio',
+            description: 'Paga con tu tarjeta CaixaBank en cualquier comercio físico. Acumula puntos con cada compra.'
           },
           2: {
             name: 'Contratación de Tarjeta',
@@ -157,8 +157,8 @@ class CatalogTranslations {
         // Digital operations (products)
         products: {
           1: {
-            name: 'Instant Bizum Transfer',
-            description: 'Send money instantly with Bizum. No fees, 100% digital. Earn Caixapoints with every transaction.'
+            name: 'Card Payment at Store',
+            description: 'Pay with your CaixaBank card at any physical store. Earn points with every purchase.'
           },
           2: {
             name: 'Credit Card Sign Up',

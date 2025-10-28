@@ -68,11 +68,15 @@
                 <div class="tier-progress-bar">
                   <div class="tier-progress-fill" data-width="<%= progressPercent %>"></div>
                 </div>
-                <div class="tier-progress-text">
-                  <%= member.levelPoints %>/<%= tierRange.max + 1 %> <%= t('member.pointsToNext') %> <%= nextTierName %>
-                  <% if (pointsNeeded > 0) { %>
-                    (<%= pointsNeeded %> <%= locale === 'es' ? 'puntos restantes' : 'points remaining' %>)
-                  <% } %>
+                <div class="tier-progress-text" style="margin-top: 8px;">
+                  <strong><%= Math.round(progressPercent) %>%</strong> <%= locale === 'es' ? 'completado' : 'complete' %>
+                  <br>
+                  <span style="font-size: 14px;">
+                    <%= member.levelPoints %> <%= locale === 'es' ? 'puntos actuales' : 'current points' %>
+                    <% if (pointsNeeded > 0) { %>
+                      | <%= pointsNeeded %> <%= locale === 'es' ? 'para' : 'to' %> <%= nextTierName %>
+                    <% } %>
+                  </span>
                 </div>
               </div>
             </div>
