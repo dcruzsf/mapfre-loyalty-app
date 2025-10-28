@@ -143,10 +143,14 @@
     "activityNotFound": "Actividad no encontrada"
   },
   "tiers": {
-    "bronze": "Basic",
-    "silver": "Plus",
-    "gold": "Premium",
-    "platinum": "Elite"
+    "bronze": "Bronce",
+    "silver": "Plata",
+    "gold": "Oro",
+    "platinum": "Platino",
+    "basic": "Bronce",
+    "plus": "Plata",
+    "premium": "Oro",
+    "elite": "Platino"
   },
   "footer": {
     "deleteAccount": "Eliminar mi cuenta y reiniciar demo",

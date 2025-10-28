@@ -143,10 +143,14 @@
     "activityNotFound": "Activity not found"
   },
   "tiers": {
-    "bronze": "Basic",
-    "silver": "Plus",
-    "gold": "Premium",
-    "platinum": "Elite"
+    "bronze": "Bronze",
+    "silver": "Silver",
+    "gold": "Gold",
+    "platinum": "Platinum",
+    "basic": "Bronze",
+    "plus": "Silver",
+    "premium": "Gold",
+    "elite": "Platinum"
   },
   "footer": {
     "deleteAccount": "Delete my account and restart demo",
