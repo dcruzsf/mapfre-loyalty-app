@@ -44,33 +44,39 @@ router.post('/purchase/:id', async (req, res) => {
   }
 
   try {
-    console.log(`${member.name} compró ${product.name} por ${product.price}€`);
+    console.log(`${member.name} realizó: ${product.name}`);
 
-    // Registrar TransactionJournal en Salesforce
     const activityDate = new Date().toISOString();
     const journalType = product.journalType || 'Accrual';
     const journalSubType = product.journalSubType || 'Purchase';
 
-    // TransactionAmount personalizado por producto
-    let transactionAmount = product.points;
-    if (product.id === 2) {
-      // Contratación de Tarjeta
-      transactionAmount = 550;
-    } else if (product.id === 6) {
-      // Contratar Seguro de Vida
-      transactionAmount = 500;
+    // Registrar qualifying points (Caixapoints) si hay
+    if (product.qualifyingPoints && product.qualifyingPoints !== 0) {
+      await salesforceLoyalty.processTransaction(
+        member.salesforceId,
+        journalType,
+        product.qualifyingPoints,
+        'qualifying',
+        journalType,
+        journalSubType,
+        activityDate
+      );
+      console.log(`✅ TransactionJournal qualifying registrado: ${product.qualifyingPoints} Caixapoints`);
     }
 
-    await salesforceLoyalty.processTransaction(
-      member.salesforceId,
-      journalType,
-      transactionAmount,
-      'qualifying',
-      journalType,
-      journalSubType,
-      activityDate
-    );
-    console.log(`✅ TransactionJournal registrado en Salesforce (${journalType}/${journalSubType}, amount: ${transactionAmount})`);
+    // Registrar non-qualifying points (Cashback) si hay
+    if (product.nonQualifyingPoints && product.nonQualifyingPoints !== 0) {
+      await salesforceLoyalty.processTransaction(
+        member.salesforceId,
+        journalType,
+        product.nonQualifyingPoints,
+        'nonQualifying',
+        journalType,
+        journalSubType,
+        activityDate
+      );
+      console.log(`✅ TransactionJournal non-qualifying registrado: ${product.nonQualifyingPoints} Cashback`);
+    }
 
     // Sincronizar puntos desde Salesforce después de registrar
     await salesforceLoyalty.syncMemberPoints(member, member.salesforceId);
@@ -78,7 +84,7 @@ router.post('/purchase/:id', async (req, res) => {
     console.log('✅ Puntos sincronizados desde Salesforce después del accrual');
 
     const message = `${i18n.t('messages.purchaseSuccess', locale)}: ${product.name}`;
-    res.redirect(`/accrual?message=${encodeURIComponent(message)}&points=${product.points}`);
+    res.redirect(`/accrual?message=${encodeURIComponent(message)}&points=${product.pointsDisplay}`);
   } catch (error) {
     console.error('⚠️ Error al registrar operación:', error.message);
     const message = `${i18n.t('messages.error', locale)}: ${error.message}`;

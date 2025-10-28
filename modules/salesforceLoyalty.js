@@ -584,8 +584,23 @@ class SalesforceLoyalty {
       if (tierResponse.data.records && tierResponse.data.records.length > 0) {
         const sfTier = tierResponse.data.records[0].MemberTier;
         if (sfTier) {
-          member.tier = sfTier;
-          console.log(`✅ Tier sincronizado: ${sfTier}`);
+          // Normalizar tier names de Salesforce a los esperados por la app
+          const tierMapping = {
+            'Bronze': 'Bronze',
+            'Bronce': 'Bronze',
+            'Silver': 'Silver',
+            'Plata': 'Silver',
+            'Gold': 'Gold',
+            'Oro': 'Gold',
+            'Platinum': 'Platinum',
+            'Platino': 'Platinum',
+            'Basic': 'Bronze',
+            'Plus': 'Silver',
+            'Premium': 'Gold',
+            'Elite': 'Platinum'
+          };
+          member.tier = tierMapping[sfTier] || sfTier;
+          console.log(`✅ Tier sincronizado: ${sfTier} → ${member.tier}`);
         }
       }
 
