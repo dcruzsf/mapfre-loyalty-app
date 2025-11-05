@@ -83,16 +83,27 @@ router.post('/redeem/:id', async (req, res) => {
 
     console.log(`${member.name} canjeó ${reward.name} por ${reward.points} puntos. Código: ${redemptionCode}`);
 
+    // Preparar campos personalizados si es redención especial (Facilitea)
+    const customFields = {};
+    if (reward.isSpecial && reward.journalType === 'Redemption') {
+      customFields.Points_to_debit__c = reward.points;
+      console.log(`🔧 Agregando campo personalizado Points_to_debit__c: ${customFields.Points_to_debit__c}`);
+    }
+
     // Registrar redemption de non-qualifying points (Cashback) en Salesforce
     const activityDate = new Date().toISOString();
+    const journalSubType = reward.journalSubType || 'Reward';
+
     await salesforceLoyalty.processTransaction(
       member.salesforceId,
       'Redemption',
       -reward.points, // Negativo para redemption
       'nonQualifying',
       'Redemption',
-      'Reward',
-      activityDate
+      journalSubType,
+      activityDate,
+      null, // journalSubTypeId
+      customFields
     );
     console.log('✅ Redemption registrado en Salesforce');
 

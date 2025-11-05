@@ -37,19 +37,19 @@ module.exports = {
     },
     {
       id: 3,
-      name: 'Redención de puntos en Facilitea',
+      name: 'Contratar Seguro de Vida SegurCaixa',
       price: 0,
-      points: -15,
-      pointsDisplay: '-15 Cashback',
-      qualifyingPoints: 0,
-      nonQualifyingPoints: -15,
-      image: 'compra3.png',
-      description: 'Canjea tus puntos por productos y servicios en Facilitea.',
-      category: 'redemption',
+      points: 500,
+      pointsDisplay: '500 Caixapoints',
+      qualifyingPoints: 500,
+      nonQualifyingPoints: 0,
+      image: 'compra6.png',
+      description: 'Protege a los tuyos con un seguro de vida 100% digital.',
+      category: 'insurance',
       isPremium: false,
       digitalOnly: true,
-      journalType: 'Redemption',
-      journalSubType: 'Purchase'
+      journalType: 'Accrual',
+      journalSubType: 'Life Insurance'
     },
     {
       id: 4,
@@ -82,22 +82,6 @@ module.exports = {
       digitalOnly: true,
       journalType: 'Accrual',
       journalSubType: 'Online purchase'
-    },
-    {
-      id: 6,
-      name: 'Contratar Seguro de Vida SegurCaixa',
-      price: 0,
-      points: 500,
-      pointsDisplay: '500 Caixapoints',
-      qualifyingPoints: 500,
-      nonQualifyingPoints: 0,
-      image: 'compra6.png',
-      description: 'Protege a los tuyos con un seguro de vida 100% digital.',
-      category: 'insurance',
-      isPremium: false,
-      digitalOnly: true,
-      journalType: 'Accrual',
-      journalSubType: 'Life Insurance'
     }
   ],
 
@@ -159,6 +143,18 @@ module.exports = {
   rewards: [
     {
       id: 1,
+      name: 'Redención de puntos en Facilitea',
+      points: 15,
+      type: 'redemption',
+      image: 'compra3.png',
+      codePrefix: 'FACILITEA',
+      description: 'Canjea tus puntos Cashback por productos y servicios en Facilitea.',
+      isSpecial: true,
+      journalType: 'Redemption',
+      journalSubType: 'Purchase'
+    },
+    {
+      id: 2,
       name: 'Cashback Instantáneo 10€',
       points: 150,
       type: 'cashback',
@@ -167,7 +163,7 @@ module.exports = {
       description: 'Dinero directo a tu cuenta. Sin esperas, sin complicaciones.'
     },
     {
-      id: 2,
+      id: 3,
       name: 'Cashback Instantáneo 25€',
       points: 350,
       type: 'cashback',
@@ -176,7 +172,7 @@ module.exports = {
       description: 'Recompensa inmediata en tu saldo disponible.'
     },
     {
-      id: 3,
+      id: 4,
       name: 'Avios Iberia',
       points: 500,
       type: 'experience',
@@ -185,7 +181,7 @@ module.exports = {
       description: 'Canjea tus Caixapoints por Avios de Iberia y vuela más cerca de tu próximo destino.'
     },
     {
-      id: 4,
+      id: 5,
       name: 'Acceso Sala VIP Aeropuerto',
       points: 800,
       type: 'experience',
@@ -194,7 +190,7 @@ module.exports = {
       description: 'Disfruta de acceso exclusivo a salas VIP en aeropuertos. Confort y tranquilidad antes de tu vuelo.'
     },
     {
-      id: 5,
+      id: 6,
       name: 'Donación Fundación "la Caixa"',
       points: 300,
       type: 'service',
@@ -203,7 +199,7 @@ module.exports = {
       description: 'Convierte tus Caixapoints en una donación de 30€ a la Fundación "la Caixa" para proyectos sociales.'
     },
     {
-      id: 6,
+      id: 7,
       name: 'Gift Card Amazon',
       points: 1000,
       type: 'service',
@@ -212,7 +208,7 @@ module.exports = {
       description: 'Gift card de Amazon para que compres lo que quieras. Canjea tus puntos por productos y tecnología.'
     },
     {
-      id: 7,
+      id: 8,
       name: 'Asesoría Personalizada en Finanzas',
       points: 600,
       type: 'service',
@@ -221,7 +217,7 @@ module.exports = {
       description: 'Sesión personalizada con un asesor financiero experto. Planifica tu futuro con ayuda profesional.'
     },
     {
-      id: 8,
+      id: 9,
       name: 'Curso Regulación en Trading',
       points: 900,
       type: 'service',
@@ -230,7 +226,7 @@ module.exports = {
       description: 'Curso completo sobre trading y regulación financiera. Aprende a invertir de forma inteligente y segura.'
     },
     {
-      id: 9,
+      id: 10,
       name: 'Tarjeta de Crédito Sin Comisiones',
       points: 1200,
       type: 'product',

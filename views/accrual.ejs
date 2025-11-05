@@ -45,10 +45,9 @@
 
 <%- include('partials/tier-progress', {member: member, locale: locale}) %>
 
-<!-- Pestañas -->
+<!-- Pestañas (solo operaciones) -->
 <div class="tabs">
   <button class="tab active" data-target="purchases-content"><%= t('pages.accrual.tabs.purchases') %></button>
-  <button class="tab" data-target="activities-content"><%= t('pages.accrual.tabs.activities') %></button>
 </div>
 
 <!-- Contenido de pestañas -->
@@ -80,27 +79,5 @@
   </div>
 </div>
 
-<div id="activities-content" class="tab-content" style="display: none;">
-  <div class="product-grid">
-    <% activities.forEach(activity => { %>
-      <div class="product-card animate-in">
-        <div class="product-image" style="background-image: url('/img/<%= activity.image %>')">
-          <% if (!activity.image.includes('.jpg') && !activity.image.includes('.png')) { %>
-            <span>Actividad: <%= activity.name %></span>
-          <% } %>
-        </div>
-        <div class="product-details">
-          <h3 class="product-title"><%= activity.name %></h3>
-          <p class="product-points">+<%= activity.points %> <%= t('pages.accrual.product.points') %></p>
-          <form method="POST" action="/accrual/activity/<%= activity.id %>" class="purchase-form">
-            <button type="submit" class="btn">
-              <%= t('pages.accrual.product.performActivity') %>
-            </button>
-          </form>
-        </div>
-      </div>
-    <% }) %>
-  </div>
-</div>
 
 <%- include('partials/footer') %>
