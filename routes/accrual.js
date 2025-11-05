@@ -38,24 +38,31 @@ router.get('/', async (req, res) => {
 // Procesar compra/operación digital
 router.post('/purchase/:id', async (req, res) => {
   const productId = parseInt(req.params.id);
+  console.log(`🛒 POST /accrual/purchase/${productId} - Iniciando procesamiento de compra`);
+
   const product = catalogConfig.products.find(p => p.id === productId);
   const locale = req.locale || 'es';
 
   if (!product) {
+    console.log(`❌ Producto no encontrado: ID ${productId}`);
     const message = i18n.t('messages.productNotFound', locale);
     return res.redirect(`/accrual?message=${encodeURIComponent(message)}`);
   }
 
+  console.log(`✅ Producto encontrado: ${product.name} (qualifying: ${product.qualifyingPoints}, non-qualifying: ${product.nonQualifyingPoints})`);
+
   const member = req.member; // Viene del middleware requireAuth
+  console.log(`👤 Member: ${member.name} (SF ID: ${member.salesforceId})`);
 
   // VALIDACIÓN: Solo funciona en modo Salesforce
   if (!member.salesforceId || process.env.USE_SALESFORCE !== 'true') {
+    console.log(`⚠️ Modo Salesforce no activo o member sin SF ID`);
     const message = 'Las operaciones solo están disponibles en modo Salesforce.';
     return res.redirect(`/accrual?message=${encodeURIComponent(message)}`);
   }
 
   try {
-    console.log(`${member.name} realizó: ${product.name}`);
+    console.log(`🎯 ${member.name} realizó: ${product.name}`);
 
     const activityDate = new Date().toISOString();
     const journalType = product.journalType || 'Accrual';
