@@ -693,23 +693,36 @@ class SalesforceLoyalty {
     const instanceUrl = await salesforceAuth.getInstanceUrl();
     const headers = await this.getHeaders();
 
-    // Intentar con diferentes nombres de objetos
+    // Intentar con diferentes nombres de objetos (sin la 'e' final en Subtype)
     const possibleObjects = [
-      'TransactionJournalSubtype',
-      'LoyaltyProgramTransactionJournalSubtype',
-      'JournalSubtype'
+      'JournalSubType',
+      'TransactionJournalSubType',
+      'LoyaltyProgramTransactionJournalSubType'
     ];
 
     for (const objectName of possibleObjects) {
       try {
-        const query = `SELECT Id FROM ${objectName} WHERE Name = '${subtypeName}' LIMIT 1`;
+        const query = `SELECT Id, Name FROM ${objectName} WHERE Name = '${subtypeName}' LIMIT 1`;
         const url = `${instanceUrl}/services/data/${this.apiVersion}/query?q=${encodeURIComponent(query)}`;
 
         const response = await axios.get(url, { headers, timeout: 10000 });
 
         if (response.data.records && response.data.records.length > 0) {
-          console.log(`✅ Encontrado ${objectName} con ID: ${response.data.records[0].Id}`);
+          console.log(`✅ Encontrado ${objectName} '${subtypeName}' con ID: ${response.data.records[0].Id}`);
           return response.data.records[0].Id;
+        } else {
+          // Si no se encontró por nombre exacto, listar los disponibles
+          console.log(`⚠️ No se encontró '${subtypeName}' en ${objectName}, listando disponibles...`);
+          const listQuery = `SELECT Id, Name FROM ${objectName} LIMIT 20`;
+          const listUrl = `${instanceUrl}/services/data/${this.apiVersion}/query?q=${encodeURIComponent(listQuery)}`;
+          const listResponse = await axios.get(listUrl, { headers, timeout: 10000 });
+
+          if (listResponse.data.records && listResponse.data.records.length > 0) {
+            console.log(`📋 JournalSubTypes disponibles en ${objectName}:`);
+            listResponse.data.records.forEach(record => {
+              console.log(`   - ${record.Name} (ID: ${record.Id})`);
+            });
+          }
         }
       } catch (error) {
         console.log(`❌ No existe objeto: ${objectName} (intentando siguiente...)`);
