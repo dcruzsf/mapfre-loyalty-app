@@ -71,35 +71,26 @@ router.post('/purchase/:id', async (req, res) => {
 
     console.log(`📋 JournalType: ${journalType}, JournalSubType: ${journalSubType}, SubTypeId: ${journalSubTypeId}`);
 
-    // Registrar qualifying points (Caixapoints) si hay
-    if (product.qualifyingPoints && product.qualifyingPoints !== 0) {
-      await salesforceLoyalty.processTransaction(
-        member.salesforceId,
-        journalType,
-        product.qualifyingPoints,
-        'qualifying',
-        journalType,
-        journalSubType,
-        activityDate,
-        journalSubTypeId
-      );
-      console.log(`✅ TransactionJournal qualifying registrado: ${product.qualifyingPoints} Caixapoints`);
-    }
+    // Calcular el monto total de la transacción (suma de qualifying + non-qualifying)
+    // En Salesforce, el TransactionAmount representa el monto total de la compra
+    // Los procesos internos de SF determinan qué parte va a qualifying y non-qualifying
+    const transactionAmount = Math.abs(product.qualifyingPoints || 0) + Math.abs(product.nonQualifyingPoints || 0);
 
-    // Registrar non-qualifying points (Cashback) si hay
-    if (product.nonQualifyingPoints && product.nonQualifyingPoints !== 0) {
-      await salesforceLoyalty.processTransaction(
-        member.salesforceId,
-        journalType,
-        product.nonQualifyingPoints,
-        'nonQualifying',
-        journalType,
-        journalSubType,
-        activityDate,
-        journalSubTypeId
-      );
-      console.log(`✅ TransactionJournal non-qualifying registrado: ${product.nonQualifyingPoints} Cashback`);
-    }
+    console.log(`💰 Monto total de transacción: ${transactionAmount} (qualifying: ${product.qualifyingPoints}, non-qualifying: ${product.nonQualifyingPoints})`);
+
+    // Crear UN SOLO TransactionJournal con el monto total
+    // Salesforce procesará internamente la distribución de puntos
+    await salesforceLoyalty.processTransaction(
+      member.salesforceId,
+      journalType,
+      transactionAmount,
+      'transaction', // Tipo genérico, SF decide la distribución
+      journalType,
+      journalSubType,
+      activityDate,
+      journalSubTypeId
+    );
+    console.log(`✅ TransactionJournal registrado con monto: ${transactionAmount}`);
 
     // Sincronizar puntos desde Salesforce después de registrar
     await salesforceLoyalty.syncMemberPoints(member, member.salesforceId);
