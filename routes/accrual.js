@@ -78,6 +78,13 @@ router.post('/purchase/:id', async (req, res) => {
 
     console.log(`💰 Monto total de transacción: ${transactionAmount} (qualifying: ${product.qualifyingPoints}, non-qualifying: ${product.nonQualifyingPoints})`);
 
+    // Preparar campos personalizados si es redención
+    const customFields = {};
+    if (journalType === 'Redemption' && Math.abs(product.nonQualifyingPoints) > 0) {
+      customFields.Points_to_debit__c = Math.abs(product.nonQualifyingPoints);
+      console.log(`🔧 Agregando campo personalizado Points_to_debit__c: ${customFields.Points_to_debit__c}`);
+    }
+
     // Crear UN SOLO TransactionJournal con el monto total
     // Salesforce procesará internamente la distribución de puntos
     await salesforceLoyalty.processTransaction(
@@ -88,7 +95,8 @@ router.post('/purchase/:id', async (req, res) => {
       journalType,
       journalSubType,
       activityDate,
-      journalSubTypeId
+      journalSubTypeId,
+      customFields
     );
     console.log(`✅ TransactionJournal registrado con monto: ${transactionAmount}`);
 

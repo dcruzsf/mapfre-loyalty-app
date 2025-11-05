@@ -774,9 +774,10 @@ class SalesforceLoyalty {
    * @param {string} journalSubTypeName - Nombre del subtipo de journal
    * @param {string} activityDate - Fecha de la actividad (ISO string)
    * @param {string} journalSubTypeId - (Opcional) ID directo del JournalSubType para evitar búsqueda
+   * @param {Object} customFields - (Opcional) Campos personalizados adicionales para el TransactionJournal
    * @returns {Promise<Object>} - Respuesta de Salesforce
    */
-  async processTransaction(loyaltyProgramMemberId, transactionType, pointsChange, currencyType, journalTypeName, journalSubTypeName, activityDate, journalSubTypeId = null) {
+  async processTransaction(loyaltyProgramMemberId, transactionType, pointsChange, currencyType, journalTypeName, journalSubTypeName, activityDate, journalSubTypeId = null, customFields = {}) {
     try {
       if (!loyaltyProgramMemberId) {
         throw new Error('Se requiere el ID del miembro de loyalty');
@@ -824,7 +825,8 @@ class SalesforceLoyalty {
         LoyaltyProgramId: loyaltyProgramId,
         MemberId: loyaltyProgramMemberId,
         TransactionAmount: Math.abs(pointsChange),
-        Status: 'Pending'
+        Status: 'Pending',
+        ...customFields  // Agregar campos personalizados si se proporcionan
       };
 
       console.log('📤 Payload:', JSON.stringify(payload, null, 2));
