@@ -414,13 +414,14 @@ class SalesforceLoyalty {
       console.log('✅ Query 1 completado');
 
       // Query 2: Obtener SOLO los engagement attributes asociados a esta promoción específica
-      // Usamos PromotionSegmentBuyerGroup para la relación entre Promotion y LoyaltyPgmEngmtAttribute
+      // Usamos PromotionSegmentSalesStore que vincula Promotion con PromotionSegment
+      // y PromotionSegment tiene la relación con LoyaltyPgmEngmtAttribute
       const allAttributesQuery = `
         SELECT Id, Name, TargetValue, DefaultValue, Description, Status, StartDate, EndDate
         FROM LoyaltyPgmEngmtAttribute
         WHERE Id IN (
-          SELECT LoyaltyPgmEngmtAttributeId
-          FROM PromotionSegmentBuyerGroup
+          SELECT EngagementAttributeId
+          FROM PromotionSegment
           WHERE PromotionId = '${promotionId}'
         )
         ORDER BY Name
