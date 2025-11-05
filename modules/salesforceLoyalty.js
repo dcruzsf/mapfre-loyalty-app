@@ -413,12 +413,15 @@ class SalesforceLoyalty {
 
       console.log('✅ Query 1 completado');
 
-      // Query 2: Obtener TODOS los engagement attributes de la promoción
+      // Query 2: Obtener SOLO los engagement attributes asociados a esta promoción específica
+      // Usamos PromotionSegmentBuyerGroup para la relación entre Promotion y LoyaltyPgmEngmtAttribute
       const allAttributesQuery = `
         SELECT Id, Name, TargetValue, DefaultValue, Description, Status, StartDate, EndDate
         FROM LoyaltyPgmEngmtAttribute
-        WHERE LoyaltyProgramId IN (
-          SELECT LoyaltyProgramId FROM Promotion WHERE Id = '${promotionId}'
+        WHERE Id IN (
+          SELECT LoyaltyPgmEngmtAttributeId
+          FROM PromotionSegmentBuyerGroup
+          WHERE PromotionId = '${promotionId}'
         )
         ORDER BY Name
       `.trim();
@@ -458,6 +461,7 @@ class SalesforceLoyalty {
         'Contratación de tarjeta': 1,
         'Contratacion de tarjeta': 1,
         'Compra en Facilitea': 1,
+        'Pago con tarjeta': 1,
         'Pago con Bizum': 2,
         'Contratación seguro': 1,
         'Contratacion seguro': 1
