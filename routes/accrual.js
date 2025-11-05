@@ -67,6 +67,9 @@ router.post('/purchase/:id', async (req, res) => {
     const activityDate = new Date().toISOString();
     const journalType = product.journalType || 'Accrual';
     const journalSubType = product.journalSubType || 'Purchase';
+    const journalSubTypeId = product.journalSubTypeId || null;
+
+    console.log(`📋 JournalType: ${journalType}, JournalSubType: ${journalSubType}, SubTypeId: ${journalSubTypeId}`);
 
     // Registrar qualifying points (Caixapoints) si hay
     if (product.qualifyingPoints && product.qualifyingPoints !== 0) {
@@ -77,7 +80,8 @@ router.post('/purchase/:id', async (req, res) => {
         'qualifying',
         journalType,
         journalSubType,
-        activityDate
+        activityDate,
+        journalSubTypeId
       );
       console.log(`✅ TransactionJournal qualifying registrado: ${product.qualifyingPoints} Caixapoints`);
     }
@@ -91,7 +95,8 @@ router.post('/purchase/:id', async (req, res) => {
         'nonQualifying',
         journalType,
         journalSubType,
-        activityDate
+        activityDate,
+        journalSubTypeId
       );
       console.log(`✅ TransactionJournal non-qualifying registrado: ${product.nonQualifyingPoints} Cashback`);
     }

@@ -32,7 +32,8 @@ module.exports = {
       isPremium: false,
       digitalOnly: true,
       journalType: 'Accrual',
-      journalSubType: 'Card Payment'
+      journalSubType: 'Compra con tarjeta',
+      journalSubTypeId: '0lSJ70000008OMNMA2'
     },
     {
       id: 3,

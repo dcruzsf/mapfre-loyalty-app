@@ -773,9 +773,10 @@ class SalesforceLoyalty {
    * @param {string} journalTypeName - Nombre del tipo de journal
    * @param {string} journalSubTypeName - Nombre del subtipo de journal
    * @param {string} activityDate - Fecha de la actividad (ISO string)
+   * @param {string} journalSubTypeId - (Opcional) ID directo del JournalSubType para evitar búsqueda
    * @returns {Promise<Object>} - Respuesta de Salesforce
    */
-  async processTransaction(loyaltyProgramMemberId, transactionType, pointsChange, currencyType, journalTypeName, journalSubTypeName, activityDate) {
+  async processTransaction(loyaltyProgramMemberId, transactionType, pointsChange, currencyType, journalTypeName, journalSubTypeName, activityDate, journalSubTypeId = null) {
     try {
       if (!loyaltyProgramMemberId) {
         throw new Error('Se requiere el ID del miembro de loyalty');
@@ -787,7 +788,15 @@ class SalesforceLoyalty {
       console.log(`🔍 Obteniendo IDs necesarios para TransactionJournal...`);
       const loyaltyProgramId = await this.getLoyaltyProgramId();
       const journalTypeId = await this.getJournalTypeId(journalTypeName);
-      const journalSubTypeId = await this.getJournalSubTypeId(journalSubTypeName);
+
+      // Si se proporcionó el ID directamente, usarlo; si no, buscarlo
+      let finalJournalSubTypeId = journalSubTypeId;
+      if (!finalJournalSubTypeId) {
+        console.log(`🔍 ID de JournalSubType no proporcionado, buscando por nombre: ${journalSubTypeName}`);
+        finalJournalSubTypeId = await this.getJournalSubTypeId(journalSubTypeName);
+      } else {
+        console.log(`✅ Usando JournalSubType ID proporcionado directamente: ${finalJournalSubTypeId}`);
+      }
 
       if (!loyaltyProgramId) {
         throw new Error(`No se encontró LoyaltyProgram: ${this.loyaltyProgramName}`);
@@ -795,11 +804,11 @@ class SalesforceLoyalty {
       if (!journalTypeId) {
         throw new Error(`No se encontró JournalType: ${journalTypeName}`);
       }
-      if (!journalSubTypeId) {
+      if (!finalJournalSubTypeId) {
         throw new Error(`No se encontró JournalSubType: ${journalSubTypeName}`);
       }
 
-      console.log(`✅ IDs obtenidos - Program: ${loyaltyProgramId}, JournalType: ${journalTypeId}, JournalSubType: ${journalSubTypeId}`);
+      console.log(`✅ IDs obtenidos - Program: ${loyaltyProgramId}, JournalType: ${journalTypeId}, JournalSubType: ${finalJournalSubTypeId}`);
 
       const instanceUrl = await salesforceAuth.getInstanceUrl();
       const url = `${instanceUrl}/services/data/${this.apiVersion}/sobjects/TransactionJournal`;
@@ -811,7 +820,7 @@ class SalesforceLoyalty {
       const payload = {
         ActivityDate: activityDate,
         JournalTypeId: journalTypeId,
-        JournalSubTypeId: journalSubTypeId,
+        JournalSubTypeId: finalJournalSubTypeId,
         LoyaltyProgramId: loyaltyProgramId,
         MemberId: loyaltyProgramMemberId,
         TransactionAmount: Math.abs(pointsChange),
