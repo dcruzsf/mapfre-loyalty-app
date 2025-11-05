@@ -62,38 +62,42 @@ class CatalogTranslations {
         // Recompensas digitales
         rewards: {
           1: {
+            name: 'Redención de puntos en Facilitea',
+            description: 'Canjea tus puntos por productos y servicios en Facilitea.'
+          },
+          2: {
             name: 'Cashback Instantáneo 10€',
             description: 'Dinero directo a tu cuenta. Sin esperas, sin complicaciones.'
           },
-          2: {
+          3: {
             name: 'Cashback Instantáneo 25€',
             description: 'Recompensa inmediata en tu saldo disponible.'
           },
-          3: {
+          4: {
             name: 'Avios Iberia',
             description: 'Canjea tus Caixapoints por Avios de Iberia y vuela más cerca de tu próximo destino.'
           },
-          4: {
+          5: {
             name: 'Acceso Sala VIP Aeropuerto',
             description: 'Disfruta de acceso exclusivo a salas VIP en aeropuertos. Confort y tranquilidad antes de tu vuelo.'
           },
-          5: {
+          6: {
             name: 'Donación Fundación "la Caixa"',
             description: 'Convierte tus Caixapoints en una donación de 30€ a la Fundación "la Caixa" para proyectos sociales.'
           },
-          6: {
+          7: {
             name: 'Gift Card Amazon',
             description: 'Gift card de Amazon para que compres lo que quieras. Canjea tus puntos por productos y tecnología.'
           },
-          7: {
+          8: {
             name: 'Asesoría Personalizada en Finanzas',
             description: 'Sesión personalizada con un asesor financiero experto. Planifica tu futuro con ayuda profesional.'
           },
-          8: {
+          9: {
             name: 'Curso Regulación en Trading',
             description: 'Curso completo sobre trading y regulación financiera. Aprende a invertir de forma inteligente y segura.'
           },
-          9: {
+          10: {
             name: 'Tarjeta de Crédito Sin Comisiones',
             description: 'Tarjeta de crédito premium sin comisiones durante 1 año. Límite ampliado y beneficios exclusivos.'
           }
@@ -213,38 +217,42 @@ class CatalogTranslations {
         // Digital rewards
         rewards: {
           1: {
+            name: 'Facilitea Points Redemption',
+            description: 'Redeem your points for products and services on Facilitea.'
+          },
+          2: {
             name: 'Instant Cashback €10',
             description: 'Money direct to your account. No waiting, no complications.'
           },
-          2: {
+          3: {
             name: 'Instant Cashback €25',
             description: 'Immediate reward in your available balance.'
           },
-          3: {
+          4: {
             name: 'Iberia Avios',
             description: 'Exchange your Caixapoints for Iberia Avios and fly closer to your next destination.'
           },
-          4: {
+          5: {
             name: 'Airport VIP Lounge Access',
             description: 'Enjoy exclusive access to VIP lounges at airports. Comfort and tranquility before your flight.'
           },
-          5: {
+          6: {
             name: 'Donation to "la Caixa" Foundation',
             description: 'Convert your Caixapoints into a €30 donation to the "la Caixa" Foundation for social projects.'
           },
-          6: {
+          7: {
             name: 'Amazon Gift Card',
             description: 'Amazon gift card to buy whatever you want. Exchange your points for products and technology.'
           },
-          7: {
+          8: {
             name: 'Personalized Financial Advice',
             description: 'Personalized session with an expert financial advisor. Plan your future with professional help.'
           },
-          8: {
+          9: {
             name: 'Trading Regulation Course',
             description: 'Complete course on trading and financial regulation. Learn to invest intelligently and safely.'
           },
-          9: {
+          10: {
             name: 'Credit Card Without Fees',
             description: 'Premium credit card with no fees for 1 year. Extended limit and exclusive benefits.'
           }
