@@ -35,6 +35,34 @@
 
 <%- include('partials/tier-progress', {member: member, locale: locale}) %>
 
+<!-- Sección de Redenciones Especiales -->
+<% if (rewards.filter(r => r.type === 'redemption').length > 0) { %>
+  <h3 class="mt-4 mb-3"><%= locale === 'es' ? 'Redención de Puntos' : 'Points Redemption' %></h3>
+
+  <div class="reward-grid">
+    <% rewards.filter(r => r.type === 'redemption').forEach((reward, index) => { %>
+      <div class="reward-card animate-in <%= member.rewardPoints < reward.points ? 'unavailable' : '' %>">
+        <div class="reward-image" style="background-image: url('/img/<%= reward.image %>')">
+        </div>
+        <div class="reward-details">
+          <h3 class="reward-title"><%= reward.name %></h3>
+          <p class="reward-description"><%= reward.description %></p>
+          <p class="reward-points"><%= reward.points %> <%= t('pages.redemption.reward.points') %></p>
+          <form method="POST" action="/redemption/redeem/<%= reward.id %>" class="redeem-form">
+            <button
+              type="submit"
+              class="btn"
+              <%= member.rewardPoints < reward.points ? 'disabled' : '' %>
+            >
+              <%= member.rewardPoints < reward.points ? t('pages.redemption.reward.insufficientPoints') : t('pages.redemption.reward.redeem') %>
+            </button>
+          </form>
+        </div>
+      </div>
+    <% }) %>
+  </div>
+<% } %>
+
 <!-- Sección de Cashback -->
 <h3 class="mt-4 mb-3"><%= locale === 'es' ? 'Cashback' : 'Cashback' %></h3>
 
