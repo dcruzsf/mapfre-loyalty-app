@@ -148,7 +148,7 @@ module.exports = {
       type: 'redemption',
       image: 'compra3.png',
       codePrefix: 'FACILITEA',
-      description: 'Canjea tus puntos Cashback por productos y servicios en Facilitea.',
+      description: 'Canjea tus puntos por productos y servicios en Facilitea.',
       isSpecial: true,
       journalType: 'Redemption',
       journalSubType: 'Purchase'
