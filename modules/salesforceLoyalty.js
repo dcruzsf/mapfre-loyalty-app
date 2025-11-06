@@ -889,7 +889,7 @@ class SalesforceLoyalty {
       const headers = await this.getHeaders();
 
       // Verificar si el badge ya existe para evitar duplicados
-      const checkQuery = `SELECT Id FROM LoyaltyProgramMemberBadge WHERE LoyaltyProgramMemberId = '${salesforceMemberId}' AND BadgeDefinitionId = '${badgeDefinitionId}'`;
+      const checkQuery = `SELECT Id FROM LoyaltyProgramMemberBadge WHERE LoyaltyProgramMemberId = '${salesforceMemberId}' AND LoyaltyProgramBadgeId = '${badgeDefinitionId}'`;
       const checkUrl = `${instanceUrl}/services/data/${this.apiVersion}/query?q=${encodeURIComponent(checkQuery)}`;
       const checkResponse = await axios.get(checkUrl, { headers, timeout: 10000 });
 
@@ -902,7 +902,7 @@ class SalesforceLoyalty {
       const url = `${instanceUrl}/services/data/${this.apiVersion}/sobjects/LoyaltyProgramMemberBadge`;
       const badgeData = {
         LoyaltyProgramMemberId: salesforceMemberId,
-        BadgeDefinitionId: badgeDefinitionId
+        LoyaltyProgramBadgeId: badgeDefinitionId
       };
 
       console.log('🏅 Asignando badge al miembro...');
@@ -938,7 +938,7 @@ class SalesforceLoyalty {
       const headers = await this.getHeaders();
 
       const query = `
-        SELECT Id, BadgeDefinitionId, BadgeDefinition.Name, BadgeDefinition.ImageUrl, CreatedDate
+        SELECT Id, LoyaltyProgramBadgeId, LoyaltyProgramBadge.Name, LoyaltyProgramBadge.ImageUrl, CreatedDate
         FROM LoyaltyProgramMemberBadge
         WHERE LoyaltyProgramMemberId = '${salesforceMemberId}'
         ORDER BY CreatedDate DESC
