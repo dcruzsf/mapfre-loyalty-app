@@ -49,7 +49,8 @@ module.exports = {
       isPremium: false,
       digitalOnly: true,
       journalType: 'Accrual',
-      journalSubType: 'Life Insurance'
+      journalSubType: 'Sign an insurance',
+      journalSubTypeId: '0lS7Q000000POCjUAO'
     },
     {
       id: 4,
