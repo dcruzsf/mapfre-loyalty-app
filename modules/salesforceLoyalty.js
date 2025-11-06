@@ -460,7 +460,7 @@ class SalesforceLoyalty {
         'Contratación de tarjeta': 1,
         'Contratacion de tarjeta': 1,
         'Compra en Facilitea': 1,
-        'Pago con tarjeta': 1,
+        'Pago con tarjeta': 2,
         'Pago con Bizum': 2,
         'Contratación seguro': 1,
         'Contratacion seguro': 1
