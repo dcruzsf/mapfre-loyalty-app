@@ -64,6 +64,23 @@
 
             <!-- Información del usuario -->
             <div class="user-info ml-3" style="display: flex; align-items: center; font-size: 12px; color: <%= brand.colors.textLight %>;">
+              <!-- Badges del usuario (si tiene) -->
+              <% if (typeof member.badges !== 'undefined' && member.badges && member.badges.length > 0) { %>
+                <div style="display: flex; align-items: center; margin-right: 15px; gap: 5px;">
+                  <% member.badges.forEach(badge => { %>
+                    <div style="width: 30px; height: 30px; border-radius: 50%; overflow: hidden; border: 2px solid <%= brand.colors.accent %>; cursor: pointer;" title="<%= badge.BadgeDefinition?.Name || 'Badge' %>">
+                      <% if (badge.BadgeDefinition?.ImageUrl) { %>
+                        <img src="<%= badge.BadgeDefinition.ImageUrl %>" alt="<%= badge.BadgeDefinition.Name %>" style="width: 100%; height: 100%; object-fit: cover;">
+                      <% } else { %>
+                        <div style="width: 100%; height: 100%; background: linear-gradient(135deg, <%= brand.colors.accent %>, <%= brand.colors.primary %>); display: flex; align-items: center; justify-content: center; color: white; font-size: 14px; font-weight: bold;">
+                          🏅
+                        </div>
+                      <% } %>
+                    </div>
+                  <% }) %>
+                </div>
+              <% } %>
+
               <div style="text-align: right; margin-right: 10px;">
                 <div style="font-weight: 500; color: <%= brand.colors.textColor %>;"><%= member.name %></div>
                 <div style="font-size: 10px;"><%= member.levelPoints %> pts | <%= t('tiers.' + member.tier.toLowerCase()) %></div>

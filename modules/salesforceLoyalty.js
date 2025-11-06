@@ -876,6 +876,160 @@ class SalesforceLoyalty {
       'Content-Type': 'application/json'
     };
   }
+
+  /**
+   * Asigna un badge a un miembro en Salesforce
+   * @param {string} salesforceMemberId - ID del LoyaltyProgramMember
+   * @param {string} badgeDefinitionId - ID del LoyaltyProgramBadge definition
+   * @returns {Promise<Object>} - Resultado de la asignación
+   */
+  async assignBadgeToMember(salesforceMemberId, badgeDefinitionId) {
+    try {
+      const instanceUrl = await salesforceAuth.getInstanceUrl();
+      const headers = await this.getHeaders();
+
+      // Verificar si el badge ya existe para evitar duplicados
+      const checkQuery = `SELECT Id FROM LoyaltyProgramMemberBadge WHERE LoyaltyProgramMemberId = '${salesforceMemberId}' AND BadgeDefinitionId = '${badgeDefinitionId}'`;
+      const checkUrl = `${instanceUrl}/services/data/${this.apiVersion}/query?q=${encodeURIComponent(checkQuery)}`;
+      const checkResponse = await axios.get(checkUrl, { headers, timeout: 10000 });
+
+      if (checkResponse.data.records && checkResponse.data.records.length > 0) {
+        console.log('✅ El miembro ya tiene este badge asignado');
+        return { alreadyExists: true, id: checkResponse.data.records[0].Id };
+      }
+
+      // Crear el registro de badge
+      const url = `${instanceUrl}/services/data/${this.apiVersion}/sobjects/LoyaltyProgramMemberBadge`;
+      const badgeData = {
+        LoyaltyProgramMemberId: salesforceMemberId,
+        BadgeDefinitionId: badgeDefinitionId
+      };
+
+      console.log('🏅 Asignando badge al miembro...');
+      console.log(`🔗 URL: ${url}`);
+      console.log(`📋 Data:`, JSON.stringify(badgeData, null, 2));
+
+      const response = await axios.post(url, badgeData, { headers, timeout: 15000 });
+
+      console.log('✅ Badge asignado correctamente');
+      console.log(`🆔 Badge Assignment ID: ${response.data.id}`);
+
+      return { success: true, id: response.data.id };
+
+    } catch (error) {
+      console.error('❌ Error asignando badge:', error.message);
+      if (error.response) {
+        console.error('📋 Detalles del error:');
+        console.error('- Status:', error.response.status);
+        console.error('- Data:', JSON.stringify(error.response.data, null, 2));
+      }
+      return null;
+    }
+  }
+
+  /**
+   * Obtiene los badges de un miembro
+   * @param {string} salesforceMemberId - ID del LoyaltyProgramMember
+   * @returns {Promise<Array>} - Lista de badges del miembro
+   */
+  async getMemberBadges(salesforceMemberId) {
+    try {
+      const instanceUrl = await salesforceAuth.getInstanceUrl();
+      const headers = await this.getHeaders();
+
+      const query = `
+        SELECT Id, BadgeDefinitionId, BadgeDefinition.Name, BadgeDefinition.ImageUrl, CreatedDate
+        FROM LoyaltyProgramMemberBadge
+        WHERE LoyaltyProgramMemberId = '${salesforceMemberId}'
+        ORDER BY CreatedDate DESC
+      `.trim();
+
+      const url = `${instanceUrl}/services/data/${this.apiVersion}/query?q=${encodeURIComponent(query)}`;
+
+      console.log('🏅 Obteniendo badges del miembro...');
+      const response = await axios.get(url, { headers, timeout: 10000 });
+
+      const badges = response.data.records || [];
+      console.log(`✅ Badges obtenidos: ${badges.length}`);
+
+      return badges;
+
+    } catch (error) {
+      console.error('❌ Error obteniendo badges:', error.message);
+      if (error.response) {
+        console.error('📋 Detalles del error:');
+        console.error('- Status:', error.response.status);
+        console.error('- Data:', JSON.stringify(error.response.data, null, 2));
+      }
+      return [];
+    }
+  }
+
+  /**
+   * Verifica si todos los hitos de una promoción están completos y asigna badge si corresponde
+   * @param {string} salesforceMemberId - ID del LoyaltyProgramMember
+   * @param {string} promotionId - ID de la promoción
+   * @param {Array} milestones - Lista de hitos de la promoción
+   * @returns {Promise<Object>} - Resultado de la verificación
+   */
+  async checkAndAssignPromotionBadge(salesforceMemberId, promotionId, milestones) {
+    try {
+      // Verificar si todos los hitos están completos
+      const allCompleted = milestones.every(m => m.completed);
+
+      if (!allCompleted) {
+        console.log('⭕ No todos los hitos están completos aún');
+        return { allCompleted: false };
+      }
+
+      console.log('✅ Todos los hitos completados! Verificando badge...');
+
+      // Obtener el BadgeDefinitionId de la promoción
+      const instanceUrl = await salesforceAuth.getInstanceUrl();
+      const headers = await this.getHeaders();
+
+      const badgeQuery = `
+        SELECT BadgeId
+        FROM Promotion
+        WHERE Id = '${promotionId}'
+      `.trim();
+
+      const badgeUrl = `${instanceUrl}/services/data/${this.apiVersion}/query?q=${encodeURIComponent(badgeQuery)}`;
+      const badgeResponse = await axios.get(badgeUrl, { headers, timeout: 10000 });
+
+      if (!badgeResponse.data.records || badgeResponse.data.records.length === 0) {
+        console.log('⚠️ La promoción no tiene un badge asociado');
+        return { allCompleted: true, badgeAssigned: false };
+      }
+
+      const badgeDefinitionId = badgeResponse.data.records[0].BadgeId;
+
+      if (!badgeDefinitionId) {
+        console.log('⚠️ La promoción no tiene BadgeId configurado');
+        return { allCompleted: true, badgeAssigned: false };
+      }
+
+      console.log(`🏅 Badge ID de la promoción: ${badgeDefinitionId}`);
+
+      // Asignar el badge al miembro
+      const result = await this.assignBadgeToMember(salesforceMemberId, badgeDefinitionId);
+
+      if (result && (result.success || result.alreadyExists)) {
+        return {
+          allCompleted: true,
+          badgeAssigned: true,
+          badgeId: result.id,
+          isNewBadge: result.success === true
+        };
+      }
+
+      return { allCompleted: true, badgeAssigned: false };
+
+    } catch (error) {
+      console.error('❌ Error verificando/asignando badge:', error.message);
+      return { allCompleted: milestones.every(m => m.completed), badgeAssigned: false };
+    }
+  }
 }
 
 module.exports = new SalesforceLoyalty();

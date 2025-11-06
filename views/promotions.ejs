@@ -45,10 +45,30 @@
 <!-- Mostrar Promociones -->
 <% if (promotions && promotions.length > 0) { %>
   <% promotions.forEach(function(promo) { %>
+    <!-- Mensaje de felicitación si se obtuvo el badge -->
+    <% if (promo.badgeResult && promo.badgeResult.isNewBadge) { %>
+      <div class="alert alert-success mt-4 animate-in" style="background: linear-gradient(135deg, #28a745, #20c997); color: white; border: none; box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);">
+        <div style="display: flex; align-items: center; gap: 15px;">
+          <div style="font-size: 48px;">🏅</div>
+          <div>
+            <h4 style="margin: 0; font-weight: bold;"><%= locale === 'es' ? '¡Enhorabuena!' : 'Congratulations!' %></h4>
+            <p style="margin: 5px 0 0 0; font-size: 16px;">
+              <%= locale === 'es'
+                ? '¡Has completado todos los hitos y ganado un badge exclusivo!'
+                : 'You have completed all milestones and earned an exclusive badge!' %>
+            </p>
+          </div>
+        </div>
+      </div>
+    <% } %>
+
     <div class="promotion-trail-card mt-4">
       <div class="promotion-trail-header">
         <h2 class="promotion-trail-title">
           <i class="fas fa-trophy"></i> <%= promo.promotionName %>
+          <% if (promo.badgeResult && promo.badgeResult.allCompleted) { %>
+            <span style="margin-left: 10px; font-size: 24px;" title="<%= locale === 'es' ? '¡Completado!' : 'Completed!' %>">🏅</span>
+          <% } %>
         </h2>
         <% if (promo.enrollmentEndDate) { %>
           <div class="promotion-trail-limit">

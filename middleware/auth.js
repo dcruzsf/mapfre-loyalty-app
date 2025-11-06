@@ -1,11 +1,12 @@
 // middleware/auth.js
 const Member = require('../models/member');
 const i18n = require('../modules/i18n');
+const salesforceLoyalty = require('../modules/salesforceLoyalty');
 
 /**
  * Middleware para verificar que el usuario tiene una sesión activa
  */
-const requireAuth = (req, res, next) => {
+const requireAuth = async (req, res, next) => {
   const locale = req.locale || 'es';
 
   if (!req.session.memberId) {
@@ -24,6 +25,23 @@ const requireAuth = (req, res, next) => {
 
   // Añadir el miembro al objeto request para fácil acceso
   req.member = member;
+
+  // Cargar badges si está en modo Salesforce
+  if (member.salesforceId && process.env.USE_SALESFORCE === 'true') {
+    try {
+      const badges = await salesforceLoyalty.getMemberBadges(member.salesforceId);
+      req.member.badges = badges;
+      res.locals.memberBadges = badges;
+    } catch (error) {
+      console.warn('⚠️ No se pudieron cargar badges:', error.message);
+      req.member.badges = [];
+      res.locals.memberBadges = [];
+    }
+  } else {
+    req.member.badges = [];
+    res.locals.memberBadges = [];
+  }
+
   next();
 };
 

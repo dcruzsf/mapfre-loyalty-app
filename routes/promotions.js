@@ -49,6 +49,14 @@ router.get('/', async (req, res) => {
           if (soqlData) {
             console.log('✅ Datos obtenidos via SOQL');
             console.log(`📊 Milestones encontrados: ${soqlData.milestones?.length || 0}`);
+
+            // Verificar si todos los hitos están completos y asignar badge si corresponde
+            const badgeResult = await salesforceLoyalty.checkAndAssignPromotionBadge(
+              member.salesforceId,
+              promo.promotionId,
+              soqlData.milestones || []
+            );
+
             // Combinar datos de programa-processes con datos SOQL
             promotionsWithTrails.push({
               promotionId: promo.promotionId,
@@ -56,7 +64,8 @@ router.get('/', async (req, res) => {
               startDate: promo.startDate || soqlData.promotion?.StartDate,
               endDate: promo.endDate || soqlData.promotion?.EndDate,
               milestones: soqlData.milestones || [],
-              dataSource: 'SOQL'
+              dataSource: 'SOQL',
+              badgeResult: badgeResult
             });
           } else {
             console.log('❌ No se pudo obtener datos por ningún método');
