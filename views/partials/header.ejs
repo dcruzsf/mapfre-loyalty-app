@@ -64,15 +64,23 @@
 
             <!-- Información del usuario -->
             <div class="user-info ml-3" style="display: flex; align-items: center; font-size: 12px; color: <%= brand.colors.textLight %>;">
-              <!-- Badges del usuario (si tiene) -->
+              <div style="text-align: right; margin-right: 10px;">
+                <div style="font-weight: 500; color: <%= brand.colors.textColor %>;"><%= member.name %></div>
+                <div style="font-size: 10px;"><%= member.levelPoints %> pts | <%= t('tiers.' + member.tier.toLowerCase()) %></div>
+              </div>
+
+              <!-- Badges del usuario (si tiene) - MÁS GRANDES Y PROMINENTES -->
               <% if (typeof member.badges !== 'undefined' && member.badges && member.badges.length > 0) { %>
-                <div style="display: flex; align-items: center; margin-right: 15px; gap: 5px;">
+                <div style="display: flex; align-items: center; margin: 0 12px; gap: 8px;">
                   <% member.badges.forEach(badge => { %>
-                    <div style="width: 30px; height: 30px; border-radius: 50%; overflow: hidden; border: 2px solid <%= brand.colors.accent %>; cursor: pointer;" title="<%= badge.LoyaltyProgramBadge?.Name || 'Badge' %>">
+                    <div style="width: 48px; height: 48px; border-radius: 50%; overflow: hidden; border: 3px solid <%= brand.colors.accent %>; cursor: pointer; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); transition: transform 0.2s ease;"
+                         onmouseover="this.style.transform='scale(1.15)'"
+                         onmouseout="this.style.transform='scale(1)'"
+                         title="<%= badge.LoyaltyProgramBadge?.Name || 'Badge' %>">
                       <% if (badge.LoyaltyProgramBadge?.ImageUrl) { %>
                         <img src="<%= badge.LoyaltyProgramBadge.ImageUrl %>" alt="<%= badge.LoyaltyProgramBadge.Name %>" style="width: 100%; height: 100%; object-fit: cover;">
                       <% } else { %>
-                        <div style="width: 100%; height: 100%; background: linear-gradient(135deg, <%= brand.colors.accent %>, <%= brand.colors.primary %>); display: flex; align-items: center; justify-content: center; color: white; font-size: 14px; font-weight: bold;">
+                        <div style="width: 100%; height: 100%; background: linear-gradient(135deg, <%= brand.colors.accent %>, <%= brand.colors.primary %>); display: flex; align-items: center; justify-content: center; color: white; font-size: 24px; font-weight: bold;">
                           🏅
                         </div>
                       <% } %>
@@ -81,10 +89,6 @@
                 </div>
               <% } %>
 
-              <div style="text-align: right; margin-right: 10px;">
-                <div style="font-weight: 500; color: <%= brand.colors.textColor %>;"><%= member.name %></div>
-                <div style="font-size: 10px;"><%= member.levelPoints %> pts | <%= t('tiers.' + member.tier.toLowerCase()) %></div>
-              </div>
               <div style="width: 35px; height: 35px; border-radius: 50%; background-color: <%= brand.colors.secondary %>; color: white; display: flex; align-items: center; justify-content: center; font-weight: 500;">
                 <%= member.name.split(' ').map(n => n.charAt(0).toUpperCase()).join('').substring(0, 2) %>
               </div>
