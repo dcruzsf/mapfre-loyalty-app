@@ -37,7 +37,7 @@ module.exports = {
     },
     {
       id: 3,
-      name: 'Contratar Seguro de Vida SegurCaixa',
+      name: 'Contratar Seguro MyBox Vida',
       price: 0,
       points: 500,
       pointsDisplay: '500 Caixapoints',

@@ -26,7 +26,7 @@ class CatalogTranslations {
             description: 'Crea tarjetas virtuales temporales para compras online ultra seguras. Máxima protección + Caixapoints.'
           },
           6: {
-            name: 'Contratar Seguro de Vida SegurCaixa',
+            name: 'Contratar Seguro MyBox Vida',
             description: 'Protege a los tuyos con un seguro de vida 100% digital. Contratación online en minutos + gran bonificación en Caixapoints.'
           }
         },
@@ -181,7 +181,7 @@ class CatalogTranslations {
             description: 'Create temporary virtual cards for ultra-secure online shopping. Maximum protection + Caixapoints.'
           },
           6: {
-            name: 'Contract Life Insurance SegurCaixa',
+            name: 'Contract MyBox Life Insurance',
             description: 'Protect your loved ones with 100% digital life insurance. Online contracting in minutes + great Caixapoints bonus.'
           }
         },
