@@ -1,4 +1,4 @@
-// modules/salesforceLoyalty.js - Versión corregida
+// modules/salesforceLoyalty.js - Versión COMPLETA y ROBUSTA
 const axios = require('axios');
 const salesforceAuth = require('./salesforceAuth');
 
@@ -390,70 +390,144 @@ class SalesforceLoyalty {
   }
 
   /**
-   * MÉTODO CORREGIDO: Query SOQL para obtener datos usando la tabla de Checklist (Hitos)
-   * Filtra correctamente por PromotionId para evitar mezclar hitos de diferentes campañas.
+   * MÉTODO MEJORADO (TRY-CATCH-FALLBACK):
+   * Intenta obtener datos reales de hitos. Si la tabla no existe o falla,
+   * usa un fallback para que la promoción se muestre igualmente.
    */
   async getPromotionDataViaSOQL(salesforceMemberId, promotionId) {
     try {
       const instanceUrl = await salesforceAuth.getInstanceUrl();
       const headers = await this.getHeaders();
+      let promotionData = null;
+      let milestones = [];
+      let dataSource = 'None';
 
-      // Query 1: Obtener información básica de la promoción
-      const promotionQuery = `SELECT Id, Name, StartDate, EndDate
-        FROM Promotion
-        WHERE Id = '${promotionId}'`;
-
-      console.log('🔍 SOQL Query 1 - Información de la promoción:');
-      const promotionUrl = `${instanceUrl}/services/data/${this.apiVersion}/query?q=${encodeURIComponent(promotionQuery)}`;
-      const promotionResponse = await axios.get(promotionUrl, { headers, timeout: 15000 });
-
-      // Query 2: Obtener HITOS ESPECÍFICOS DE ESTA PROMOCIÓN
-      // Usamos LoyaltyProgramMbrPromChecklt que vincula Member + Promotion + Progress
-      const checklistQuery = `
-        SELECT Id, Name, CurrentValue, TargetValue, Status
-        FROM LoyaltyProgramMbrPromChecklt
-        WHERE LoyaltyProgramMemberId = '${salesforceMemberId}'
-        AND PromotionId = '${promotionId}'
-      `.trim();
-
-      console.log('🔍 SOQL Query 2 - Hitos (Checklist) específicos de la promoción:');
-      console.log(checklistQuery);
-
-      const checklistUrl = `${instanceUrl}/services/data/${this.apiVersion}/query?q=${encodeURIComponent(checklistQuery)}`;
-      const checklistResponse = await axios.get(checklistUrl, { headers, timeout: 15000 });
-
-      console.log(`✅ Hitos encontrados: ${checklistResponse.data.records.length}`);
-
-      // Mapear los resultados al formato que espera tu vista
-      const milestones = checklistResponse.data.records.map(record => {
-        // Asegurar valores numéricos
-        const current = parseFloat(record.CurrentValue) || 0;
-        const target = parseFloat(record.TargetValue) || 1; // Evitar división por cero
+      // 1. Obtener datos básicos de la promoción (OBLIGATORIO)
+      try {
+        const promotionQuery = `SELECT Id, Name, Description, StartDate, EndDate 
+          FROM Promotion 
+          WHERE Id = '${promotionId}'`;
+        const promotionUrl = `${instanceUrl}/services/data/${this.apiVersion}/query?q=${encodeURIComponent(promotionQuery)}`;
+        const promotionResponse = await axios.get(promotionUrl, { headers, timeout: 10000 });
         
-        return {
-          id: record.Id,
-          name: record.Name, // El nombre del hito (ej: "Gasta 500€")
-          currentValue: current,
-          targetValue: target,
-          completed: record.Status === 'Completed' || (current >= target)
-        };
-      });
+        if (!promotionResponse.data.records || promotionResponse.data.records.length === 0) {
+            console.log(`⚠️ Promoción ${promotionId} no encontrada (Basic Info).`);
+            return null;
+        }
+        promotionData = promotionResponse.data.records[0];
+      } catch (basicError) {
+          console.error(`❌ Error fatal obteniendo info de promoción: ${basicError.message}`);
+          return null; 
+      }
 
-      milestones.forEach(m => {
-        console.log(`   - ${m.name}: ${m.currentValue}/${m.targetValue} ${m.completed ? '✅' : '⭕'}`);
-      });
+      // 2. INTENTO A: Tabla "LoyaltyProgramMbrPromChecklt" (Hitos reales específicos)
+      // Esta tabla puede no existir en algunas versiones de Salesforce.
+      try {
+        console.log("🔍 [Intento A] Buscando hitos reales en LoyaltyProgramMbrPromChecklt...");
+        const checklistQuery = `
+          SELECT Id, Name, CurrentValue, TargetValue, Status
+          FROM LoyaltyProgramMbrPromChecklt
+          WHERE LoyaltyProgramMemberId = '${salesforceMemberId}'
+          AND PromotionId = '${promotionId}'
+        `.trim();
+
+        const checklistUrl = `${instanceUrl}/services/data/${this.apiVersion}/query?q=${encodeURIComponent(checklistQuery)}`;
+        const checklistResponse = await axios.get(checklistUrl, { headers, timeout: 10000 });
+
+        if (checklistResponse.data.records && checklistResponse.data.records.length > 0) {
+          console.log(`✅ Hitos reales encontrados: ${checklistResponse.data.records.length}`);
+          milestones = checklistResponse.data.records.map(record => ({
+            id: record.Id,
+            name: record.Name,
+            currentValue: parseFloat(record.CurrentValue) || 0,
+            targetValue: parseFloat(record.TargetValue) || 1,
+            completed: record.Status === 'Completed' || (parseFloat(record.CurrentValue) >= parseFloat(record.TargetValue))
+          }));
+          dataSource = 'RealChecklist';
+        } else {
+           console.log(`ℹ️ Tabla Checklist existe pero está vacía para esta promo.`);
+        }
+      } catch (checkError) {
+        // AQUÍ CAPTURAMOS TU ERROR: "sObject type ... is not supported"
+        console.warn(`⚠️ [Fallo Intento A] No se pudo leer LoyaltyProgramMbrPromChecklt (Probablemente no soportado/sin permisos): ${checkError.message}`);
+        // No hacemos throw, dejamos que continúe al Fallback (paso 3)
+      }
+
+      // 3. INTENTO B (FALLBACK): Atributos Generales (Lógica original)
+      // Si no tenemos hitos del paso anterior, usamos esto para no dejar la pantalla en blanco.
+      if (milestones.length === 0) {
+         console.log("🔄 [Intento B] Activando Fallback: Usando atributos generales del programa...");
+         try {
+            // 3.1 Obtener atributos generales asociados a la promoción
+            const attributesQuery = `
+              SELECT Id, Name, TargetValue, DefaultValue, Description
+              FROM LoyaltyPgmEngmtAttribute
+              WHERE LoyaltyProgramId IN (
+                SELECT LoyaltyProgramId FROM Promotion WHERE Id = '${promotionId}'
+              )
+              ORDER BY Name
+            `.trim();
+            const attrUrl = `${instanceUrl}/services/data/${this.apiVersion}/query?q=${encodeURIComponent(attributesQuery)}`;
+            const attrResponse = await axios.get(attrUrl, { headers, timeout: 10000 });
+            
+            // 3.2 Obtener progreso del usuario en esos atributos
+            const progressQuery = `
+                SELECT LoyaltyPgmEngmtAttributeId, CurrentValue 
+                FROM LoyaltyPgmMbrAttributeVal 
+                WHERE LoyaltyProgramMemberId = '${salesforceMemberId}'
+            `.trim();
+            const progressUrl = `${instanceUrl}/services/data/${this.apiVersion}/query?q=${encodeURIComponent(progressQuery)}`;
+            const progressResponse = await axios.get(progressUrl, { headers, timeout: 10000 });
+
+            // Mapa de progreso
+            const progressMap = {};
+            if(progressResponse.data.records){
+                progressResponse.data.records.forEach(p => {
+                    progressMap[p.LoyaltyPgmEngmtAttributeId] = parseFloat(p.CurrentValue) || 0;
+                });
+            }
+
+            // Mapa manual de targets (por si Salesforce no los trae)
+            const targetMap = {
+                'Contratación de tarjeta': 1, 'Contratacion de tarjeta': 1,
+                'Compra en Facilitea': 1, 'Pago con tarjeta': 2,
+                'Pago con Bizum': 2, 'Contratación seguro': 1
+            };
+
+            // Construir hitos fallback
+            if (attrResponse.data.records) {
+              milestones = attrResponse.data.records.map(attribute => {
+                const cleanName = attribute.Name.split('__')[0].replace(/_/g, ' ');
+                const current = progressMap[attribute.Id] || 0;
+                const target = attribute.TargetValue 
+                    ? parseFloat(attribute.TargetValue) 
+                    : (targetMap[cleanName] || 1);
+
+                return {
+                  id: attribute.Id,
+                  name: cleanName,
+                  currentValue: current,
+                  targetValue: target,
+                  completed: current >= target,
+                  isGeneric: true
+                };
+              });
+              dataSource = 'FallbackAttributes';
+              console.log(`✅ Hitos genéricos (fallback) cargados: ${milestones.length}`);
+            }
+         } catch (fallbackError) {
+            console.error(`❌ [Fallo Intento B] Falló también el fallback: ${fallbackError.message}`);
+         }
+      }
 
       return {
-        promotion: promotionResponse.data.records[0] || null,
+        promotion: promotionData,
         milestones: milestones,
-        dataSource: 'LoyaltyProgramMbrPromChecklt'
+        dataSource: dataSource
       };
 
     } catch (error) {
-      console.error('❌ Error en queries SOQL:', error.message);
-      if (error.response) {
-        console.error('📋 Detalles del error:', JSON.stringify(error.response.data, null, 2));
-      }
+      console.error('❌ Error general inesperado en getPromotionDataViaSOQL:', error.message);
       return null;
     }
   }
