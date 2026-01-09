@@ -1,4 +1,4 @@
-// modules/salesforceLoyalty.js - Versión mejorada con manejo de timeout
+// modules/salesforceLoyalty.js - Versión corregida
 const axios = require('axios');
 const salesforceAuth = require('./salesforceAuth');
 
@@ -390,10 +390,8 @@ class SalesforceLoyalty {
   }
 
   /**
-   * MÉTODO ALTERNATIVO: Query SOQL para obtener datos de promoción y milestones
-   * @param {string} salesforceMemberId - ID del LoyaltyProgramMember
-   * @param {string} promotionId - ID de la promoción
-   * @returns {Promise<Object>} - Datos de la promoción con milestones
+   * MÉTODO CORREGIDO: Query SOQL para obtener datos usando la tabla de Checklist (Hitos)
+   * Filtra correctamente por PromotionId para evitar mezclar hitos de diferentes campañas.
    */
   async getPromotionDataViaSOQL(salesforceMemberId, promotionId) {
     try {
@@ -406,111 +404,55 @@ class SalesforceLoyalty {
         WHERE Id = '${promotionId}'`;
 
       console.log('🔍 SOQL Query 1 - Información de la promoción:');
-      console.log(promotionQuery);
-
       const promotionUrl = `${instanceUrl}/services/data/${this.apiVersion}/query?q=${encodeURIComponent(promotionQuery)}`;
       const promotionResponse = await axios.get(promotionUrl, { headers, timeout: 15000 });
 
-      console.log('✅ Query 1 completado');
-
-      // Query 2: Obtener engagement attributes del programa
-      // Nota: Este query obtiene todos los attributes del programa, no solo los de la promoción específica
-      // Esto es porque la relación directa entre Promotion y LoyaltyPgmEngmtAttribute no está expuesta en la API
-      const allAttributesQuery = `
-        SELECT Id, Name, TargetValue, DefaultValue, Description, Status, StartDate, EndDate
-        FROM LoyaltyPgmEngmtAttribute
-        WHERE LoyaltyProgramId IN (
-          SELECT LoyaltyProgramId FROM Promotion WHERE Id = '${promotionId}'
-        )
-        ORDER BY Name
-      `.trim();
-
-      console.log('🔍 SOQL Query 2 - Todos los engagement attributes de la promoción:');
-
-      const allAttributesUrl = `${instanceUrl}/services/data/${this.apiVersion}/query?q=${encodeURIComponent(allAttributesQuery)}`;
-      const allAttributesResponse = await axios.get(allAttributesUrl, { headers, timeout: 15000 });
-
-      console.log(`✅ Query 2 completado - Total attributes: ${allAttributesResponse.data.records.length}`);
-
-      // Query 3: Obtener progreso del miembro en estos attributes
-      const memberProgressQuery = `
-        SELECT Id, CurrentValue, CumulativeValue, LoyaltyPgmEngmtAttributeId
-        FROM LoyaltyPgmMbrAttributeVal
+      // Query 2: Obtener HITOS ESPECÍFICOS DE ESTA PROMOCIÓN
+      // Usamos LoyaltyProgramMbrPromChecklt que vincula Member + Promotion + Progress
+      const checklistQuery = `
+        SELECT Id, Name, CurrentValue, TargetValue, Status
+        FROM LoyaltyProgramMbrPromChecklt
         WHERE LoyaltyProgramMemberId = '${salesforceMemberId}'
+        AND PromotionId = '${promotionId}'
       `.trim();
 
-      console.log('🔍 SOQL Query 3 - Progreso del miembro:');
+      console.log('🔍 SOQL Query 2 - Hitos (Checklist) específicos de la promoción:');
+      console.log(checklistQuery);
 
-      const memberProgressUrl = `${instanceUrl}/services/data/${this.apiVersion}/query?q=${encodeURIComponent(memberProgressQuery)}`;
-      const memberProgressResponse = await axios.get(memberProgressUrl, { headers, timeout: 15000 });
+      const checklistUrl = `${instanceUrl}/services/data/${this.apiVersion}/query?q=${encodeURIComponent(checklistQuery)}`;
+      const checklistResponse = await axios.get(checklistUrl, { headers, timeout: 15000 });
 
-      console.log(`✅ Query 3 completado - Total progress records: ${memberProgressResponse.data.records.length}`);
+      console.log(`✅ Hitos encontrados: ${checklistResponse.data.records.length}`);
 
-      // Crear un mapa de progreso del miembro por attributeId
-      const progressMap = {};
-      memberProgressResponse.data.records.forEach(record => {
-        progressMap[record.LoyaltyPgmEngmtAttributeId] = {
-          currentValue: parseFloat(record.CurrentValue) || 0,
-          cumulativeValue: record.CumulativeValue || 0
-        };
-      });
-
-      // Mapeo de targets hardcodeados (no disponibles en Salesforce API)
-      const targetMap = {
-        'Contratación de tarjeta': 1,
-        'Contratacion de tarjeta': 1,
-        'Compra en Facilitea': 1,
-        'Pago con tarjeta': 2,
-        'Pago con Bizum': 2,
-        'Contratación seguro': 1,
-        'Contratacion seguro': 1
-      };
-
-      // Combinar todos los attributes con el progreso del miembro
-      const milestones = allAttributesResponse.data.records.map(attribute => {
-        const progress = progressMap[attribute.Id] || { currentValue: 0, cumulativeValue: 0 };
-        const currentValue = progress.currentValue;
-
-        // Limpiar el nombre del attribute (quitar el sufijo técnico)
-        const cleanName = attribute.Name.split('__')[0].replace(/_/g, ' ');
-
-        // Obtener target del mapa hardcodeado (fallback a TargetValue de Salesforce si existe)
-        const targetValue = attribute.TargetValue
-          ? parseFloat(attribute.TargetValue)
-          : (targetMap[cleanName] || 1); // Default a 1 si no está en el mapa
-
+      // Mapear los resultados al formato que espera tu vista
+      const milestones = checklistResponse.data.records.map(record => {
+        // Asegurar valores numéricos
+        const current = parseFloat(record.CurrentValue) || 0;
+        const target = parseFloat(record.TargetValue) || 1; // Evitar división por cero
+        
         return {
-          id: attribute.Id,
-          name: cleanName,
-          currentValue: currentValue,
-          targetValue: targetValue,
-          defaultValue: parseFloat(attribute.DefaultValue || 0),
-          description: attribute.Description,
-          status: attribute.Status,
-          startDate: attribute.StartDate,
-          endDate: attribute.EndDate,
-          completed: currentValue >= targetValue
+          id: record.Id,
+          name: record.Name, // El nombre del hito (ej: "Gasta 500€")
+          currentValue: current,
+          targetValue: target,
+          completed: record.Status === 'Completed' || (current >= target)
         };
       });
 
-      console.log(`📊 Total milestones procesados: ${milestones.length}`);
       milestones.forEach(m => {
-        console.log(`   - ${m.name}: ${m.currentValue}${m.targetValue ? '/' + m.targetValue : ''} ${m.completed ? '✅' : '⭕'}`);
+        console.log(`   - ${m.name}: ${m.currentValue}/${m.targetValue} ${m.completed ? '✅' : '⭕'}`);
       });
 
-      // Combinar resultados
       return {
         promotion: promotionResponse.data.records[0] || null,
         milestones: milestones,
-        totalQueries: 3
+        dataSource: 'LoyaltyProgramMbrPromChecklt'
       };
 
     } catch (error) {
       console.error('❌ Error en queries SOQL:', error.message);
       if (error.response) {
-        console.error('📋 Detalles del error:');
-        console.error('- Status:', error.response.status);
-        console.error('- Data:', JSON.stringify(error.response.data, null, 2));
+        console.error('📋 Detalles del error:', JSON.stringify(error.response.data, null, 2));
       }
       return null;
     }
