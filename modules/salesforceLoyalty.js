@@ -1,4 +1,4 @@
-// modules/salesforceLoyalty.js - Versión Final (Lógica Hero Ajustada + Tier Fix)
+// modules/salesforceLoyalty.js - Versión Final (Hitos + Tiers + BADGES RESTAURADOS)
 const axios = require('axios');
 const salesforceAuth = require('./salesforceAuth');
 
@@ -107,9 +107,6 @@ class SalesforceLoyalty {
     } catch (error) { throw error; }
   }
 
-  /**
-   * CORREGIDO: Mapeo de Tiers para arreglar el bug visual "tiers.plata"
-   */
   async syncMemberPoints(member, salesforceMemberId) {
     try {
       const currencies = await this.getMemberCurrencies(salesforceMemberId);
@@ -125,7 +122,7 @@ class SalesforceLoyalty {
       if (tierResponse.data.records?.length > 0) {
         const sfTierName = tierResponse.data.records[0].Name;
         
-        // DICCIONARIO DE TRADUCCIÓN (IMPORTANTE)
+        // Mapeo de Tiers (Restaurado)
         const tierMapping = {
             'Bronze': 'Bronze', 'Bronce': 'Bronze', 
             'Silver': 'Silver', 'Plata': 'Silver', 
@@ -135,7 +132,6 @@ class SalesforceLoyalty {
         };
 
         if (sfTierName) {
-            // Usamos el mapeo o el nombre original si no está en la lista
             member.tier = tierMapping[sfTierName] || sfTierName;
         }
       }
@@ -144,7 +140,7 @@ class SalesforceLoyalty {
   }
 
   // ---------------------------------------------------------------------------
-  // 2. GESTIÓN DE PROMOCIONES E HITOS (LOGICA CORREGIDA PARA HERO)
+  // 2. GESTIÓN DE PROMOCIONES E HITOS (1 vs 4 + Filters)
   // ---------------------------------------------------------------------------
 
   async getEnrolledPromotions(salesforceMemberId) {
@@ -211,10 +207,9 @@ class SalesforceLoyalty {
         }
       } catch (e) {}
 
-      // 3. FALLBACK CON FILTRO MANUAL CORREGIDO
+      // 3. FALLBACK FILTRADO MANUAL
       if (milestones.length === 0) {
         try {
-          // Traemos TODOS los atributos
           const q = `SELECT Id, Name, TargetValue FROM LoyaltyPgmEngmtAttribute WHERE LoyaltyProgramId IN (SELECT LoyaltyProgramId FROM Promotion WHERE Id = '${promotionId}')`;
           const url = `${instanceUrl}/services/data/${this.apiVersion}/query?q=${encodeURIComponent(q)}`;
           const res = await axios.get(url, { headers, timeout: 8000 });
@@ -230,35 +225,27 @@ class SalesforceLoyalty {
              const allAttrs = res.data.records;
              let filteredAttrs = [];
 
-             // -----------------------------------------------------------
-             // REGLAS DE NEGOCIO DEFINITIVAS
-             // -----------------------------------------------------------
              const promoName = promotionData.Name.toLowerCase();
 
              if (promoName.includes('premio') || (promoName.includes('compras') && promoName.includes('tarjeta'))) {
                 // CASO PREMIO: Solo "Pago"
                 filteredAttrs = allAttrs.filter(a => a.Name.toLowerCase().includes('pago'));
              } else {
-                // CASO HERO: Queremos todo MENOS "Compra" (evita duplicado) PERO INCLUYENDO "Pago"
-                filteredAttrs = allAttrs.filter(a => {
-                    const n = a.Name.toLowerCase();
-                    return !n.includes('compra'); // Eliminamos solo "compra", dejamos "pago"
-                });
+                // CASO HERO: Todo MENOS "Compra" (incluye Pago)
+                filteredAttrs = allAttrs.filter(a => !a.Name.toLowerCase().includes('compra'));
              }
 
-             // Mapear y Forzar Targets
              milestones = filteredAttrs.map(a => {
                const cleanName = a.Name.split('__')[0].replace(/_/g, ' ');
                const nLower = cleanName.toLowerCase();
                
                let target = parseFloat(a.TargetValue) || 1;
                
-               // Lógica de Targets para "Pago"
                if (nLower.includes('pago')) {
                    if (promoName.includes('premio') || promoName.includes('compras')) {
-                       target = 5; // En "Premio" son 5
+                       target = 5; 
                    } else {
-                       target = 2; // En "Hero" son 2
+                       target = 2; // Hero
                    }
                }
 
@@ -343,20 +330,97 @@ class SalesforceLoyalty {
     }
   }
 
+  // ---------------------------------------------------------------------------
+  // 4. BADGES (RESTAURADA LOGICA COMPLETA)
+  // ---------------------------------------------------------------------------
+
   async checkAndAssignPromotionBadge(salesforceMemberId, promotionId, milestones) {
+    try {
+      // 1. Verificar si TODO está completado
       const allCompleted = milestones.length > 0 && milestones.every(m => m.completed);
-      return { allCompleted, badgeAssigned: false };
+      
+      if (!allCompleted) {
+        return { allCompleted: false, badgeAssigned: false };
+      }
+
+      console.log('✅ Todos los hitos completados! Verificando badge...');
+
+      // 2. Obtener BadgeId de la Promoción
+      const instanceUrl = await salesforceAuth.getInstanceUrl();
+      const headers = await this.getHeaders();
+      
+      const badgeQuery = `SELECT BadgeId FROM Promotion WHERE Id = '${promotionId}'`;
+      const badgeUrl = `${instanceUrl}/services/data/${this.apiVersion}/query?q=${encodeURIComponent(badgeQuery)}`;
+      
+      const badgeResponse = await axios.get(badgeUrl, { headers, timeout: 10000 });
+      
+      if (!badgeResponse.data.records || badgeResponse.data.records.length === 0) {
+         return { allCompleted: true, badgeAssigned: false };
+      }
+      
+      const badgeDefinitionId = badgeResponse.data.records[0].BadgeId;
+      
+      if (!badgeDefinitionId) {
+         console.log('⚠️ Promoción completada pero sin BadgeId configurado.');
+         return { allCompleted: true, badgeAssigned: false };
+      }
+
+      // 3. Asignar el Badge al Miembro
+      console.log(`🏅 Asignando Badge (${badgeDefinitionId})...`);
+      const result = await this.assignBadgeToMember(salesforceMemberId, badgeDefinitionId);
+
+      if (result && (result.success || result.alreadyExists)) {
+        return {
+          allCompleted: true,
+          badgeAssigned: true,
+          badgeId: result.id,
+          isNewBadge: result.success === true // Importante para el mensaje de UI
+        };
+      }
+
+      return { allCompleted: true, badgeAssigned: false };
+
+    } catch (error) {
+      console.error('❌ Error asignando badge:', error.message);
+      return { allCompleted: true, badgeAssigned: false };
+    }
   }
 
   async assignBadgeToMember(salesforceMemberId, badgeDefinitionId) {
     try {
       const instanceUrl = await salesforceAuth.getInstanceUrl();
       const headers = await this.getHeaders();
+
+      // Check duplicados
+      const checkQuery = `SELECT Id FROM LoyaltyProgramMemberBadge WHERE LoyaltyProgramMemberId = '${salesforceMemberId}' AND LoyaltyProgramBadgeId = '${badgeDefinitionId}'`;
+      const checkUrl = `${instanceUrl}/services/data/${this.apiVersion}/query?q=${encodeURIComponent(checkQuery)}`;
+      const checkResponse = await axios.get(checkUrl, { headers, timeout: 10000 });
+
+      if (checkResponse.data.records && checkResponse.data.records.length > 0) {
+        return { alreadyExists: true, id: checkResponse.data.records[0].Id };
+      }
+
+      // Crear Badge
       const url = `${instanceUrl}/services/data/${this.apiVersion}/sobjects/LoyaltyProgramMemberBadge`;
       const badgeData = { LoyaltyProgramMemberId: salesforceMemberId, LoyaltyProgramBadgeId: badgeDefinitionId };
       const response = await axios.post(url, badgeData, { headers, timeout: 15000 });
+      
       return { success: true, id: response.data.id };
-    } catch (error) { return null; }
+    } catch (error) { 
+        console.error('❌ Fallo al crear MemberBadge:', error.message);
+        return null; 
+    }
+  }
+
+  async getMemberBadges(salesforceMemberId) {
+    try {
+      const instanceUrl = await salesforceAuth.getInstanceUrl();
+      const headers = await this.getHeaders();
+      const query = `SELECT Id, LoyaltyProgramBadgeId, LoyaltyProgramBadge.Name, LoyaltyProgramBadge.ImageUrl, CreatedDate FROM LoyaltyProgramMemberBadge WHERE LoyaltyProgramMemberId = '${salesforceMemberId}' ORDER BY CreatedDate DESC`;
+      const url = `${instanceUrl}/services/data/${this.apiVersion}/query?q=${encodeURIComponent(query)}`;
+      const response = await axios.get(url, { headers, timeout: 10000 });
+      return response.data.records || [];
+    } catch (error) { return []; }
   }
 
   async getHeaders() {
