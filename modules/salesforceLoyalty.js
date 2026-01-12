@@ -1,4 +1,4 @@
-// modules/salesforceLoyalty.js - Versión Final (Mapeo Exacto 1 vs 4)
+// modules/salesforceLoyalty.js - Versión Final (Lógica de Negocio Ajustada al 100%)
 const axios = require('axios');
 const salesforceAuth = require('./salesforceAuth');
 
@@ -128,7 +128,7 @@ class SalesforceLoyalty {
   }
 
   // ---------------------------------------------------------------------------
-  // 2. GESTIÓN DE PROMOCIONES E HITOS (LOGICA CORREGIDA: 1 vs 4)
+  // 2. GESTIÓN DE PROMOCIONES E HITOS (LOGICA CORREGIDA: MAPEO MANUAL PRECISIÓN TOTAL)
   // ---------------------------------------------------------------------------
 
   async getEnrolledPromotions(salesforceMemberId) {
@@ -163,10 +163,6 @@ class SalesforceLoyalty {
     return null;
   }
 
-  /**
-   * MÉTODO CON FILTRADO MANUAL (1 HITO vs 4 HITOS):
-   * Filtra los 5 atributos globales para asignarlos correctamente.
-   */
   async getPromotionDataViaSOQL(salesforceMemberId, promotionId) {
     try {
       const instanceUrl = await salesforceAuth.getInstanceUrl();
@@ -184,7 +180,7 @@ class SalesforceLoyalty {
         promotionData = res.data.records[0];
       } catch (e) { return null; }
 
-      // 2. Intentar CHECKLIST (Progreso Real - Fallará en tu entorno, pero lo dejamos)
+      // 2. Intentar CHECKLIST (Por si acaso se arregla en el futuro)
       try {
         const q = `SELECT Id, Name, CurrentValue, TargetValue, Status FROM LoyaltyProgramMbrPromChecklt WHERE LoyaltyProgramMemberId = '${salesforceMemberId}' AND PromotionId = '${promotionId}'`;
         const url = `${instanceUrl}/services/data/${this.apiVersion}/query?q=${encodeURIComponent(q)}`;
@@ -199,17 +195,14 @@ class SalesforceLoyalty {
         }
       } catch (e) {}
 
-      // 3. FALLBACK CON FILTRO MANUAL (1 vs 4)
+      // 3. FALLBACK CON FILTRO MANUAL DEFINITIVO
       if (milestones.length === 0) {
         try {
           console.log(`🔍 Buscando atributos globales para: ${promotionData.Name}`);
-          
-          // Traemos TODOS los atributos (los 5 que tienes)
           const q = `SELECT Id, Name, TargetValue FROM LoyaltyPgmEngmtAttribute WHERE LoyaltyProgramId IN (SELECT LoyaltyProgramId FROM Promotion WHERE Id = '${promotionId}')`;
           const url = `${instanceUrl}/services/data/${this.apiVersion}/query?q=${encodeURIComponent(q)}`;
           const res = await axios.get(url, { headers, timeout: 8000 });
           
-          // Progreso del usuario
           let progressMap = {};
           try {
              const progQ = `SELECT LoyaltyPgmEngmtAttributeId, CurrentValue FROM LoyaltyPgmMbrAttributeVal WHERE LoyaltyProgramMemberId = '${salesforceMemberId}'`;
@@ -222,36 +215,35 @@ class SalesforceLoyalty {
              let filteredAttrs = [];
 
              // -------------------------------------------------------------
-             // REGLA DE NEGOCIO: 1 HITO EN "PREMIO", 4 HITOS EN "HERO"
+             // REGLAS DE NEGOCIO: 
+             // "PREMIO" -> Solo Pago (Target 5)
+             // "HERO"   -> Todo menos Compra (Pago Target 2, resto Target 1)
              // -------------------------------------------------------------
              const promoName = promotionData.Name.toLowerCase();
 
-             // "Premio por compras por tarjeta"
              if (promoName.includes('premio') || (promoName.includes('compras') && promoName.includes('tarjeta'))) {
-                // SOLO queremos el de "Pago con tarjeta"
-                filteredAttrs = allAttrs.filter(a => {
-                    const n = a.Name.toLowerCase();
-                    return n.includes('pago'); // Este es el único para esta promo
-                });
+                // CASO PREMIO: Solo queremos "Pago con tarjeta"
+                filteredAttrs = allAttrs.filter(a => a.Name.toLowerCase().includes('pago'));
              } else {
-                // "CaixaBank Hero" (La otra)
-                // Queremos TODOS los demás (Contratar, Redención, Seguro, Compra)
-                filteredAttrs = allAttrs.filter(a => {
-                    const n = a.Name.toLowerCase();
-                    return !n.includes('pago'); // Excluimos el que se usó arriba
-                });
+                // CASO HERO: Queremos todo MENOS "Compra" (así entra Pago, Seguro, Redención, Contratar)
+                filteredAttrs = allAttrs.filter(a => !a.Name.toLowerCase().includes('compra'));
              }
 
-             // Mapeo Final
+             // Mapear y Aplicar Objetivos (Targets) Diferenciados
              milestones = filteredAttrs.map(a => {
                const cleanName = a.Name.split('__')[0].replace(/_/g, ' ');
                const nLower = cleanName.toLowerCase();
                
-               // Target
                let target = parseFloat(a.TargetValue) || 1;
-               // Forzar target a 5 solo para el hito de pago en la promo de premio
-               if (promoName.includes('premio') && nLower.includes('pago')) {
-                   target = 5; 
+
+               // LÓGICA DE TARGETS
+               if (nLower.includes('pago')) {
+                   // Si es "Pago con tarjeta", depende de la promo
+                   if (promoName.includes('premio') || promoName.includes('compras')) {
+                       target = 5; // En "Premio" son 5 veces
+                   } else {
+                       target = 2; // En "Hero" son 2 veces
+                   }
                }
 
                return {
@@ -263,7 +255,7 @@ class SalesforceLoyalty {
                  isGeneric: true
                };
              });
-             dataSource = 'ManualFiltered1vs4';
+             dataSource = 'ManualFilteredRules';
           }
         } catch (e) { console.error(e); }
       }
@@ -349,17 +341,6 @@ class SalesforceLoyalty {
       const response = await axios.post(url, badgeData, { headers, timeout: 15000 });
       return { success: true, id: response.data.id };
     } catch (error) { return null; }
-  }
-
-  async getMemberBadges(salesforceMemberId) {
-    try {
-      const instanceUrl = await salesforceAuth.getInstanceUrl();
-      const headers = await this.getHeaders();
-      const query = `SELECT Id, LoyaltyProgramBadgeId, LoyaltyProgramBadge.Name, LoyaltyProgramBadge.ImageUrl, CreatedDate FROM LoyaltyProgramMemberBadge WHERE LoyaltyProgramMemberId = '${salesforceMemberId}' ORDER BY CreatedDate DESC`;
-      const url = `${instanceUrl}/services/data/${this.apiVersion}/query?q=${encodeURIComponent(query)}`;
-      const response = await axios.get(url, { headers, timeout: 10000 });
-      return response.data.records || [];
-    } catch (error) { return []; }
   }
 
   async getHeaders() {
