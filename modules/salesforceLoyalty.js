@@ -1,4 +1,4 @@
-// modules/salesforceLoyalty.js - Versión Final (Solo Datos Reales)
+// modules/salesforceLoyalty.js - Versión Final: Mapeo Manual de Hitos
 const axios = require('axios');
 const salesforceAuth = require('./salesforceAuth');
 
@@ -6,7 +6,7 @@ class SalesforceLoyalty {
   constructor() {
     this.apiVersion = process.env.SF_API_VERSION || 'v61.0';
     this.loyaltyProgramName = process.env.SF_LOYALTY_PROGRAM_NAME;
-    this.timeout = 25000; // 25 segundos
+    this.timeout = 25000; 
   }
 
   // ---------------------------------------------------------------------------
@@ -15,7 +15,7 @@ class SalesforceLoyalty {
 
   async enrollMember(memberData) {
     try {
-      if (!this.loyaltyProgramName) throw new Error('No se ha definido el nombre del programa de loyalty');
+      if (!this.loyaltyProgramName) throw new Error('No se ha definido el nombre del programa');
 
       console.log('⏱️ Iniciando registro en Salesforce...');
       const accessToken = await Promise.race([
@@ -121,14 +121,14 @@ class SalesforceLoyalty {
 
       if (tierResponse.data.records?.length > 0) {
         const tierName = tierResponse.data.records[0].Name;
-        if (tierName) member.tier = tierName; // Ajusta mapping si es necesario
+        if (tierName) member.tier = tierName;
       }
       return member;
     } catch (error) { return member; }
   }
 
   // ---------------------------------------------------------------------------
-  // 2. GESTIÓN DE PROMOCIONES E HITOS (LÓGICA CORREGIDA)
+  // 2. GESTIÓN DE PROMOCIONES E HITOS (LOGICA CORREGIDA: MAPEO MANUAL)
   // ---------------------------------------------------------------------------
 
   async getEnrolledPromotions(salesforceMemberId) {
@@ -151,8 +151,6 @@ class SalesforceLoyalty {
 
     const variations = [
        `/services/data/${this.apiVersion}/connect/loyalty/programs/${encodedProgramName}/members/${encodedMembershipNumber}/engagement-attributes?promotionId=${promotionId}`,
-       `/services/data/${this.apiVersion}/loyalty/programs/${encodedProgramName}/members/${encodedMembershipNumber}/engagement-attributes?promotionId=${promotionId}`,
-       `/services/data/${this.apiVersion}/loyalty/programs/${encodedProgramName}/members/${encodedMembershipNumber}/member-engagement-attributes?promotionId=${promotionId}`,
        `/services/data/${this.apiVersion}/loyalty/programs/${encodedProgramName}/members/${encodedMembershipNumber}/engagement-trail?promotionId=${promotionId}`
     ];
 
@@ -166,8 +164,9 @@ class SalesforceLoyalty {
   }
 
   /**
-   * MÉTODO DEPURADO: Busca datos reales en 3 tablas distintas.
-   * Sin datos falsos.
+   * MÉTODO CON FILTRADO MANUAL:
+   * Asigna hitos específicos a cada promoción basándose en su nombre
+   * para corregir el problema de visualización duplicada.
    */
   async getPromotionDataViaSOQL(salesforceMemberId, promotionId) {
     try {
@@ -177,7 +176,7 @@ class SalesforceLoyalty {
       let milestones = [];
       let dataSource = 'None';
 
-      // PASO 1: Info Básica
+      // 1. Info Básica de la Promoción
       try {
         const q = `SELECT Id, Name, Description, StartDate, EndDate FROM Promotion WHERE Id = '${promotionId}'`;
         const url = `${instanceUrl}/services/data/${this.apiVersion}/query?q=${encodeURIComponent(q)}`;
@@ -186,81 +185,95 @@ class SalesforceLoyalty {
         promotionData = res.data.records[0];
       } catch (e) { return null; }
 
-      // PASO 2: Intentar CHECKLIST (Progreso Real)
+      // 2. Intentar CHECKLIST (Progreso Real) - Intentamos primero por si acaso
       try {
-        console.log(`🔍 [${promotionData.Name}] Buscando en Checklist...`);
         const q = `SELECT Id, Name, CurrentValue, TargetValue, Status FROM LoyaltyProgramMbrPromChecklt WHERE LoyaltyProgramMemberId = '${salesforceMemberId}' AND PromotionId = '${promotionId}'`;
         const url = `${instanceUrl}/services/data/${this.apiVersion}/query?q=${encodeURIComponent(q)}`;
         const res = await axios.get(url, { headers, timeout: 5000 });
-        
         if (res.data.records?.length > 0) {
           milestones = res.data.records.map(r => ({
             id: r.Id, name: r.Name, 
-            currentValue: parseFloat(r.CurrentValue)||0, 
-            targetValue: parseFloat(r.TargetValue)||1, 
-            completed: r.Status === 'Completed' || (parseFloat(r.CurrentValue)>=parseFloat(r.TargetValue))
+            currentValue: parseFloat(r.CurrentValue)||0, targetValue: parseFloat(r.TargetValue)||1, 
+            completed: r.Status === 'Completed'
           }));
           dataSource = 'RealChecklist';
         }
-      } catch (e) { /* Error normal si la tabla no existe o sin permisos */ }
+      } catch (e) {}
 
-      // PASO 3: Intentar PROMOTION ACTIVITY (Configuración Estática de la Promo)
+      // 3. FALLBACK CON FILTRO MANUAL (La solución a tu problema)
       if (milestones.length === 0) {
         try {
-          console.log(`🔍 [${promotionData.Name}] Buscando en PromotionActivity...`);
-          const q = `SELECT Id, Name, Description FROM PromotionActivity WHERE PromotionId = '${promotionId}'`;
-          const url = `${instanceUrl}/services/data/${this.apiVersion}/query?q=${encodeURIComponent(q)}`;
-          const res = await axios.get(url, { headers, timeout: 5000 });
+          console.log(`🔍 Buscando atributos globales para: ${promotionData.Name}`);
           
-          if (res.data.records?.length > 0) {
-            milestones = res.data.records.map(a => ({
-              id: a.Id, name: a.Name, currentValue: 0, targetValue: 1, completed: false
-            }));
-            dataSource = 'PromotionActivity';
-            console.log(`✅ Actividades encontradas: ${milestones.map(m=>m.name).join(', ')}`);
-          }
-        } catch (e) {}
-      }
-
-      // PASO 4: Intentar ATRIBUTOS GLOBALES (Último recurso real)
-      if (milestones.length === 0) {
-        try {
-          console.log(`🔍 [${promotionData.Name}] Buscando Atributos Globales...`);
+          // Traemos TODOS los atributos
           const q = `SELECT Id, Name, TargetValue FROM LoyaltyPgmEngmtAttribute WHERE LoyaltyProgramId IN (SELECT LoyaltyProgramId FROM Promotion WHERE Id = '${promotionId}')`;
           const url = `${instanceUrl}/services/data/${this.apiVersion}/query?q=${encodeURIComponent(q)}`;
           const res = await axios.get(url, { headers, timeout: 8000 });
           
+          // Progreso
+          let progressMap = {};
+          try {
+             const progQ = `SELECT LoyaltyPgmEngmtAttributeId, CurrentValue FROM LoyaltyPgmMbrAttributeVal WHERE LoyaltyProgramMemberId = '${salesforceMemberId}'`;
+             const progRes = await axios.get(`${instanceUrl}/services/data/${this.apiVersion}/query?q=${encodeURIComponent(progQ)}`, { headers, timeout: 5000 });
+             if(progRes.data.records) progRes.data.records.forEach(p => progressMap[p.LoyaltyPgmEngmtAttributeId] = parseFloat(p.CurrentValue)||0);
+          } catch(err) {}
+
           if (res.data.records?.length > 0) {
              const allAttrs = res.data.records;
-             console.log(`📊 Atributos encontrados: ${allAttrs.map(a=>a.Name).join(', ')}`);
+             let filteredAttrs = [];
 
-             // Obtener progreso para estos atributos
-             let progressMap = {};
-             try {
-                const progQ = `SELECT LoyaltyPgmEngmtAttributeId, CurrentValue FROM LoyaltyPgmMbrAttributeVal WHERE LoyaltyProgramMemberId = '${salesforceMemberId}'`;
-                const progRes = await axios.get(`${instanceUrl}/services/data/${this.apiVersion}/query?q=${encodeURIComponent(progQ)}`, { headers, timeout: 5000 });
-                if(progRes.data.records) progRes.data.records.forEach(p => progressMap[p.LoyaltyPgmEngmtAttributeId] = parseFloat(p.CurrentValue)||0);
-             } catch(err) {}
+             // -------------------------------------------------------------
+             // LÓGICA DE NEGOCIO MANUAL (AQUÍ ESTÁ LA MAGIA)
+             // -------------------------------------------------------------
+             const promoName = promotionData.Name.toLowerCase();
 
-             // Devolvemos lo que encuentre sin inventar nada
-             milestones = allAttrs.map(a => ({
-               id: a.Id, 
-               name: a.Name.split('__')[0].replace(/_/g, ' '), 
-               currentValue: progressMap[a.Id] || 0, 
-               targetValue: parseFloat(a.TargetValue)||1, 
-               completed: (progressMap[a.Id] || 0) >= (parseFloat(a.TargetValue)||1),
-               isGeneric: true
-             }));
-             dataSource = 'GlobalAttributes';
+             if (promoName.includes('tarjeta') || promoName.includes('compras')) {
+                // CASO 1: Promoción de Tarjeta
+                // Buscamos hitos relacionados con "Pago" o "Compra"
+                filteredAttrs = allAttrs.filter(a => {
+                    const n = a.Name.toLowerCase();
+                    return n.includes('pago') || n.includes('compra');
+                });
+                
+                // Si no encuentra específicos, coge uno cualquiera para no salir vacía
+                if(filteredAttrs.length === 0 && allAttrs.length > 0) filteredAttrs = [allAttrs[0]];
+
+             } else {
+                // CASO 2: Promoción Hero / Genérica
+                // Buscamos el resto (Seguro, Redención, Contratar)
+                filteredAttrs = allAttrs.filter(a => {
+                    const n = a.Name.toLowerCase();
+                    return !n.includes('pago') && !n.includes('compra');
+                });
+             }
+
+             // Mapear y Ajustar Targets
+             milestones = filteredAttrs.map(a => {
+               const cleanName = a.Name.split('__')[0].replace(/_/g, ' ');
+               const nLower = cleanName.toLowerCase();
+               
+               // FORZAR TARGETS SEGÚN TU REQUISITO
+               let target = parseFloat(a.TargetValue) || 1;
+               if (nLower.includes('pago') || nLower.includes('compra')) {
+                   target = 5; // Requisito explícito: 5 veces
+               }
+
+               return {
+                 id: a.Id, 
+                 name: cleanName, 
+                 currentValue: progressMap[a.Id] || 0, 
+                 targetValue: target, 
+                 completed: (progressMap[a.Id] || 0) >= target,
+                 isGeneric: true
+               };
+             });
+             dataSource = 'ManualFilteredAttributes';
           }
-        } catch (e) {}
+        } catch (e) { console.error(e); }
       }
 
       return { promotion: promotionData, milestones, dataSource };
-    } catch (error) {
-      console.error('Fatal Error getPromotionData:', error.message);
-      return null;
-    }
+    } catch (error) { return null; }
   }
 
   // ---------------------------------------------------------------------------
@@ -327,11 +340,23 @@ class SalesforceLoyalty {
   }
 
   async checkAndAssignPromotionBadge(salesforceMemberId, promotionId, milestones) {
-      // Implementación básica para no bloquear
+      // Implementación simplificada
       const allCompleted = milestones.length > 0 && milestones.every(m => m.completed);
       return { allCompleted, badgeAssigned: false };
   }
 
+  async assignBadgeToMember(salesforceMemberId, badgeDefinitionId) {
+    try {
+      const instanceUrl = await salesforceAuth.getInstanceUrl();
+      const headers = await this.getHeaders();
+      const url = `${instanceUrl}/services/data/${this.apiVersion}/sobjects/LoyaltyProgramMemberBadge`;
+      const badgeData = { LoyaltyProgramMemberId: salesforceMemberId, LoyaltyProgramBadgeId: badgeDefinitionId };
+      const response = await axios.post(url, badgeData, { headers, timeout: 15000 });
+      return { success: true, id: response.data.id };
+    } catch (error) { return null; }
+  }
+
+  // Métodos auxiliares
   async getHeaders() {
     const token = await salesforceAuth.getAccessToken();
     return { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' };
