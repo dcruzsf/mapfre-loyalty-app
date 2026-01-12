@@ -1,4 +1,4 @@
-// modules/salesforceLoyalty.js - Versión Final (Hitos + Tiers + BADGES RESTAURADOS)
+// modules/salesforceLoyalty.js - Versión Final (Compra vs Pago Corregido)
 const axios = require('axios');
 const salesforceAuth = require('./salesforceAuth');
 
@@ -122,7 +122,7 @@ class SalesforceLoyalty {
       if (tierResponse.data.records?.length > 0) {
         const sfTierName = tierResponse.data.records[0].Name;
         
-        // Mapeo de Tiers (Restaurado)
+        // Mapeo para evitar error de traducción
         const tierMapping = {
             'Bronze': 'Bronze', 'Bronce': 'Bronze', 
             'Silver': 'Silver', 'Plata': 'Silver', 
@@ -140,7 +140,7 @@ class SalesforceLoyalty {
   }
 
   // ---------------------------------------------------------------------------
-  // 2. GESTIÓN DE PROMOCIONES E HITOS (1 vs 4 + Filters)
+  // 2. GESTIÓN DE PROMOCIONES E HITOS (LOGICA DE NEGOCIO CORREGIDA)
   // ---------------------------------------------------------------------------
 
   async getEnrolledPromotions(salesforceMemberId) {
@@ -207,9 +207,10 @@ class SalesforceLoyalty {
         }
       } catch (e) {}
 
-      // 3. FALLBACK FILTRADO MANUAL
+      // 3. FALLBACK CON FILTRO MANUAL CORREGIDO
       if (milestones.length === 0) {
         try {
+          // Traemos TODOS los atributos
           const q = `SELECT Id, Name, TargetValue FROM LoyaltyPgmEngmtAttribute WHERE LoyaltyProgramId IN (SELECT LoyaltyProgramId FROM Promotion WHERE Id = '${promotionId}')`;
           const url = `${instanceUrl}/services/data/${this.apiVersion}/query?q=${encodeURIComponent(q)}`;
           const res = await axios.get(url, { headers, timeout: 8000 });
@@ -225,13 +226,14 @@ class SalesforceLoyalty {
              const allAttrs = res.data.records;
              let filteredAttrs = [];
 
+             // REGLAS DE NEGOCIO
              const promoName = promotionData.Name.toLowerCase();
 
              if (promoName.includes('premio') || (promoName.includes('compras') && promoName.includes('tarjeta'))) {
-                // CASO PREMIO: Solo "Pago"
-                filteredAttrs = allAttrs.filter(a => a.Name.toLowerCase().includes('pago'));
+                // CASO PREMIO: Buscamos "COMPRA" (no Pago) porque es donde están los 4 puntos
+                filteredAttrs = allAttrs.filter(a => a.Name.toLowerCase().includes('compra'));
              } else {
-                // CASO HERO: Todo MENOS "Compra" (incluye Pago)
+                // CASO HERO: Queremos "PAGO" (y el resto), pero NO "Compra"
                 filteredAttrs = allAttrs.filter(a => !a.Name.toLowerCase().includes('compra'));
              }
 
@@ -241,12 +243,11 @@ class SalesforceLoyalty {
                
                let target = parseFloat(a.TargetValue) || 1;
                
-               if (nLower.includes('pago')) {
-                   if (promoName.includes('premio') || promoName.includes('compras')) {
-                       target = 5; 
-                   } else {
-                       target = 2; // Hero
-                   }
+               // ASIGNACIÓN DE TARGETS
+               if (nLower.includes('compra')) {
+                   target = 5; // La promo de Premio por Compras (target 5)
+               } else if (nLower.includes('pago')) {
+                   target = 2; // El hito de Pago en Hero (target 2)
                }
 
                return {
@@ -330,42 +331,23 @@ class SalesforceLoyalty {
     }
   }
 
-  // ---------------------------------------------------------------------------
-  // 4. BADGES (RESTAURADA LOGICA COMPLETA)
-  // ---------------------------------------------------------------------------
-
   async checkAndAssignPromotionBadge(salesforceMemberId, promotionId, milestones) {
     try {
-      // 1. Verificar si TODO está completado
       const allCompleted = milestones.length > 0 && milestones.every(m => m.completed);
-      
-      if (!allCompleted) {
-        return { allCompleted: false, badgeAssigned: false };
-      }
+      if (!allCompleted) return { allCompleted: false, badgeAssigned: false };
 
-      console.log('✅ Todos los hitos completados! Verificando badge...');
-
-      // 2. Obtener BadgeId de la Promoción
+      console.log('✅ Verificando badge...');
       const instanceUrl = await salesforceAuth.getInstanceUrl();
       const headers = await this.getHeaders();
       
       const badgeQuery = `SELECT BadgeId FROM Promotion WHERE Id = '${promotionId}'`;
       const badgeUrl = `${instanceUrl}/services/data/${this.apiVersion}/query?q=${encodeURIComponent(badgeQuery)}`;
-      
       const badgeResponse = await axios.get(badgeUrl, { headers, timeout: 10000 });
       
-      if (!badgeResponse.data.records || badgeResponse.data.records.length === 0) {
-         return { allCompleted: true, badgeAssigned: false };
-      }
-      
+      if (!badgeResponse.data.records?.length) return { allCompleted: true, badgeAssigned: false };
       const badgeDefinitionId = badgeResponse.data.records[0].BadgeId;
-      
-      if (!badgeDefinitionId) {
-         console.log('⚠️ Promoción completada pero sin BadgeId configurado.');
-         return { allCompleted: true, badgeAssigned: false };
-      }
+      if (!badgeDefinitionId) return { allCompleted: true, badgeAssigned: false };
 
-      // 3. Asignar el Badge al Miembro
       console.log(`🏅 Asignando Badge (${badgeDefinitionId})...`);
       const result = await this.assignBadgeToMember(salesforceMemberId, badgeDefinitionId);
 
@@ -374,15 +356,14 @@ class SalesforceLoyalty {
           allCompleted: true,
           badgeAssigned: true,
           badgeId: result.id,
-          isNewBadge: result.success === true // Importante para el mensaje de UI
+          isNewBadge: result.success === true
         };
       }
-
       return { allCompleted: true, badgeAssigned: false };
 
     } catch (error) {
-      console.error('❌ Error asignando badge:', error.message);
-      return { allCompleted: true, badgeAssigned: false };
+      console.error('❌ Error badge:', error.message);
+      return { allCompleted: milestones.every(m => m.completed), badgeAssigned: false };
     }
   }
 
@@ -390,26 +371,11 @@ class SalesforceLoyalty {
     try {
       const instanceUrl = await salesforceAuth.getInstanceUrl();
       const headers = await this.getHeaders();
-
-      // Check duplicados
-      const checkQuery = `SELECT Id FROM LoyaltyProgramMemberBadge WHERE LoyaltyProgramMemberId = '${salesforceMemberId}' AND LoyaltyProgramBadgeId = '${badgeDefinitionId}'`;
-      const checkUrl = `${instanceUrl}/services/data/${this.apiVersion}/query?q=${encodeURIComponent(checkQuery)}`;
-      const checkResponse = await axios.get(checkUrl, { headers, timeout: 10000 });
-
-      if (checkResponse.data.records && checkResponse.data.records.length > 0) {
-        return { alreadyExists: true, id: checkResponse.data.records[0].Id };
-      }
-
-      // Crear Badge
       const url = `${instanceUrl}/services/data/${this.apiVersion}/sobjects/LoyaltyProgramMemberBadge`;
       const badgeData = { LoyaltyProgramMemberId: salesforceMemberId, LoyaltyProgramBadgeId: badgeDefinitionId };
       const response = await axios.post(url, badgeData, { headers, timeout: 15000 });
-      
       return { success: true, id: response.data.id };
-    } catch (error) { 
-        console.error('❌ Fallo al crear MemberBadge:', error.message);
-        return null; 
-    }
+    } catch (error) { return null; }
   }
 
   async getMemberBadges(salesforceMemberId) {
@@ -421,6 +387,22 @@ class SalesforceLoyalty {
       const response = await axios.get(url, { headers, timeout: 10000 });
       return response.data.records || [];
     } catch (error) { return []; }
+  }
+
+  // --- MÉTODOS AUXILIARES ---
+  async enrollMemberInPromotion(salesforceMemberId, promotionId) {
+    try {
+      const instanceUrl = await salesforceAuth.getInstanceUrl();
+      const headers = await this.getHeaders();
+      const url = `${instanceUrl}/services/data/${this.apiVersion}/sobjects/PromotionEnrollment`;
+      const enrollmentData = { LoyaltyProgramMemberId: salesforceMemberId, PromotionId: promotionId, EnrollmentStatus: 'Enrolled' };
+      const response = await axios.post(url, enrollmentData, { headers, timeout: 15000 });
+      console.log('✅ Miembro enrollado en promoción');
+      return response.data;
+    } catch (error) { 
+        console.error('⚠️ Error enrollment promo:', error.message);
+        return null; 
+    }
   }
 
   async getHeaders() {
