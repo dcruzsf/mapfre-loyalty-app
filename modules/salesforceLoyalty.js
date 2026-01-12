@@ -1,4 +1,4 @@
-// modules/salesforceLoyalty.js - Versión Final (Hitos Corregidos + Tier Mapping Restaurado)
+// modules/salesforceLoyalty.js - Versión Final (Lógica Hero Ajustada + Tier Fix)
 const axios = require('axios');
 const salesforceAuth = require('./salesforceAuth');
 
@@ -108,7 +108,7 @@ class SalesforceLoyalty {
   }
 
   /**
-   * CORREGIDO: Mapeo de Tiers para evitar "tiers.plata"
+   * CORREGIDO: Mapeo de Tiers para arreglar el bug visual "tiers.plata"
    */
   async syncMemberPoints(member, salesforceMemberId) {
     try {
@@ -125,7 +125,7 @@ class SalesforceLoyalty {
       if (tierResponse.data.records?.length > 0) {
         const sfTierName = tierResponse.data.records[0].Name;
         
-        // MAPEO RESTAURADO: Convierte nombres de SF a claves internas
+        // DICCIONARIO DE TRADUCCIÓN (IMPORTANTE)
         const tierMapping = {
             'Bronze': 'Bronze', 'Bronce': 'Bronze', 
             'Silver': 'Silver', 'Plata': 'Silver', 
@@ -135,6 +135,7 @@ class SalesforceLoyalty {
         };
 
         if (sfTierName) {
+            // Usamos el mapeo o el nombre original si no está en la lista
             member.tier = tierMapping[sfTierName] || sfTierName;
         }
       }
@@ -143,7 +144,7 @@ class SalesforceLoyalty {
   }
 
   // ---------------------------------------------------------------------------
-  // 2. GESTIÓN DE PROMOCIONES E HITOS (LOGICA: 1 vs 4)
+  // 2. GESTIÓN DE PROMOCIONES E HITOS (LOGICA CORREGIDA PARA HERO)
   // ---------------------------------------------------------------------------
 
   async getEnrolledPromotions(salesforceMemberId) {
@@ -195,7 +196,7 @@ class SalesforceLoyalty {
         promotionData = res.data.records[0];
       } catch (e) { return null; }
 
-      // 2. Intentar CHECKLIST (Progreso Real)
+      // 2. Intentar CHECKLIST
       try {
         const q = `SELECT Id, Name, CurrentValue, TargetValue, Status FROM LoyaltyProgramMbrPromChecklt WHERE LoyaltyProgramMemberId = '${salesforceMemberId}' AND PromotionId = '${promotionId}'`;
         const url = `${instanceUrl}/services/data/${this.apiVersion}/query?q=${encodeURIComponent(q)}`;
@@ -210,7 +211,7 @@ class SalesforceLoyalty {
         }
       } catch (e) {}
 
-      // 3. FALLBACK CON FILTRO MANUAL (Corrección Visual)
+      // 3. FALLBACK CON FILTRO MANUAL CORREGIDO
       if (milestones.length === 0) {
         try {
           // Traemos TODOS los atributos
@@ -229,17 +230,19 @@ class SalesforceLoyalty {
              const allAttrs = res.data.records;
              let filteredAttrs = [];
 
-             // REGLAS DE NEGOCIO
+             // -----------------------------------------------------------
+             // REGLAS DE NEGOCIO DEFINITIVAS
+             // -----------------------------------------------------------
              const promoName = promotionData.Name.toLowerCase();
 
              if (promoName.includes('premio') || (promoName.includes('compras') && promoName.includes('tarjeta'))) {
                 // CASO PREMIO: Solo "Pago"
                 filteredAttrs = allAttrs.filter(a => a.Name.toLowerCase().includes('pago'));
              } else {
-                // CASO HERO: Todo MENOS "Pago" y "Compra"
+                // CASO HERO: Queremos todo MENOS "Compra" (evita duplicado) PERO INCLUYENDO "Pago"
                 filteredAttrs = allAttrs.filter(a => {
                     const n = a.Name.toLowerCase();
-                    return !n.includes('pago') && !n.includes('compra');
+                    return !n.includes('compra'); // Eliminamos solo "compra", dejamos "pago"
                 });
              }
 
@@ -249,9 +252,16 @@ class SalesforceLoyalty {
                const nLower = cleanName.toLowerCase();
                
                let target = parseFloat(a.TargetValue) || 1;
-               // Regla: Si es "Pago", target 5 en Premio, pero esta lógica filtra antes
-               if (promoName.includes('premio') && nLower.includes('pago')) target = 5;
                
+               // Lógica de Targets para "Pago"
+               if (nLower.includes('pago')) {
+                   if (promoName.includes('premio') || promoName.includes('compras')) {
+                       target = 5; // En "Premio" son 5
+                   } else {
+                       target = 2; // En "Hero" son 2
+                   }
+               }
+
                return {
                  id: a.Id, 
                  name: cleanName, 
@@ -347,34 +357,6 @@ class SalesforceLoyalty {
       const response = await axios.post(url, badgeData, { headers, timeout: 15000 });
       return { success: true, id: response.data.id };
     } catch (error) { return null; }
-  }
-
-  // --- MÉTODOS IMPORTANTES FALTANTES EN VERSIONES ANTERIORES ---
-  
-  async enrollMemberInPromotion(salesforceMemberId, promotionId) {
-    try {
-      const instanceUrl = await salesforceAuth.getInstanceUrl();
-      const headers = await this.getHeaders();
-      const url = `${instanceUrl}/services/data/${this.apiVersion}/sobjects/PromotionEnrollment`;
-      const enrollmentData = { LoyaltyProgramMemberId: salesforceMemberId, PromotionId: promotionId, EnrollmentStatus: 'Enrolled' };
-      const response = await axios.post(url, enrollmentData, { headers, timeout: 15000 });
-      console.log('✅ Miembro enrollado en promoción');
-      return response.data;
-    } catch (error) { 
-        console.error('⚠️ Error enrollment promo:', error.message);
-        return null; 
-    }
-  }
-
-  async getMemberBadges(salesforceMemberId) {
-    try {
-      const instanceUrl = await salesforceAuth.getInstanceUrl();
-      const headers = await this.getHeaders();
-      const query = `SELECT Id, LoyaltyProgramBadgeId, LoyaltyProgramBadge.Name, LoyaltyProgramBadge.ImageUrl, CreatedDate FROM LoyaltyProgramMemberBadge WHERE LoyaltyProgramMemberId = '${salesforceMemberId}' ORDER BY CreatedDate DESC`;
-      const url = `${instanceUrl}/services/data/${this.apiVersion}/query?q=${encodeURIComponent(query)}`;
-      const response = await axios.get(url, { headers, timeout: 10000 });
-      return response.data.records || [];
-    } catch (error) { return []; }
   }
 
   async getHeaders() {
