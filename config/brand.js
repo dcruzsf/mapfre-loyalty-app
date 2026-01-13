@@ -1,66 +1,62 @@
-// config/brand.js - Configuración centralizada de marca CaixaBank Experience
+// config/brand.js - Textos CaixaBank Experience, Colores estilo Imagin
 module.exports = {
   // Información básica de la marca
-  name: 'CaixaBank Experience',
-  fullName: 'CaixaBank Experience',
-  pointsName: 'Caixapoints',
+  name: 'Imagin Experience',
+  fullName: 'Imagin Experience',
+  pointsName: 'Puntos',
   pointsSymbol: '⭐',
 
-  // Mensajes y textos
+  // Mensajes y textos (ORIGINALES)
   messages: {
-    welcome: '¡Bienvenido a CaixaBank Experience!',
-    welcomeDescription: 'Tu banca 100% digital que premia tu estilo de vida',
-    tagline: 'Banca digital que te impulsa',
+    welcome: '¡Bienvenido a Imagin Experience!',
+    welcomeDescription: 'Tu banca digital que premia tu estilo de vida y fidelidad.',
+    tagline: 'Experiencias que suman',
     joinClub: 'COMENZAR EXPERIENCE',
     benefits: {
-      title: 'BENEFICIOS DIGITALES',
+      title: 'BENEFICIOS DEL PROGRAMA',
       list: [
-        'Gana Caixapoints con cada operación digital',
-        'Cashback instantáneo en tus compras',
-        'Acceso prioritario a nuevas funcionalidades',
-        'Experiencias exclusivas personalizadas'
+        'Puntos en todas tus operaciones',
+        'Acceso a productos exclusivos',
+        'Experiencias personalizadas',
+        'Atención prioritaria'
       ]
     },
     features: [
       {
-        title: 'Gana Caixapoints',
-        description: 'Acumula Caixapoints con cada operación digital: transferencias, pagos móviles, inversiones y más.'
+        title: 'Gana Puntos',
+        description: 'Acumula Puntos con tus operaciones diarias, productos contratados y participación digital.'
       },
       {
-        title: 'Desbloquea logros',
-        description: 'Completa retos digitales y alcanza objetivos financieros mientras ganas recompensas.'
-      },
-      {
-        title: 'Evoluciona tu categoría',
-        description: 'Desde Basic hasta Elite: más uso digital, mejores beneficios exclusivos.'
+        title: 'Desbloquea Logros',
+        description: 'Supera retos financieros y de estilo de vida para conseguir medallas y bonificaciones extra.'
       }
     ]
   },
   
-  // Paleta de colores - CaixaBank Experience (moderna y digital)
+  // Paleta de colores - Estilo Imagin (Vibrante y Contrastado)
   colors: {
-    primary: '#0066B3',        // Azul CaixaBank principal - vibrante
-    secondary: '#00C9FF',      // Azul cielo brillante (digital)
-    accent: '#003D6E',         // Azul profundo premium
-    lightGray: '#F8F9FB',      // Gris ultra claro (background limpio)
-    midGray: '#E4E8ED',        // Gris medio suave
-    darkGray: '#7A8C9E',       // Gris texto secundario
-    textColor: '#1A2332',      // Texto principal (casi negro, pero más suave)
-    textLight: '#5F6F82',      // Texto secundario legible
-    backgroundColor: '#FFFFFF',
-    cardBackground: '#FFFFFF',
-    borderColor: '#E8ECF1',    // Bordes ultra sutiles
-    successColor: '#00E676',   // Verde brillante (digital success)
-    errorColor: '#FF3D71',     // Rojo moderno
-    warningColor: '#FFB800',   // Amarillo/naranja advertencias
-    notificationColor: '#00C9FF', // Azul notificaciones brillante
+    primary: '#00E39F',        // VERDE IMAGIN (Botones principales, acciones)
+    secondary: '#000000',      // NEGRO (Botones secundarios, textos fuertes)
+    accent: '#FF0049',         // ROSA IMAGIN (Detalles, destacados, iconos)
+    lightGray: '#FAFAFA',      // Fondo casi blanco
+    midGray: '#F2F2F2',        // Fondos de elementos secundarios
+    darkGray: '#707070',       // Texto gris
+    textColor: '#121212',      // Negro casi puro para lectura
+    textLight: '#707070',      // Gris para subtítulos
+    backgroundColor: '#FFFFFF', // Fondo blanco limpio
+    cardBackground: '#FFFFFF',  // Tarjetas blancas
+    borderColor: '#F0F0F0',    // Bordes muy sutiles
+    successColor: '#00E39F',   // Verde Neón para éxito
+    errorColor: '#FF3B30',     // Rojo vibrante
+    warningColor: '#FFCC00',   // Amarillo
+    notificationColor: '#FF0049', // Rosa para notificaciones
 
-    // Colores de tier - Inspirados en tarjetas premium modernas
+    // Colores de tier - Estilo minimalista/metálico
     tierColors: {
-      bronze: '#B87333',       // Basic - Bronce cálido
-      silver: '#B8BEC5',       // Plus - Plata moderna
-      gold: '#F4C542',         // Premium - Oro vibrante
-      platinum: '#C9D5E0'      // Elite - Platino elegante
+      bronze: '#CD7F32',       // Bronce
+      silver: '#A0A0A0',       // Plata (más oscuro para contraste sobre blanco)
+      gold: '#EDB328',         // Oro
+      platinum: '#191919'      // Platino/Negro (Estilo tarjeta Infinity)
     }
   },
   
@@ -71,13 +67,15 @@ module.exports = {
     favicon: '/img/favicon.ico'
   },
   
-  // Categorías de productos/intereses para registro (enfoque digital)
+  // Categorías (ORIGINALES)
   categories: [
-    { id: 'digital_banking', label: 'Banca digital y pagos móviles' },
-    { id: 'investments', label: 'Inversiones y ahorro inteligente' },
-    { id: 'lifestyle', label: 'Experiencias y lifestyle' }
+    { id: 'banking', label: 'Banca del día a día' },
+    { id: 'savings', label: 'Ahorro e Inversión' },
+    { id: 'financing', label: 'Financiación' },
+    { id: 'insurance', label: 'Seguros y Protección' },
+    { id: 'lifestyle', label: 'Ocio y Experiencias' }
   ],
 
   // Copyright
-  copyright: '2024-2025 CaixaBank Experience, S.A.'
+  copyright: '2024-2025 CaixaBank, S.A. Todos los derechos reservados.'
 };
