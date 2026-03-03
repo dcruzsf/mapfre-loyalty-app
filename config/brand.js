@@ -61,9 +61,9 @@ module.exports = {
   
   // Rutas de imágenes (Actualizadas a la nueva marca)
   images: {
-    logo: '/img/logo-mapfre.png',
-    background: '/img/bg-mapfre-clean.jpg',
-    favicon: '/img/favicon-mapfre.ico'
+    logo: '/img/logo.png',
+    background: '/img/background.png',
+    favicon: '/img/favicon.ico'
   },
   
   // Categorías (Enfoque en Seguros y Protección)
