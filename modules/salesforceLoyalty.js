@@ -8,52 +8,62 @@ class SalesforceLoyalty {
     this.timeout = 25000; 
   }
 
+  // Helper para headers
+  async getHeaders() {
+    const token = await salesforceAuth.getAccessToken();
+    return { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' };
+  }
+
   // ---------------------------------------------------------------------------
-  // 1. GESTIÓN DE MIEMBROS MAPFRE
+  // 1. GESTIÓN DE MIEMBROS MAPFRE (Registro corregido)
   // ---------------------------------------------------------------------------
 
   async enrollMember(memberData) {
     try {
-      if (!this.loyaltyProgramName) throw new Error('Nombre del programa Mapfre no definido');
+      if (!this.loyaltyProgramName) throw new Error('Nombre del programa Mapfre no definido en Config Vars');
 
-      console.log('⏱️ Registrando cliente en Mapfre Te Cuidamos (SF)...');
-      const accessToken = await Promise.race([
-        salesforceAuth.getAccessToken(),
-        this._createTimeoutPromise(10000, 'Timeout Token')
-      ]);
-
+      console.log(`⏱️ Registrando cliente en "${this.loyaltyProgramName}" (SF)...`);
+      
+      const accessToken = await salesforceAuth.getAccessToken();
       const instanceUrl = await salesforceAuth.getInstanceUrl();
       const enrollmentDate = new Date().toISOString();
-      // Generamos un número de socio con prefijo MAP
+      
+      // MembershipNumber manual con prefijo MAP (Necesario si no es automático en SF)
       const membershipNumber = `MAP-${Date.now()}`;
 
       const payload = {
-        enrollmentDate,
-        membershipNumber,
+        enrollmentDate: enrollmentDate,
+        membershipNumber: membershipNumber,
         associatedContactDetails: {
           firstName: memberData.name.split(' ')[0] || memberData.name,
-          lastName: memberData.name.split(' ').slice(1).join(' ') || 'Apellido',
+          lastName: memberData.name.split(' ').slice(1).join(' ') || 'Socio',
           email: memberData.email,
-          allowDuplicateRecords: "false"
+          allowDuplicateRecords: "false" 
         },
         memberStatus: "Active",
-        createTransactionJournals: "true",
-        transactionJournalStatementFrequency: "Monthly",
-        transactionJournalStatementMethod: "Email",
-        enrollmentChannel: "Web_Portal", // Canal Mapfre
-        canReceivePromotions: "true"
+        enrollmentChannel: "Web"
       };
 
       const encodedProgramName = encodeURIComponent(this.loyaltyProgramName);
       const url = `${instanceUrl}/services/data/${this.apiVersion}/loyalty-programs/${encodedProgramName}/individual-member-enrollments`;
       
-      const headers = { 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json' };
-      const response = await axios.post(url, payload, { headers, timeout: this.timeout });
+      const headers = { 
+        'Authorization': `Bearer ${accessToken}`, 
+        'Content-Type': 'application/json' 
+      };
+
+      console.log('📡 Enviando inscripción simplificada a Salesforce...');
+      const response = await axios.post(url, payload, { headers, timeout: 20000 });
 
       console.log('✅ Cliente Mapfre dado de alta en Salesforce');
       return response.data;
+      
     } catch (error) {
-      console.error('❌ Error enrollMember Mapfre:', error.message);
+      if (error.response && error.response.data) {
+        console.error('❌ DETALLE ERROR 400 SF:', JSON.stringify(error.response.data));
+      } else {
+        console.error('❌ Error enrollMember Mapfre:', error.message);
+      }
       throw error;
     }
   }
@@ -69,7 +79,6 @@ class SalesforceLoyalty {
       const response = await axios.get(url, { headers, timeout: 15000 });
       const result = { qualifying: 0, nonQualifying: 0 };
       
-      // Ajuste de nombres de moneda Mapfre
       const qName = process.env.SF_CURRENCY_QUALIFYING_NAME || 'Puntos_Nivel'; 
       const nqName = process.env.SF_CURRENCY_NONQUALIFYING_NAME || 'Treboles';
 
@@ -85,7 +94,7 @@ class SalesforceLoyalty {
     try {
       const currencies = await this.getMemberCurrencies(salesforceMemberId);
       member.levelPoints = currencies.qualifying;
-      member.rewardPoints = currencies.nonQualifying; // Estos son los Tréboles
+      member.rewardPoints = currencies.nonQualifying; // Tréboles
 
       const instanceUrl = await salesforceAuth.getInstanceUrl();
       const headers = await this.getHeaders();
@@ -95,42 +104,27 @@ class SalesforceLoyalty {
 
       if (tierResponse.data.records?.length > 0) {
         const sfTierName = tierResponse.data.records[0].Name;
-        
-        // Mapeo Mapfre: Salesforce Name -> App Brand Tier Name
-        const tierMapping = {
-            'Silver': 'Plata',
-            'Gold': 'Oro',
-            'Platinum': 'Platino',
-            'Diamond': 'Diamante'
-        };
-
-        if (sfTierName) {
-            member.tier = tierMapping[sfTierName] || sfTierName;
-        }
+        const tierMapping = { 'Silver': 'Plata', 'Gold': 'Oro', 'Platinum': 'Platino', 'Diamond': 'Diamante' };
+        if (sfTierName) member.tier = tierMapping[sfTierName] || sfTierName;
       }
       return member;
     } catch (error) { return member; }
   }
 
   // ---------------------------------------------------------------------------
-  // 2. LÓGICA DE PROMOCIONES (MAPFRE: PROTECCIÓN Y PREVENCIÓN)
+  // 2. PROMOCIONES E HITOS (Retos Mapfre)
   // ---------------------------------------------------------------------------
 
   async getPromotionDataViaSOQL(salesforceMemberId, promotionId) {
     try {
       const instanceUrl = await salesforceAuth.getInstanceUrl();
       const headers = await this.getHeaders();
-      let promotionData = null;
-      let milestones = [];
-
-      // Obtener info de la promoción
+      
       const q = `SELECT Id, Name, Description FROM Promotion WHERE Id = '${promotionId}'`;
       const res = await axios.get(`${instanceUrl}/services/data/${this.apiVersion}/query?q=${encodeURIComponent(q)}`, { headers });
       if (!res.data.records?.length) return null;
-      promotionData = res.data.records[0];
+      const promotionData = res.data.records[0];
 
-      // Lógica de Atributos de Engagement (Engagement Attributes)
-      // Mapfre suele medir: "Polizas_Contratadas", "Dias_Sin_Siniestros", "Revisiones_Realizadas"
       const attrQ = `SELECT Id, Name, TargetValue FROM LoyaltyPgmEngmtAttribute WHERE LoyaltyProgramId IN (SELECT LoyaltyProgramId FROM Promotion WHERE Id = '${promotionId}')`;
       const attrRes = await axios.get(`${instanceUrl}/services/data/${this.apiVersion}/query?q=${encodeURIComponent(attrQ)}`, { headers });
       
@@ -139,16 +133,11 @@ class SalesforceLoyalty {
       const progRes = await axios.get(`${instanceUrl}/services/data/${this.apiVersion}/query?q=${encodeURIComponent(progQ)}`, { headers });
       if(progRes.data.records) progRes.data.records.forEach(p => progressMap[p.LoyaltyPgmEngmtAttributeId] = parseFloat(p.CurrentValue)||0);
 
-      const promoName = promotionData.Name.toLowerCase();
-
-      // Adaptación de Reglas de Negocio Mapfre
-      milestones = (attrRes.data.records || []).map(a => {
+      const milestones = (attrRes.data.records || []).map(a => {
         const nLower = a.Name.toLowerCase();
         let target = parseFloat(a.TargetValue) || 1;
-
-        // Ajustamos targets dinámicos si no vienen de SF
-        if (nLower.includes('poliza') || nLower.includes('seguro')) target = 3; // Reto Multi-póliza
-        if (nLower.includes('siniestro')) target = 365; // Reto Conductor Seguro (días)
+        if (nLower.includes('poliza') || nLower.includes('seguro')) target = 3; 
+        if (nLower.includes('siniestro')) target = 365; 
 
         return {
           id: a.Id, 
@@ -164,49 +153,39 @@ class SalesforceLoyalty {
   }
 
   // ---------------------------------------------------------------------------
-  // 3. PROCESAMIENTO DE TRANSACCIONES (TRÉBOLES)
+  // 3. PROCESAMIENTO DE TRANSACCIONES (Tréboles)
   // ---------------------------------------------------------------------------
 
   async processTransaction(memberId, type, points, currency, jType, jSubType, date, jSubTypeId) {
     try {
-      console.log(`🍀 Registrando movimiento de Tréboles: ${type}...`);
-      const progId = await this.getLoyaltyProgramId();
-      const typeId = await this.getJournalTypeId(jType || 'Accrual');
-      const subTypeId = jSubTypeId || await this.getJournalSubTypeId(jSubType || 'Insurance_Purchase');
-
+      console.log(`🍀 Registrando movimiento de Tréboles: ${jSubType}...`);
       const instanceUrl = await salesforceAuth.getInstanceUrl();
+      const headers = await this.getHeaders();
+      
+      const progQ = `SELECT Id FROM LoyaltyProgram WHERE Name = '${this.loyaltyProgramName}' LIMIT 1`;
+      const progRes = await axios.get(`${instanceUrl}/services/data/${this.apiVersion}/query?q=${encodeURIComponent(progQ)}`, { headers });
+      const progId = progRes.data.records?.[0]?.Id;
+
+      const typeQ = `SELECT Id FROM TransactionJournalType WHERE Name = '${jType || 'Accrual'}' LIMIT 1`;
+      const typeRes = await axios.get(`${instanceUrl}/services/data/${this.apiVersion}/query?q=${encodeURIComponent(typeQ)}`, { headers });
+      const typeId = typeRes.data.records?.[0]?.Id;
+
       const payload = {
         ActivityDate: date, 
         JournalTypeId: typeId, 
-        JournalSubTypeId: subTypeId,
+        JournalSubTypeId: jSubTypeId, // ID del subtipo (ej. Compra Seguro)
         LoyaltyProgramId: progId, 
         MemberId: memberId, 
         TransactionAmount: Math.abs(points),
         Status: 'Pending'
       };
       
-      const headers = await this.getHeaders();
       const res = await axios.post(`${instanceUrl}/services/data/${this.apiVersion}/sobjects/TransactionJournal`, payload, { headers });
       return res.data;
     } catch (e) {
-      console.warn('⚠️ Error en TransactionJournal (Salesforce):', e.message);
+      console.warn('⚠️ Error en TransactionJournal:', e.message);
       return null;
     }
-  }
-
-  // ... Resto de métodos auxiliares (getHeaders, timeouts, etc) idénticos pero con logs de Mapfre ...
-  
-  async getHeaders() {
-    const token = await salesforceAuth.getAccessToken();
-    return { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' };
-  }
-
-  async getLoyaltyProgramId() {
-    const instanceUrl = await salesforceAuth.getInstanceUrl();
-    const headers = await this.getHeaders();
-    const q = `SELECT Id FROM LoyaltyProgram WHERE Name = '${this.loyaltyProgramName}' LIMIT 1`;
-    const res = await axios.get(`${instanceUrl}/services/data/${this.apiVersion}/query?q=${encodeURIComponent(q)}`, { headers });
-    return res.data.records?.[0]?.Id;
   }
 
   _createTimeoutPromise(ms, msg) {
