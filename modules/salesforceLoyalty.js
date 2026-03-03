@@ -4,7 +4,7 @@ const salesforceAuth = require('./salesforceAuth');
 class SalesforceLoyalty {
   constructor() {
     this.apiVersion = process.env.SF_API_VERSION || 'v61.0';
-    this.loyaltyProgramName = process.env.SF_LOYALTY_PROGRAM_NAME || 'Mapfre_Te_Cuidamos';
+    this.loyaltyProgramName = process.env.SF_LOYALTY_PROGRAM_NAME || 'Mapfre Te Cuidamos';
     this.timeout = 25000; 
   }
 
