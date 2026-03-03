@@ -2,7 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
 const session = require('express-session');
-const basicAuth = require('express-basic-auth');
+const basicAuth = require('express-basic-auth'); // Puedes dejar el require, no molesta
 require('dotenv').config();
 
 // Importar configuración de marca
@@ -25,8 +25,8 @@ const debugRoutes = require('./routes/debug');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Configurar autenticación básica (antes de cualquier otro middleware)
-if (process.env.NODE_ENV !== 'development') {
+// --- BLOQUE DE AUTENTICACIÓN COMENTADO PARA ACCESO PÚBLICO ---
+/* if (process.env.NODE_ENV !== 'development') {
   app.use(basicAuth({
     users: { 
       [process.env.ADMIN_USERNAME]: process.env.ADMIN_PASSWORD
@@ -35,10 +35,12 @@ if (process.env.NODE_ENV !== 'development') {
     realm: `${brandConfig.fullName} Demo App`,
   }));
 }
+*/
+// ------------------------------------------------------------
 
 // Configuración de sesiones
 app.use(session({
-  secret: process.env.SESSION_SECRET,
+  secret: process.env.SESSION_SECRET || 'mapfre-secret-key', // Fallback por si falta en Config Vars
   resave: false,
   saveUninitialized: false,
   cookie: {
@@ -147,7 +149,7 @@ app.post('/logout', (req, res) => {
   });
 });
 
-// Manejo de errores - asegurarse de que este middleware esté al final
+// Manejo de errores
 app.use((err, req, res, next) => {
   console.error(err.stack);
   const locale = req.locale || 'es';
@@ -158,7 +160,7 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Manejo de 404 - página no encontrada
+// Manejo de 404
 app.use((req, res, next) => {
   const locale = req.locale || 'es';
   res.status(404).render('error', {
