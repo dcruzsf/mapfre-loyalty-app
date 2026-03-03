@@ -2,32 +2,33 @@ const i18n = require('./i18n');
 
 class TransactionTranslations {
   constructor() {
-    // Description patterns for translation (usando "Caixapoints" en lugar de "Puntos")
+    // Patrones de descripción para traducción (Mapfre: Tréboles y Protección)
     this.descriptionPatterns = {
       es: {
-        // Tier updates
-        'Actualización a nivel': 'Actualización a nivel',
-        // Caixapoints from digital operations/activities
-        'Caixapoints por': 'Caixapoints por',
-        'Puntos por compra de': 'Caixapoints por',
-        'Redención:': 'Canje:',
-        'Compra de': 'Operación:',
-        'puntos': 'Caixapoints',
-        'Puntos': 'Caixapoints'
+        // Actualizaciones de nivel
+        'Actualización a nivel': 'Subida de categoría a',
+        // Tréboles por operaciones y servicios
+        'Caixapoints por': 'Tréboles por',
+        'Puntos por compra de': 'Tréboles por contratación de',
+        'Redención:': 'Uso de Tréboles:',
+        'Canje:': 'Uso de Tréboles:',
+        'Compra de': 'Seguro:',
+        'puntos': 'tréboles',
+        'Puntos': 'Tréboles'
       },
       en: {
         // Tier updates
-        'Actualización a nivel': 'Tier upgrade to level',
-        // Caixapoints from digital operations/activities
-        'Caixapoints por': 'Caixapoints from',
-        'Puntos por compra de': 'Caixapoints from',
+        'Actualización a nivel': 'Tier upgrade to',
+        // Tréboles/Clovers translation
+        'Caixapoints por': 'Tréboles from',
+        'Puntos por compra de': 'Tréboles from',
         'Redención:': 'Redemption:',
         'Canje:': 'Redemption:',
-        'Compra de': 'Operation:',
-        'Operación:': 'Operation:',
-        'puntos': 'Caixapoints',
-        'Puntos': 'Caixapoints',
-        'Caixapoints': 'Caixapoints'
+        'Compra de': 'Insurance:',
+        'Operación:': 'Service:',
+        'puntos': 'tréboles',
+        'Puntos': 'Tréboles',
+        'Tréboles': 'Tréboles'
       }
     };
   }
@@ -35,11 +36,11 @@ class TransactionTranslations {
   translateTransaction(transaction, locale = 'es') {
     const translatedTransaction = { ...transaction };
 
-    // Translate transaction type
+    // Traducir el tipo de transacción (ej: Accrual -> Acumulación)
     const typeKey = `transactions.types.${transaction.type}`;
     translatedTransaction.type = i18n.t(typeKey, locale) || transaction.type;
 
-    // Translate description
+    // Traducir la descripción (donde suelen aparecer los nombres de producto)
     translatedTransaction.description = this.translateDescription(transaction.description, locale);
 
     return translatedTransaction;
@@ -48,27 +49,30 @@ class TransactionTranslations {
   translateDescription(description, locale = 'es') {
     if (!description) return description;
 
-    // If already in the target locale, return as is
-    if (locale === 'es') {
-      return description;
-    }
-
-    // Apply translation patterns for English
     let translatedDescription = description;
 
-    for (const [spanishPattern, englishPattern] of Object.entries(this.descriptionPatterns.en)) {
-      if (translatedDescription.includes(spanishPattern)) {
-        translatedDescription = translatedDescription.replace(spanishPattern, englishPattern);
-      }
+    // Aplicar patrones según el idioma
+    const patterns = this.descriptionPatterns[locale] || this.descriptionPatterns.es;
+
+    for (const [key, value] of Object.entries(patterns)) {
+      // Reemplazo global para asegurar que "puntos" o "Caixapoints" desaparezcan
+      const regex = new RegExp(key, 'gi');
+      translatedDescription = translatedDescription.replace(regex, value);
     }
 
-    // Handle tier updates with dynamic tier names
-    if (translatedDescription.includes('Actualización a nivel')) {
-      const tierMatch = translatedDescription.match(/Actualización a nivel (\w+)/);
+    // Manejo específico para subidas de nivel (Plata, Oro, Platino, Diamante)
+    if (translatedDescription.includes('nivel')) {
+      const tierMatch = translatedDescription.match(/(nivel|category)\s+(\w+)/i);
       if (tierMatch) {
-        const tierName = tierMatch[1];
+        const tierName = tierMatch[2];
+        // Buscamos la traducción del nivel en nuestro i18n
         const translatedTierName = i18n.t(`tiers.${tierName.toLowerCase()}`, locale) || tierName;
-        translatedDescription = `Tier upgrade to ${translatedTierName}`;
+        
+        if (locale === 'es') {
+          translatedDescription = `Subida de categoría a nivel ${translatedTierName}`;
+        } else {
+          translatedDescription = `Tier upgrade to ${translatedTierName} level`;
+        }
       }
     }
 
@@ -76,5 +80,5 @@ class TransactionTranslations {
   }
 }
 
-// Export singleton instance
+// Exportar instancia única
 module.exports = new TransactionTranslations();

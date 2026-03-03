@@ -6,160 +6,136 @@ const { requireAuth } = require('../middleware/auth');
 const i18n = require('../modules/i18n');
 const salesforceLoyalty = require('../modules/salesforceLoyalty');
 
-// Aplicar middleware de autenticación a todas las rutas
+// Aplicar middleware de autenticación a todas las rutas de Mapfre Te Cuidamos
 router.use(requireAuth);
 
-// Mostrar página de accrual (Ganar Puntos)
+// Mostrar página de obtención de Tréboles (Accrual)
 router.get('/', async (req, res) => {
-  const member = req.member; // Viene del middleware requireAuth
+  const member = req.member; 
   const locale = req.locale || 'es';
 
-  // Sincronizar puntos y tier desde Salesforce antes de mostrar la página
+  // Sincronizar Tréboles y Categoría (Tier) desde Salesforce al cargar
   if (member.salesforceId && process.env.USE_SALESFORCE === 'true') {
     try {
       await salesforceLoyalty.syncMemberPoints(member, member.salesforceId);
       Member.save(member);
-      console.log('✅ Currencies y tier sincronizados al cargar página de accrual');
+      console.log('🍀 Mapfre: Tréboles y nivel actualizados desde Salesforce');
     } catch (error) {
-      console.error('⚠️ Error sincronizando en página accrual:', error.message);
+      console.error('⚠️ Error sincronizando datos de Mapfre:', error.message);
     }
   }
 
   res.render('accrual', {
     member,
-    products: catalogConfig.products,
-    activities: catalogConfig.activities,
+    products: catalogConfig.products, // Seguros y Servicios
+    activities: catalogConfig.activities, // Prevención y Salud
     message: req.query.message || null,
     points: req.query.points || null,
     locale
   });
 });
 
-// Procesar compra/operación digital
+// Procesar contratación de seguro u operación de partner
 router.post('/purchase/:id', async (req, res) => {
   const productId = parseInt(req.params.id);
-  console.log(`🛒 POST /accrual/purchase/${productId} - Iniciando procesamiento de compra`);
-
   const product = catalogConfig.products.find(p => p.id === productId);
   const locale = req.locale || 'es';
 
   if (!product) {
-    console.log(`❌ Producto no encontrado: ID ${productId}`);
     const message = i18n.t('messages.productNotFound', locale);
     return res.redirect(`/accrual?message=${encodeURIComponent(message)}`);
   }
 
-  console.log(`✅ Producto encontrado: ${product.name} (qualifying: ${product.qualifyingPoints}, non-qualifying: ${product.nonQualifyingPoints})`);
+  const member = req.member;
 
-  const member = req.member; // Viene del middleware requireAuth
-  console.log(`👤 Member: ${member.name} (SF ID: ${member.salesforceId})`);
-
-  // VALIDACIÓN: Solo funciona en modo Salesforce
+  // Solo procesamos si hay conexión con la Org de Salesforce de Mapfre
   if (!member.salesforceId || process.env.USE_SALESFORCE !== 'true') {
-    console.log(`⚠️ Modo Salesforce no activo o member sin SF ID`);
-    const message = 'Las operaciones solo están disponibles en modo Salesforce.';
+    const message = 'La gestión de seguros requiere conexión con los sistemas centrales de Mapfre.';
     return res.redirect(`/accrual?message=${encodeURIComponent(message)}`);
   }
 
   try {
-    console.log(`🎯 ${member.name} realizó: ${product.name}`);
+    console.log(`🎯 Cliente ${member.name} contrató: ${product.name}`);
 
     const activityDate = new Date().toISOString();
     const journalType = product.journalType || 'Accrual';
-    const journalSubType = product.journalSubType || 'Purchase';
+    const journalSubType = product.journalSubType || 'Insurance_Purchase'; // Subtipo adaptado
     const journalSubTypeId = product.journalSubTypeId || null;
 
-    console.log(`📋 JournalType: ${journalType}, JournalSubType: ${journalSubType}, SubTypeId: ${journalSubTypeId}`);
-
-    // Calcular el monto total de la transacción (suma de qualifying + non-qualifying)
-    // En Salesforce, el TransactionAmount representa el monto total de la compra
-    // Los procesos internos de SF determinan qué parte va a qualifying y non-qualifying
+    // En Mapfre, el monto total influye en la bonificación de Tréboles
     const transactionAmount = Math.abs(product.qualifyingPoints || 0) + Math.abs(product.nonQualifyingPoints || 0);
 
-    console.log(`💰 Monto total de transacción: ${transactionAmount} (qualifying: ${product.qualifyingPoints}, non-qualifying: ${product.nonQualifyingPoints})`);
-
-    // Preparar campos personalizados si es redención
+    // Campos personalizados para lógica de fidelización Mapfre en Salesforce
     const customFields = {};
     if (journalType === 'Redemption' && Math.abs(product.nonQualifyingPoints) > 0) {
       customFields.Points_to_debit__c = Math.abs(product.nonQualifyingPoints);
-      console.log(`🔧 Agregando campo personalizado Points_to_debit__c: ${customFields.Points_to_debit__c}`);
+      console.log(`🔧 Debitando Tréboles del saldo: ${customFields.Points_to_debit__c}`);
     }
 
-    // Crear UN SOLO TransactionJournal con el monto total
-    // Salesforce procesará internamente la distribución de puntos
+    // Registro de la operación en el motor de Loyalty de Salesforce
     await salesforceLoyalty.processTransaction(
       member.salesforceId,
       journalType,
       transactionAmount,
-      'transaction', // Tipo genérico, SF decide la distribución
+      'treboles', // Moneda institucional
       journalType,
       journalSubType,
       activityDate,
       journalSubTypeId,
       customFields
     );
-    console.log(`✅ TransactionJournal registrado con monto: ${transactionAmount}`);
 
-    // Sincronizar puntos desde Salesforce después de registrar
+    // Sincronizar tras la operación para mostrar el balance real de Tréboles
     await salesforceLoyalty.syncMemberPoints(member, member.salesforceId);
     Member.save(member);
-    console.log('✅ Puntos sincronizados desde Salesforce después del accrual');
 
     const message = `${i18n.t('messages.purchaseSuccess', locale)}: ${product.name}`;
     res.redirect(`/accrual?message=${encodeURIComponent(message)}&points=${product.pointsDisplay}`);
   } catch (error) {
-    console.error('⚠️ Error al registrar operación:', error.message);
+    console.error('❌ Error en operación Mapfre:', error.message);
     const message = `${i18n.t('messages.error', locale)}: ${error.message}`;
     res.redirect(`/accrual?message=${encodeURIComponent(message)}`);
   }
 });
 
-// Procesar actividad
+// Procesar hito de prevención o actividad digital
 router.post('/activity/:id', async (req, res) => {
   const activityId = parseInt(req.params.id);
   const activity = catalogConfig.activities.find(a => a.id === activityId);
   const locale = req.locale || 'es';
 
   if (!activity) {
-    const message = i18n.t('messages.activityNotFound', locale);
-    return res.redirect(`/accrual?message=${encodeURIComponent(message)}`);
+    return res.redirect(`/accrual?message=${encodeURIComponent(i18n.t('messages.activityNotFound', locale))}`);
   }
 
-  const member = req.member; // Viene del middleware requireAuth
+  const member = req.member;
 
-  // VALIDACIÓN: Solo funciona en modo Salesforce
   if (!member.salesforceId || process.env.USE_SALESFORCE !== 'true') {
-    const message = 'Las actividades solo están disponibles en modo Salesforce.';
-    return res.redirect(`/accrual?message=${encodeURIComponent(message)}`);
+    return res.redirect(`/accrual?message=${encodeURIComponent('Modo offline no disponible para hitos de prevención.')}`);
   }
 
   try {
-    console.log(`${member.name} completó actividad: ${activity.name}`);
+    console.log(`🍀 Hito Mapfre completado: ${activity.name} por ${member.name}`);
 
-    // Registrar TransactionJournal en Salesforce
     const activityDate = new Date().toISOString();
     await salesforceLoyalty.processTransaction(
       member.salesforceId,
       'Accrual',
       activity.points,
-      'qualifying',
+      'puntos_nivel', // Puntos para subir de Plata a Oro/Platino
       'Accrual',
       'Activity',
       activityDate
     );
-    console.log('✅ TransactionJournal de actividad registrado en Salesforce');
 
-    // Sincronizar puntos desde Salesforce después de registrar
     await salesforceLoyalty.syncMemberPoints(member, member.salesforceId);
     Member.save(member);
-    console.log('✅ Puntos sincronizados desde Salesforce después del accrual de actividad');
 
     const message = `${i18n.t('messages.activitySuccess', locale)}: ${activity.name}`;
     res.redirect(`/accrual?message=${encodeURIComponent(message)}&points=${activity.points}`);
   } catch (error) {
-    console.error('⚠️ Error al registrar actividad:', error.message);
-    const message = `${i18n.t('messages.error', locale)}: ${error.message}`;
-    res.redirect(`/accrual?message=${encodeURIComponent(message)}`);
+    console.error('❌ Error en actividad de prevención:', error.message);
+    res.redirect(`/accrual?message=${encodeURIComponent(i18n.t('messages.error', locale))}`);
   }
 });
 

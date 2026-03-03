@@ -5,63 +5,68 @@ const { getCurrentMember } = require('../middleware/auth');
 const transactionTranslations = require('../modules/transactionTranslations');
 const salesforceLoyalty = require('../modules/salesforceLoyalty');
 
-// Aplicar middleware para obtener el miembro actual
+// Middleware para obtener el miembro (cliente) actual
 router.use(getCurrentMember);
 
+/**
+ * Dashboard Principal: Resumen de Tréboles y Estado de Cliente
+ */
 router.get('/', async (req, res) => {
-  // Si hay un parámetro de nuevo logro, marcarlo para mostrar notificación
+  // Parámetros de hitos o notificaciones (ej: desbloqueo de hito 'Conductor Seguro')
   const newAchievement = req.query.newAchievement === 'true';
   const achievementName = req.query.achievementName;
   const achievementPoints = req.query.achievementPoints;
   const message = req.query.message;
   const locale = req.locale || 'es';
 
-  // El miembro actual viene del middleware
   const member = req.member;
 
-  // Sincronizar currencies desde Salesforce si está disponible
+  // Sincronización proactiva con Mapfre Te Cuidamos (Salesforce)
   if (member && member.salesforceId && process.env.USE_SALESFORCE === 'true') {
     try {
+      // Sincronizamos Tréboles y Categoría (Plata, Oro, Platino, Diamante)
       await salesforceLoyalty.syncMemberPoints(member, member.salesforceId);
-      // Guardar el miembro actualizado
+      
+      // Persistir cambios en el modelo local
       Member.save(member);
-      console.log('✅ Currencies sincronizadas al cargar dashboard');
+      console.log('🍀 Mapfre Sync: Dashboard actualizado con datos de Salesforce');
     } catch (syncError) {
-      console.warn('⚠️ No se pudieron sincronizar currencies al cargar dashboard:', syncError.message);
-      // No bloquear el flujo, continuar con valores locales
+      console.warn('⚠️ Mapfre Sync: Usando valores locales temporalmente:', syncError.message);
     }
   }
 
   res.render('index', {
     member: member || null,
-    message: message || null
+    message: message || null,
+    // Podrías añadir aquí variables de marca si tu EJS las requiere
+    brandName: 'Mapfre Te Cuidamos'
   });
 });
 
-// Ruta para que un usuario individual resetee su cuenta
+/**
+ * Gestión de Cuenta: Eliminación de datos del programa
+ */
 router.post('/reset-account', (req, res) => {
   if (!req.session.memberId) {
-    return res.redirect('/register?message=Debes estar registrado para resetear tu cuenta');
+    return res.redirect('/register?message=Debes acceder para gestionar tu baja en el programa');
   }
   
   const member = Member.findById(req.session.memberId);
   if (member) {
-    // Encontrar el índice del miembro en el array
     const members = Member.getAll();
     const memberIndex = members.findIndex(m => m.id === member.id);
     
     if (memberIndex !== -1) {
-      // Eliminar el miembro del array
       members.splice(memberIndex, 1);
     }
   }
   
-  // Destruir la sesión
+  // Destruir la sesión y redirigir
   req.session.destroy((err) => {
     if (err) {
-      console.error('Error al destruir sesión:', err);
+      console.error('Error al cerrar sesión:', err);
     }
-    res.redirect('/register?message=Tu cuenta ha sido eliminada. Puedes registrarte nuevamente');
+    res.redirect('/register?message=Tus datos han sido eliminados correctamente de Mapfre Te Cuidamos');
   });
 });
 

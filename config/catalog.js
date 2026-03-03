@@ -1,393 +1,174 @@
-// config/catalog.js - Configuración de operaciones digitales y recompensas CaixaBank Experience
 module.exports = {
-  // Operaciones digitales para acumulación de puntos (enfoque 100% digital)
+  // Productos Mapfre para acumulación de Tréboles
   products: [
     {
-      id: 2,
-      name: 'Contratación de Tarjeta',
-      price: 0,
-      points: 550,
-      pointsDisplay: '550 Caixapoints',
-      qualifyingPoints: 550,
-      nonQualifyingPoints: 0,
-      image: 'compra2.png',
-      description: 'Contrata tu tarjeta de crédito 100% online. Rápido, seguro y sin papeleos.',
-      category: 'digital_banking',
-      isPremium: false,
-      digitalOnly: true,
-      journalType: 'Accrual',
-      journalSubType: 'Sign Credit Card'
-    },
-    {
       id: 1,
-      name: 'Pago con Tarjeta en Comercio',
+      name: 'Seguro de Automóvil Pago como Conduzco',
       price: 0,
-      points: 50,
-      pointsDisplay: '50 Caixapoints + 15 Cashback',
-      qualifyingPoints: 50,
-      nonQualifyingPoints: 15,
-      image: 'compra1.png',
-      description: 'Paga con tu tarjeta CaixaBank en cualquier comercio físico.',
-      category: 'digital_banking',
-      isPremium: false,
-      digitalOnly: true,
-      journalType: 'Accrual',
-      journalSubType: 'Credit Card Payment',
-      journalSubTypeId: '0lSJ70000008OckMAE'
-    },
-    {
-      id: 3,
-      name: 'Contratar Seguro MyBox Vida',
-      price: 0,
-      points: 500,
-      pointsDisplay: '500 Caixapoints',
-      qualifyingPoints: 500,
-      nonQualifyingPoints: 0,
-      image: 'compra6.png',
-      description: 'Protege a los tuyos con un seguro de vida 100% digital.',
+      points: 800,
+      pointsDisplay: '800 Puntos de Nivel + 50 Tréboles',
+      qualifyingPoints: 800,
+      nonQualifyingPoints: 50,
+      image: 'car-insurance.png',
+      description: 'Seguro inteligente que premia tu buena conducción con Tréboles directos.',
       category: 'insurance',
       isPremium: false,
       digitalOnly: true,
       journalType: 'Accrual',
-      journalSubType: 'Sign an insurance',
-      journalSubTypeId: '0lS7Q000000POCjUAO'
+      journalSubType: 'Sign an Insurance'
     },
     {
-      id: 4,
-      name: 'Alta Nómina',
+      id: 2,
+      name: 'Seguro de Hogar Digital',
       price: 0,
-      points: 4000,
-      pointsDisplay: '4000 Puntos de Cashback',
-      qualifyingPoints: 0,
-      nonQualifyingPoints: 4000,
-      image: 'compra4.png',
-      description: 'Domicilia tu nómina con nosotros y disfruta de una cuenta libre de comisiones. Accede a financiación preferente y ventajas exclusivas para tu día a día.',
-      category: 'digital_banking',
+      points: 500,
+      pointsDisplay: '500 Puntos de Nivel',
+      qualifyingPoints: 500,
+      nonQualifyingPoints: 0,
+      image: 'home-insurance.png',
+      description: 'Protección completa para tu hogar con gestión de siniestros desde la App.',
+      category: 'insurance',
       isPremium: false,
       digitalOnly: true,
       journalType: 'Accrual',
-      journalSubType: 'Alta Nómina'
+      journalSubType: 'Sign an Insurance'
     },
     {
-      id: 5,
-      name: 'Alta Bizum',
+      id: 3,
+      name: 'Revisión Oficial Pre-ITV',
       price: 0,
-      points: 250,
-      pointsDisplay: '250 Puntos de Cashback',
-      qualifyingPoints: 0,
-      nonQualifyingPoints: 250,
-      image: 'compra5.png',
-      description: 'Activa el servicio y empieza a enviar o recibir dinero al instante con tu móvil. La forma más cómoda, rápida y segura de pagar a tus amigos.',
-      category: 'digital_banking',
+      points: 100,
+      pointsDisplay: '100 Puntos + Revisión Gratuita',
+      qualifyingPoints: 100,
+      nonQualifyingPoints: 0,
+      image: 'itv-service.png',
+      description: 'Prepara tu coche para la ITV en nuestra red de talleres distinguidos.',
+      category: 'insurance_partner',
       isPremium: false,
       digitalOnly: true,
       journalType: 'Accrual',
-      journalSubType: 'Alta Bizum'
+      journalSubType: 'Purchase'
     }
   ],
 
-  // Actividades digitales para ganar puntos extra
+  // Actividades para ganar Tréboles extra (Prevención y Salud)
   activities: [
     {
       id: 1,
-      name: 'Descarga App CaixaBankNow',
-      points: 150,
-      image: 'actividad1.png',
+      name: 'Descarga App Mapfre',
+      points: 100,
+      image: 'app-download.png',
       category: 'app',
-      description: 'Descarga la app y activa tu banca móvil. Tu banco en el bolsillo.'
+      description: 'Gestiona tus pólizas, partes y asistencia en carretera desde tu móvil.'
     },
     {
       id: 2,
-      name: 'Completar perfil financiero',
-      points: 80,
-      image: 'actividad2.png',
-      category: 'profile',
-      challengeTrigger: 'profile_complete',
-      description: 'Completa tu información financiera y preferencias de inversión.'
+      name: 'Video-Consulta Médica',
+      points: 150,
+      image: 'telemedicine.png',
+      category: 'health',
+      description: 'Usa el servicio de telemedicina por primera vez y gana Tréboles.'
     },
     {
       id: 3,
-      name: 'Invitar amigos a CaixaBank Experience',
-      points: 100,
-      image: 'actividad3.png',
-      category: 'referral',
-      description: 'Comparte tu código. Tú ganas, tu amigo gana.'
-    },
-    {
-      id: 4,
-      name: 'Activar Face ID / Huella Digital',
-      points: 75,
-      image: 'actividad4.png',
-      category: 'security',
-      challengeTrigger: 'social_share',
-      description: 'Máxima seguridad biométrica para tu app.'
-    },
-    {
-      id: 5,
-      name: 'Desafío Quiz Financiero',
-      points: 90,
-      image: 'actividad5.png',
-      category: 'quiz',
-      description: 'Demuestra tus conocimientos financieros y gana Caixapoints. Pon a prueba tu cultura financiera.'
-    },
-    {
-      id: 6,
-      name: 'Domiciliación de Nómina Digital',
-      points: 500,
-      image: 'actividad6.png',
-      category: 'payroll',
-      description: 'Domicilia tu nómina 100% online y recibe una mega bonificación de Caixapoints. Tu sueldo, más rentable.'
+      name: 'Curso de Conducción Segura',
+      points: 300,
+      image: 'driving-course.png',
+      category: 'safety',
+      description: 'Mejora tu seguridad al volante y reduce tu prima anual.'
     }
   ],
 
-  // Recompensas digitales y experiencias (estilo Revolut)
+  // Recompensas del Programa "Te Cuidamos"
   rewards: [
     {
       id: 1,
-      name: 'Redención de puntos en Facilitea',
-      points: 15,
-      type: 'redemption',
-      image: 'compra3.png',
-      codePrefix: 'FACILITEA',
-      description: 'Canjea tus puntos por productos y servicios en Facilitea.',
-      isSpecial: true,
-      journalType: 'Redemption',
-      journalSubType: 'Purchase'
+      name: 'Descuento en Renovación de Póliza',
+      points: 1, // 1 Trébol = 1€
+      type: 'cashback',
+      image: 'discount-policy.png',
+      codePrefix: 'RENEW',
+      description: 'Usa tus Tréboles para pagar menos en tu próximo recibo de seguro.'
     },
     {
       id: 2,
-      name: 'Cashback Instantáneo 10€',
-      points: 150,
-      type: 'cashback',
-      image: 'descuento1.png',
-      codePrefix: 'CASH10',
-      description: 'Dinero directo a tu cuenta. Sin esperas, sin complicaciones.'
+      name: 'Cheque Carburante 20€',
+      points: 20,
+      type: 'experience',
+      image: 'fuel-card.png',
+      codePrefix: 'FUEL20',
+      description: 'Canjea tus tréboles por combustible en gasolineras asociadas.'
     },
     {
       id: 3,
-      name: 'Cashback Instantáneo 25€',
-      points: 350,
-      type: 'cashback',
-      image: 'descuento2.png',
-      codePrefix: 'CASH25',
-      description: 'Recompensa inmediata en tu saldo disponible.'
+      name: 'Servicio de Bricolaje en el Hogar',
+      points: 0,
+      type: 'service',
+      image: 'handyman.png',
+      codePrefix: 'BRICO',
+      description: 'Gratis por ser nivel Oro o superior. Un profesional en tu casa.',
+      isSpecial: true
     },
     {
       id: 4,
-      name: 'Avios Iberia',
-      points: 500,
-      type: 'experience',
-      image: 'experiencia1.png',
-      codePrefix: 'AVIOS',
-      description: 'Canjea tus Caixapoints por Avios de Iberia y vuela más cerca de tu próximo destino.'
-    },
-    {
-      id: 5,
-      name: 'Acceso Sala VIP Aeropuerto',
-      points: 800,
-      type: 'experience',
-      image: 'experiencia2.png',
-      codePrefix: 'VIPROOM',
-      description: 'Disfruta de acceso exclusivo a salas VIP en aeropuertos. Confort y tranquilidad antes de tu vuelo.'
-    },
-    {
-      id: 6,
-      name: 'Donación Fundación "la Caixa"',
-      points: 300,
+      name: 'Amazon Gift Card (Cuidamos tu ocio)',
+      points: 50,
       type: 'service',
-      image: 'experiencia3.png',
-      codePrefix: 'DONATION',
-      description: 'Convierte tus Caixapoints en una donación de 30€ a la Fundación "la Caixa" para proyectos sociales.'
-    },
-    {
-      id: 7,
-      name: 'Gift Card Amazon',
-      points: 1000,
-      type: 'service',
-      image: 'experiencia4.png',
-      codePrefix: 'AMAZON',
-      description: 'Gift card de Amazon para que compres lo que quieras. Canjea tus puntos por productos y tecnología.'
-    },
-    {
-      id: 8,
-      name: 'Asesoría Personalizada en Finanzas',
-      points: 600,
-      type: 'service',
-      image: 'experiencia5.png',
-      codePrefix: 'FINADVICE',
-      description: 'Sesión personalizada con un asesor financiero experto. Planifica tu futuro con ayuda profesional.'
-    },
-    {
-      id: 9,
-      name: 'Curso Regulación en Trading',
-      points: 900,
-      type: 'service',
-      image: 'experiencia6.png',
-      codePrefix: 'TRADECOURSE',
-      description: 'Curso completo sobre trading y regulación financiera. Aprende a invertir de forma inteligente y segura.'
-    },
-    {
-      id: 10,
-      name: 'Tarjeta de Crédito Sin Comisiones',
-      points: 1200,
-      type: 'product',
-      image: 'experiencia7.png',
-      codePrefix: 'CREDITFREE',
-      description: 'Tarjeta de crédito premium sin comisiones durante 1 año. Límite ampliado y beneficios exclusivos.'
+      image: 'amazon-card.png',
+      codePrefix: 'AMZMAPFRE',
+      description: 'Tarjeta regalo de 50€ canjeando tus Tréboles acumulados.'
     }
   ],
 
-  // Retos digitales (gamificación estilo Revolut)
+  // Retos de Fidelidad
   challenges: [
     {
-      id: 'digital_warrior',
-      name: 'Guerrero Digital',
-      description: 'Realiza 3 operaciones completamente digitales (Bizum, pagos móviles, etc.)',
-      reward: 100,
-      goal: 3,
-      type: 'digital_banking',
-      triggerCategory: 'digital_banking'
-    },
-    {
-      id: 'profile_complete',
-      name: 'Perfil 100% Configurado',
-      description: 'Completa tu perfil, activa alertas y configura preferencias (4 acciones)',
-      reward: 120,
-      goal: 4,
-      type: 'profile'
-    },
-    {
-      id: 'social_influencer',
-      name: 'Influencer Financiero',
-      description: 'Invita a 3 amigos a CaixaBank Experience',
-      reward: 150,
-      goal: 3,
-      type: 'referral'
-    },
-    {
-      id: 'investment_starter',
-      name: 'Inversor Inteligente',
-      description: 'Realiza tu primera inversión desde la app móvil',
-      reward: 200,
+      id: 'safe_driver',
+      name: 'Conductor Ejemplar',
+      description: 'Mantén tu historial sin partes de accidente durante 12 meses',
+      reward: 500,
       goal: 1,
-      type: 'investments',
-      triggerCategory: 'investments'
+      type: 'insurance'
+    },
+    {
+      id: 'multi_policy',
+      name: 'Protección Total',
+      description: 'Protege tu Coche, Hogar y Salud con Mapfre',
+      reward: 1000,
+      goal: 3,
+      type: 'insurance'
     }
   ],
 
-  // Logros digitales (achievements con enfoque moderno)
+  // Logros (Achievements) Mapfre
   achievements: [
     {
       id: 'welcome',
-      name: 'Bienvenido a Experience',
-      description: 'Te has unido a la revolución digital de CaixaBank',
+      name: 'Bienvenido a Te Cuidamos',
+      description: 'Tu viaje hacia la tranquilidad total comienza aquí.',
       points: 50,
-      icon: 'rocket',
+      icon: 'shield-alt',
       category: 'general',
-      hideWhenLocked: false,
       autoUnlock: true
     },
     {
-      id: 'first_digital_operation',
-      name: 'Primera Operación Digital',
-      description: 'Has realizado tu primera operación 100% digital',
-      points: 75,
-      icon: 'mobile-alt',
-      category: 'digital',
-      hideWhenLocked: false,
-      hint: 'Realiza una operación desde la app',
-      trigger: 'purchase'
-    },
-    {
-      id: 'premium_investor',
-      name: 'Inversor Premium',
-      description: 'Has activado inversiones automáticas desde la app',
-      points: 200,
-      icon: 'chart-line',
-      category: 'investment',
-      hideWhenLocked: false,
-      hint: 'Activa inversiones automáticas',
-      trigger: 'premium_purchase'
-    },
-    {
-      id: 'first_redemption',
-      name: 'Primera Recompensa',
-      description: 'Has canjeado tus Caixapoints por primera vez',
-      points: 100,
-      icon: 'gift',
-      category: 'redemption',
-      hideWhenLocked: false,
-      hint: 'Canjea tus Caixapoints por una recompensa',
-      trigger: 'redemption'
-    },
-    {
-      id: 'challenge_digital_warrior',
-      name: 'Guerrero Digital',
-      description: 'Completaste el reto de 3 operaciones digitales',
-      points: 80,
-      icon: 'bolt',
-      category: 'challenge',
-      hideWhenLocked: false,
-      hint: 'Realiza 3 operaciones digitales',
-      trigger: 'challenge_complete'
-    },
-    {
-      id: 'challenge_profile_complete',
-      name: 'Perfil 100% Configurado',
-      description: 'Completaste toda la configuración de tu perfil',
-      points: 90,
-      icon: 'user-check',
-      category: 'challenge',
-      hideWhenLocked: false,
-      hint: 'Completa todas las configuraciones de perfil',
-      trigger: 'challenge_complete'
-    },
-    {
-      id: 'challenge_social_influencer',
-      name: 'Influencer Financiero',
-      description: 'Invitaste a 3 amigos a CaixaBank Experience',
-      points: 100,
-      icon: 'users',
-      category: 'social',
-      hideWhenLocked: false,
-      hint: 'Invita a 3 amigos al programa',
-      trigger: 'challenge_complete'
-    },
-    {
       id: 'tier_plus',
-      name: 'Nivel Plus Desbloqueado',
-      description: 'Has alcanzado el nivel Plus con beneficios mejorados',
-      points: 150,
-      icon: 'award',
+      name: 'Ascenso a Nivel Oro',
+      description: 'Has demostrado ser un cliente comprometido con su seguridad.',
+      points: 500,
+      icon: 'medal',
       category: 'tier',
-      hideWhenLocked: false,
-      hint: 'Alcanza 500 Caixapoints',
       trigger: 'tier_update',
-      tierRequired: 'Silver'
+      tierRequired: 'Oro'
     },
     {
-      id: 'tier_premium',
-      name: 'Nivel Premium Desbloqueado',
-      description: 'Has alcanzado el nivel Premium con beneficios superiores',
-      points: 250,
-      icon: 'crown',
-      category: 'tier',
-      hideWhenLocked: false,
-      hint: 'Alcanza 1000 Caixapoints',
-      trigger: 'tier_update',
-      tierRequired: 'Gold'
-    },
-    {
-      id: 'tier_elite',
-      name: 'Nivel Elite Desbloqueado',
-      description: 'Has alcanzado el máximo nivel Elite con beneficios exclusivos',
-      points: 400,
-      icon: 'gem',
-      category: 'tier',
-      hideWhenLocked: false,
-      hint: 'Alcanza 2000 Caixapoints',
-      trigger: 'tier_update',
-      tierRequired: 'Platinum'
+      id: 'no_claims',
+      name: 'Muro de Contención',
+      description: 'Un año completo sin siniestros. ¡Felicidades!',
+      points: 200,
+      icon: 'user-shield',
+      category: 'safety',
+      trigger: 'purchase'
     }
   ]
 };

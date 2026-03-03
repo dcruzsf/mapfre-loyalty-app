@@ -1,313 +1,120 @@
-// modules/catalogTranslations.js - Traducciones del catálogo de productos, actividades, recompensas y logros
 class CatalogTranslations {
   constructor() {
     this.translations = {
       es: {
-        // Operaciones digitales (productos)
+        // Operaciones y Seguros (Productos)
         products: {
           1: {
-            name: 'Pago con Tarjeta en Comercio',
-            description: 'Paga con tu tarjeta CaixaBank en cualquier comercio físico. Acumula puntos con cada compra.'
+            name: 'Seguro de Automóvil Pago como Conduzco',
+            description: 'Seguro inteligente que premia tu buena conducción con Tréboles directos y descuentos.'
           },
           2: {
-            name: 'Contratación de Tarjeta',
-            description: 'Contrata tu tarjeta de crédito 100% online. Rápido, seguro y sin papeleos. Acumula Caixapoints automáticamente.'
+            name: 'Seguro de Hogar Digital',
+            description: 'Protección completa con gestión de siniestros 100% online desde tu App Mapfre.'
           },
           3: {
-            name: 'Redención de puntos en Facilitea',
-            description: 'Canjea tus puntos por productos y servicios en Facilitea. Haz tu vida más fácil mientras usas tus puntos.'
-          },
-          4: {
-            name: 'Donación a Fundación Caixa',
-            description: 'Convierte tu operación en una donación solidaria a la Fundación "la Caixa". Haz el bien mientras acumulas Caixapoints.'
-          },
-          5: {
-            name: 'Compra Online con Tarjeta Virtual',
-            description: 'Crea tarjetas virtuales temporales para compras online ultra seguras. Máxima protección + Caixapoints.'
-          },
-          6: {
-            name: 'Contratar Seguro MyBox Vida',
-            description: 'Protege a los tuyos con un seguro de vida 100% digital. Contratación online en minutos + gran bonificación en Caixapoints.'
+            name: 'Revisión Oficial Pre-ITV',
+            description: 'Pon a punto tu vehículo en nuestra red de talleres distinguidos y gana puntos de nivel.'
           }
         },
 
-        // Actividades digitales
+        // Actividades de fidelización
         activities: {
-          1: {
-            name: 'Descarga App CaixaBankNow',
-            description: 'Descarga la app y activa tu banca móvil. Tu banco en el bolsillo.'
-          },
-          2: {
-            name: 'Completar perfil financiero',
-            description: 'Completa tu información financiera y preferencias de inversión.'
-          },
-          3: {
-            name: 'Invitar amigos a CaixaBank Experience',
-            description: 'Comparte tu código. Tú ganas, tu amigo gana.'
-          },
-          4: {
-            name: 'Activar Face ID / Huella Digital',
-            description: 'Máxima seguridad biométrica para tu app.'
-          },
-          5: {
-            name: 'Desafío Quiz Financiero',
-            description: 'Demuestra tus conocimientos financieros y gana Caixapoints. Pon a prueba tu cultura financiera.'
-          },
-          6: {
-            name: 'Domiciliación de Nómina Digital',
-            description: 'Domicilia tu nómina 100% online y recibe una mega bonificación de Caixapoints. Tu sueldo, más rentable.'
-          }
+          1: { name: 'Descarga App Mapfre', description: 'Tu oficina de seguros siempre contigo.' },
+          2: { name: 'Video-Consulta Médica', description: 'Habla con un especialista sin salir de casa.' },
+          3: { name: 'Curso de Conducción Segura', description: 'Mejora tu técnica y reduce el riesgo de accidentes.' }
         },
 
-        // Recompensas digitales
+        // Recompensas del Club Te Cuidamos
         rewards: {
-          1: {
-            name: 'Redención de puntos en Facilitea',
-            description: 'Canjea tus puntos por productos y servicios en Facilitea.'
-          },
-          2: {
-            name: 'Cashback Instantáneo 10€',
-            description: 'Dinero directo a tu cuenta. Sin esperas, sin complicaciones.'
-          },
-          3: {
-            name: 'Cashback Instantáneo 25€',
-            description: 'Recompensa inmediata en tu saldo disponible.'
-          },
-          4: {
-            name: 'Avios Iberia',
-            description: 'Canjea tus Caixapoints por Avios de Iberia y vuela más cerca de tu próximo destino.'
-          },
-          5: {
-            name: 'Acceso Sala VIP Aeropuerto',
-            description: 'Disfruta de acceso exclusivo a salas VIP en aeropuertos. Confort y tranquilidad antes de tu vuelo.'
-          },
-          6: {
-            name: 'Donación Fundación "la Caixa"',
-            description: 'Convierte tus Caixapoints en una donación de 30€ a la Fundación "la Caixa" para proyectos sociales.'
-          },
-          7: {
-            name: 'Gift Card Amazon',
-            description: 'Gift card de Amazon para que compres lo que quieras. Canjea tus puntos por productos y tecnología.'
-          },
-          8: {
-            name: 'Asesoría Personalizada en Finanzas',
-            description: 'Sesión personalizada con un asesor financiero experto. Planifica tu futuro con ayuda profesional.'
-          },
-          9: {
-            name: 'Curso Regulación en Trading',
-            description: 'Curso completo sobre trading y regulación financiera. Aprende a invertir de forma inteligente y segura.'
-          },
-          10: {
-            name: 'Tarjeta de Crédito Sin Comisiones',
-            description: 'Tarjeta de crédito premium sin comisiones durante 1 año. Límite ampliado y beneficios exclusivos.'
-          }
+          1: { name: 'Descuento en Renovación', description: 'Usa tus Tréboles para reducir el coste de tu próximo recibo.' },
+          2: { name: 'Cheque Carburante 20€', description: 'Ahorra en tus desplazamientos con nuestra red de gasolineras.' },
+          3: { name: 'Servicio de Bricolaje', description: 'Un profesional te ayuda con las pequeñas reparaciones del hogar.' },
+          4: { name: 'Amazon Gift Card', description: 'Canjea tus Tréboles por tarjetas regalo de 50€.' }
         },
 
-        // Logros
+        // Logros (Achievements)
         achievements: {
           welcome: {
-            name: 'Bienvenida',
-            description: 'Te has unido al programa de lealtad'
-          },
-          first_purchase: {
-            name: 'Primera Compra',
-            description: 'Has realizado tu primera compra',
-            hint: 'Realiza tu primera compra en la tienda'
-          },
-          premium_purchase: {
-            name: 'Compra Premium',
-            description: 'Has comprado la Vintage Tan Rider Jacket',
-            hint: 'Compra la Vintage Tan Rider Jacket'
-          },
-          first_redemption: {
-            name: 'Primer Canje',
-            description: 'Has canjeado tus puntos por primera vez',
-            hint: 'Canjea tus puntos por una recompensa'
-          },
-          challenge_accessories_lover: {
-            name: 'Amor por los accesorios',
-            description: 'Completaste el reto de comprar accesorios',
-            hint: 'Compra los dos accesorios disponibles (gorro y calcetines)'
-          },
-          challenge_profile_complete: {
-            name: 'Experto en finanzas',
-            description: 'Completaste el reto de perfil (4 veces)',
-            hint: 'Completa toda la información de tu perfil 4 veces'
-          },
-          challenge_social_share: {
-            name: 'Social ambassador',
-            description: 'Completaste el reto de compartir en redes',
-            hint: 'Comparte 3 productos en redes sociales'
+            name: 'Bienvenido a Te Cuidamos',
+            description: 'Has iniciado tu camino hacia una protección total.'
           },
           tier_plus: {
-            name: 'Nivel Plus',
-            description: 'Has alcanzado el nivel Plus',
-            hint: 'Alcanza 500 Caixapoints'
+            name: 'Cliente Oro',
+            description: 'Has alcanzado el nivel Oro por tu fidelidad.',
+            hint: 'Acumula 500 Tréboles'
           },
           tier_premium: {
-            name: 'Nivel Premium',
-            description: 'Has alcanzado el nivel Premium',
-            hint: 'Alcanza 1000 Caixapoints'
+            name: 'Cliente Platino',
+            description: 'Nivel Platino desbloqueado: máxima protección.',
+            hint: 'Acumula 1500 Tréboles'
           },
           tier_elite: {
-            name: 'Nivel Elite',
-            description: 'Has alcanzado el nivel Elite',
-            hint: 'Alcanza 2000 Caixapoints'
+            name: 'Cliente Diamante',
+            description: 'Eres uno de nuestros clientes más exclusivos.',
+            hint: 'Acumula 3000 Tréboles'
+          },
+          no_claims: {
+            name: 'Conductor Seguro',
+            description: 'Un año sin siniestros registrados.',
+            hint: 'Mantén tu póliza limpia de partes un año'
           }
         }
       },
 
       en: {
-        // Digital operations (products)
         products: {
           1: {
-            name: 'Card Payment at Store',
-            description: 'Pay with your CaixaBank card at any physical store. Earn points with every purchase.'
+            name: 'Pay-How-You-Drive Car Insurance',
+            description: 'Smart insurance that rewards safe driving with direct Clovers and discounts.'
           },
           2: {
-            name: 'Credit Card Sign Up',
-            description: 'Sign up for your credit card 100% online. Fast, secure and paperless. Accumulate Caixapoints automatically.'
+            name: 'Digital Home Insurance',
+            description: 'Full protection with 100% online claims management through your Mapfre App.'
           },
           3: {
-            name: 'Facilitea Points Redemption',
-            description: 'Redeem your points for products and services on Facilitea. Make your life easier while using your points.'
-          },
-          4: {
-            name: 'Donation to Caixa Foundation',
-            description: 'Turn your transaction into a charitable donation to "la Caixa" Foundation. Do good while earning Caixapoints.'
-          },
-          5: {
-            name: 'Online Purchase with Virtual Card',
-            description: 'Create temporary virtual cards for ultra-secure online shopping. Maximum protection + Caixapoints.'
-          },
-          6: {
-            name: 'Contract MyBox Life Insurance',
-            description: 'Protect your loved ones with 100% digital life insurance. Online contracting in minutes + great Caixapoints bonus.'
+            name: 'Pre-ITV Official Inspection',
+            description: 'Get your vehicle ready at our premium workshop network and earn tier points.'
           }
         },
 
-        // Digital activities
         activities: {
-          1: {
-            name: 'Download CaixaBankNow App',
-            description: 'Download the app and activate your mobile banking. Your bank in your pocket.'
-          },
-          2: {
-            name: 'Complete financial profile',
-            description: 'Complete your financial information and investment preferences.'
-          },
-          3: {
-            name: 'Invite friends to CaixaBank Experience',
-            description: 'Share your code. You earn, your friend earns.'
-          },
-          4: {
-            name: 'Activate Face ID / Fingerprint',
-            description: 'Maximum biometric security for your app.'
-          },
-          5: {
-            name: 'Financial Quiz Challenge',
-            description: 'Demonstrate your financial knowledge and earn Caixapoints. Test your financial literacy.'
-          },
-          6: {
-            name: 'Digital Payroll Direct Deposit',
-            description: 'Set up your payroll 100% online and receive a mega Caixapoints bonus. Your salary, more profitable.'
-          }
+          1: { name: 'Download Mapfre App', description: 'Your insurance office always with you.' },
+          2: { name: 'Medical Video-Consultation', description: 'Speak with a specialist without leaving home.' },
+          3: { name: 'Safe Driving Course', description: 'Improve your technique and reduce accident risks.' }
         },
 
-        // Digital rewards
         rewards: {
-          1: {
-            name: 'Facilitea Points Redemption',
-            description: 'Redeem your points for products and services on Facilitea.'
-          },
-          2: {
-            name: 'Instant Cashback €10',
-            description: 'Money direct to your account. No waiting, no complications.'
-          },
-          3: {
-            name: 'Instant Cashback €25',
-            description: 'Immediate reward in your available balance.'
-          },
-          4: {
-            name: 'Iberia Avios',
-            description: 'Exchange your Caixapoints for Iberia Avios and fly closer to your next destination.'
-          },
-          5: {
-            name: 'Airport VIP Lounge Access',
-            description: 'Enjoy exclusive access to VIP lounges at airports. Comfort and tranquility before your flight.'
-          },
-          6: {
-            name: 'Donation to "la Caixa" Foundation',
-            description: 'Convert your Caixapoints into a €30 donation to the "la Caixa" Foundation for social projects.'
-          },
-          7: {
-            name: 'Amazon Gift Card',
-            description: 'Amazon gift card to buy whatever you want. Exchange your points for products and technology.'
-          },
-          8: {
-            name: 'Personalized Financial Advice',
-            description: 'Personalized session with an expert financial advisor. Plan your future with professional help.'
-          },
-          9: {
-            name: 'Trading Regulation Course',
-            description: 'Complete course on trading and financial regulation. Learn to invest intelligently and safely.'
-          },
-          10: {
-            name: 'Credit Card Without Fees',
-            description: 'Premium credit card with no fees for 1 year. Extended limit and exclusive benefits.'
-          }
+          1: { name: 'Renewal Discount', description: 'Use your Clovers to reduce the cost of your next policy.' },
+          2: { name: '€20 Fuel Voucher', description: 'Save on your travels at our partner gas stations.' },
+          3: { name: 'Home DIY Service', description: 'A professional helps you with small repairs at home.' },
+          4: { name: 'Amazon Gift Card', description: 'Exchange your Clovers for €50 gift cards.' }
         },
 
-        // Logros
         achievements: {
           welcome: {
-            name: 'Welcome',
-            description: 'You have joined the loyalty program'
-          },
-          first_purchase: {
-            name: 'First Purchase',
-            description: 'You have made your first purchase',
-            hint: 'Make your first purchase in the store'
-          },
-          premium_purchase: {
-            name: 'Premium Purchase',
-            description: 'You have purchased the Vintage Tan Rider Jacket',
-            hint: 'Buy the Vintage Tan Rider Jacket'
-          },
-          first_redemption: {
-            name: 'First Redemption',
-            description: 'You have redeemed your points for the first time',
-            hint: 'Redeem your points for a reward'
-          },
-          challenge_accessories_lover: {
-            name: 'Accessories Lover',
-            description: 'You completed the accessory shopping challenge',
-            hint: 'Buy both available accessories (hat and socks)'
-          },
-          challenge_profile_complete: {
-            name: 'Finance Expert',
-            description: 'You completed the profile challenge (4 times)',
-            hint: 'Complete all your profile information 4 times'
-          },
-          challenge_social_share: {
-            name: 'Social Ambassador',
-            description: 'You completed the social sharing challenge',
-            hint: 'Share 3 products on social media'
+            name: 'Welcome to We Care',
+            description: 'You have started your journey towards total protection.'
           },
           tier_plus: {
-            name: 'Plus Level',
-            description: 'You have reached Plus level',
-            hint: 'Reach 500 Caixapoints'
+            name: 'Gold Customer',
+            description: 'You have reached Gold level due to your loyalty.',
+            hint: 'Accumulate 500 Clovers'
           },
           tier_premium: {
-            name: 'Premium Level',
-            description: 'You have reached Premium level',
-            hint: 'Reach 1000 Caixapoints'
+            name: 'Platinum Customer',
+            description: 'Platinum level unlocked: maximum protection.',
+            hint: 'Accumulate 1500 Clovers'
           },
           tier_elite: {
-            name: 'Elite Level',
-            description: 'You have reached Elite level',
-            hint: 'Reach 2000 Caixapoints'
+            name: 'Diamond Customer',
+            description: 'You are one of our most exclusive customers.',
+            hint: 'Accumulate 3000 Clovers'
+          },
+          no_claims: {
+            name: 'Safe Driver',
+            description: 'One full year without any claims reported.',
+            hint: 'Keep your policy claim-free for a year'
           }
         }
       }
@@ -316,46 +123,27 @@ class CatalogTranslations {
 
   getTranslatedCatalog(originalCatalog, locale = 'es') {
     if (!this.translations[locale]) {
-      locale = 'es'; // fallback
+      locale = 'es';
     }
 
     const translatedCatalog = JSON.parse(JSON.stringify(originalCatalog));
     const translation = this.translations[locale];
 
-    // Traducir productos
-    if (translatedCatalog.products && translation.products) {
-      translatedCatalog.products = translatedCatalog.products.map(product => ({
-        ...product,
-        name: translation.products[product.id]?.name || product.name,
-        description: translation.products[product.id]?.description || product.description
-      }));
-    }
-
-    // Traducir actividades
-    if (translatedCatalog.activities && translation.activities) {
-      translatedCatalog.activities = translatedCatalog.activities.map(activity => ({
-        ...activity,
-        name: translation.activities[activity.id]?.name || activity.name
-      }));
-    }
-
-    // Traducir recompensas
-    if (translatedCatalog.rewards && translation.rewards) {
-      translatedCatalog.rewards = translatedCatalog.rewards.map(reward => ({
-        ...reward,
-        name: translation.rewards[reward.id]?.name || reward.name
-      }));
-    }
-
-    // Traducir logros
-    if (translatedCatalog.achievements && translation.achievements) {
-      translatedCatalog.achievements = translatedCatalog.achievements.map(achievement => ({
-        ...achievement,
-        name: translation.achievements[achievement.id]?.name || achievement.name,
-        description: translation.achievements[achievement.id]?.description || achievement.description,
-        hint: translation.achievements[achievement.id]?.hint || achievement.hint
-      }));
-    }
+    // Mapeo genérico para todas las colecciones
+    const collections = ['products', 'activities', 'rewards', 'achievements'];
+    
+    collections.forEach(collectionKey => {
+      if (translatedCatalog[collectionKey] && translation[collectionKey]) {
+        translatedCatalog[collectionKey] = translatedCatalog[collectionKey].map(item => {
+          const itemTranslation = translation[collectionKey][item.id || item.key || item.id_name]; 
+          // Nota: adaptado para manejar tanto IDs numéricos como claves de texto (como en achievements)
+          const key = item.id || item.id_name || item.key;
+          const t = translation[collectionKey][key];
+          
+          return t ? { ...item, ...t } : item;
+        });
+      }
+    });
 
     return translatedCatalog;
   }

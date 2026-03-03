@@ -1,84 +1,83 @@
-// modules/brandTranslations.js - Traducciones CaixaBank Experience
 class BrandTranslations {
   constructor() {
     this.translations = {
       es: {
         messages: {
-          welcome: '¡Bienvenido a CaixaBank Experience!',
-          welcomeDescription: 'Tu banca 100% digital que premia tu estilo de vida',
-          tagline: 'Banca digital que te impulsa',
-          joinClub: 'COMENZAR EXPERIENCE',
+          welcome: '¡Bienvenido a Mapfre Te Cuidamos!',
+          welcomeDescription: 'El programa que protege tu futuro y premia tu fidelidad.',
+          tagline: 'Tu confianza siempre tiene recompensa',
+          joinClub: 'ACCEDER A MI ÁREA',
           benefits: {
-            title: 'BENEFICIOS DIGITALES',
+            title: 'VENTAJAS POR SER CLIENTE',
             list: [
-              'Gana Caixapoints con cada operación digital',
-              'Cashback instantáneo en tus compras',
-              'Acceso prioritario a nuevas funcionalidades',
-              'Experiencias exclusivas personalizadas'
+              'Acumula Tréboles al renovar tus seguros',
+              'Ahorro directo en tus próximos recibos',
+              'Asistencia VIP en carretera y hogar',
+              'Descuentos en más de 200 marcas asociadas'
             ]
           },
           features: [
             {
-              title: 'Gana Caixapoints',
-              description: 'Acumula Caixapoints con cada operación digital: transferencias, pagos móviles, inversiones y más.'
+              title: 'Suma Tréboles',
+              description: 'Acumula Tréboles con la contratación de pólizas y canjéalos por descuentos en tus renovaciones.'
             },
             {
-              title: 'Desbloquea logros',
-              description: 'Completa retos digitales y alcanza objetivos financieros mientras ganas recompensas.'
+              title: 'Hitos de Fidelidad',
+              description: 'Premiamos tu buena conducción y tu compromiso con la prevención de riesgos.'
             },
             {
-              title: 'Evoluciona tu categoría',
-              description: 'Desde Basic hasta Elite: más uso digital, mejores beneficios exclusivos.'
+              title: 'Sube de Nivel',
+              description: 'De Plata a Diamante: cuanta más protección elijas, más privilegios exclusivos desbloqueas.'
             }
           ]
         },
         categories: [
-          { id: 'digital_banking', label: 'Banca digital y pagos móviles' },
-          { id: 'investments', label: 'Inversiones y ahorro inteligente' },
-          { id: 'lifestyle', label: 'Experiencias y lifestyle' }
+          { id: 'insurance', label: 'Protección y Seguros' },
+          { id: 'health', label: 'Salud y Bienestar' },
+          { id: 'lifestyle', label: 'Ocio y Ventajas Te Cuidamos' }
         ],
-        recentTransactions: 'Actividad Reciente',
-        points: 'Caixapoints',
-        pointsSymbol: '⭐'
+        recentTransactions: 'Últimos Movimientos',
+        points: 'Tréboles',
+        pointsSymbol: '🍀'
       },
       en: {
         messages: {
-          welcome: 'Welcome to CaixaBank Experience!',
-          welcomeDescription: 'Your 100% digital banking that rewards your lifestyle',
-          tagline: 'Digital banking that drives you forward',
-          joinClub: 'START EXPERIENCE',
+          welcome: 'Welcome to Mapfre We Care!',
+          welcomeDescription: 'The program that protects your future and rewards your loyalty.',
+          tagline: 'Your trust always has its reward',
+          joinClub: 'ACCESS MY AREA',
           benefits: {
-            title: 'DIGITAL BENEFITS',
+            title: 'CUSTOMER BENEFITS',
             list: [
-              'Earn Caixapoints with every digital operation',
-              'Instant cashback on your purchases',
-              'Priority access to new features',
-              'Exclusive personalized experiences'
+              'Earn Tréboles (Clovers) by renewing your policies',
+              'Direct savings on your insurance premiums',
+              'VIP roadside and home assistance',
+              'Discounts across more than 200 partner brands'
             ]
           },
           features: [
             {
-              title: 'Earn Caixapoints',
-              description: 'Accumulate Caixapoints with every digital operation: transfers, mobile payments, investments and more.'
+              title: 'Earn Tréboles',
+              description: 'Accumulate Tréboles with every policy and redeem them for discounts on renewals.'
             },
             {
-              title: 'Unlock achievements',
-              description: 'Complete digital challenges and reach financial goals while earning rewards.'
+              title: 'Loyalty Milestones',
+              description: 'We reward safe driving and your commitment to risk prevention.'
             },
             {
-              title: 'Evolve your tier',
-              description: 'From Basic to Elite: more digital usage, better exclusive benefits.'
+              title: 'Upgrade your Tier',
+              description: 'From Silver to Diamond: the more protection you choose, the more exclusive privileges you unlock.'
             }
           ]
         },
         categories: [
-          { id: 'digital_banking', label: 'Digital banking and mobile payments' },
-          { id: 'investments', label: 'Investments and smart savings' },
-          { id: 'lifestyle', label: 'Experiences and lifestyle' }
+          { id: 'insurance', label: 'Protection & Insurance' },
+          { id: 'health', label: 'Health & Wellness' },
+          { id: 'lifestyle', label: 'Leisure & Te Cuidamos Benefits' }
         ],
         recentTransactions: 'Recent Activity',
-        points: 'Caixapoints',
-        pointsSymbol: '⭐'
+        points: 'Tréboles',
+        pointsSymbol: '🍀'
       }
     };
   }
@@ -96,6 +95,10 @@ class BrandTranslations {
 
     // Traducir categorías
     translatedBrand.categories = translation.categories;
+
+    // Actualizar símbolos y nombres de moneda
+    translatedBrand.pointsName = translation.points;
+    translatedBrand.pointsSymbol = translation.pointsSymbol;
 
     // Añadir traducciones extras
     translatedBrand.recentTransactions = translation.recentTransactions;

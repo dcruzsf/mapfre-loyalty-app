@@ -1,29 +1,29 @@
-/* style.css - Imagin Style - Botones Verdes & Look Limpio */
+/* style.css - Mapfre Look & Feel - Confianza y Protección */
 
-/* --- DEFINICIÓN DE COLORES --- */
+/* --- DEFINICIÓN DE COLORES CORPORATIVOS --- */
 :root {
-  /* COLOR PRINCIPAL: Verde Imagin */
-  --primary-color: #00E39F;
+  /* COLOR INSTITUCIONAL: Rojo Mapfre */
+  --primary-color: #D31411;
   
-  /* COLOR SECUNDARIO: Negro Puro */
-  --secondary-color: #000000;
+  /* COLOR SECUNDARIO: Azul Mapfre (Confianza) */
+  --secondary-color: #00519E;
   
-  /* ACENTO: Rosa (para detalles pequeños) */
-  --accent-color: #FF0049;
+  /* ACENTO: Gris Azulado para fondos */
+  --accent-color: #E6EEF4;
   
-  /* TEXTOS */
-  --text-color: #121212;
-  --text-light: #707070;
+  /* TEXTOS: Contraste alto para accesibilidad */
+  --text-color: #333333;
+  --text-light: #666666;
   
   /* FONDOS */
-  --background-color: #FFFFFF;
+  --background-color: #F8F9FA;
   --card-background: #FFFFFF;
-  --card-black: #191919;
+  --footer-bg: #212529;
   
   /* ESTADOS */
-  --border-color: #F0F0F0;
-  --success-color: #00E39F;
-  --error-color: #FF3B30;
+  --border-color: #DDE1E6;
+  --success-color: #28A745;
+  --error-color: #B00020;
 }
 
 * {
@@ -33,310 +33,200 @@
 }
 
 body {
-  font-family: 'Sharp Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+  /* Tipografía más corporativa y profesional */
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   background-color: var(--background-color);
   color: var(--text-color);
-  line-height: 1.6;
-  font-size: 16px;
-  font-weight: 400;
+  line-height: 1.5;
   -webkit-font-smoothing: antialiased;
 }
 
-/* Quitamos cualquier overlay anterior */
-body::before { display: none; }
-
 .container {
-  max-width: 1140px;
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 0 24px;
+  padding: 0 20px;
 }
 
-/* --- NAVBAR LIMPIA --- */
+/* --- NAVBAR MAPFRE (Sólida y Profesional) --- */
 .navbar {
-  background-color: rgba(255, 255, 255, 0.98);
-  backdrop-filter: blur(10px);
-  padding: 20px 0;
+  background-color: #FFFFFF;
+  padding: 15px 0;
   position: sticky;
   top: 0;
   z-index: 100;
-  border-bottom: 1px solid transparent;
+  border-bottom: 3px solid var(--primary-color); /* Línea roja distintiva */
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
 }
 
 .navbar-brand {
-  font-weight: 800;
-  letter-spacing: -0.5px;
-  font-size: 22px;
-  color: #000000;
+  font-weight: 700;
+  font-size: 20px;
+  color: var(--primary-color);
   text-decoration: none;
   display: flex;
   align-items: center;
+  text-transform: uppercase;
 }
 
 .navbar-logo {
-  height: 30px;
-  margin-right: 12px;
-}
-
-.navbar-nav {
-  display: flex;
-  align-items: center;
-  gap: 12px;
+  height: 35px;
+  margin-right: 15px;
 }
 
 .nav-link {
   color: var(--text-color);
   text-decoration: none;
   font-weight: 600;
-  font-size: 15px;
-  padding: 10px 20px;
-  border-radius: 30px;
-  transition: all 0.2s ease;
+  font-size: 14px;
+  padding: 8px 16px;
+  transition: color 0.2s ease;
 }
 
 .nav-link:hover {
-  background-color: #F5F5F5;
-  color: #000;
+  color: var(--primary-color);
 }
 
-/* Link activo: Negro sólido */
+/* Link activo: Estilo Mapfre */
 .nav-link.active {
-  background-color: #000000;
-  color: #FFFFFF;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  color: var(--primary-color);
+  border-bottom: 2px solid var(--primary-color);
 }
 
-.nav-link.active::after { display: none; }
-
-/* --- TITULOS --- */
+/* --- CABECERAS --- */
 .page-header-space {
-  margin-top: 60px;
-  margin-bottom: 40px;
-  text-align: center;
+  margin-top: 40px;
+  margin-bottom: 30px;
 }
 
 .page-title {
-  font-size: 42px;
-  margin-bottom: 16px;
-  font-weight: 800;
-  letter-spacing: -1px;
+  font-size: 36px;
+  font-weight: 700;
   color: #000000;
-  background: none;
-  -webkit-text-fill-color: initial;
+  margin-bottom: 8px;
 }
 
 .page-subtitle {
   font-size: 18px;
   color: var(--text-light);
-  font-weight: 400;
 }
 
-/* --- TARJETA DE USUARIO (ESTILO BLACK CARD) --- */
+/* --- TARJETA DE USUARIO (ROJO INSTITUCIONAL) --- */
 .member-summary {
-  background: var(--card-black);
-  padding: 40px;
+  background: linear-gradient(135deg, var(--primary-color) 0%, #a30f0d 100%);
+  padding: 35px;
   margin-bottom: 40px;
-  border-radius: 30px;
+  border-radius: 8px; /* Mapfre usa bordes menos redondeados */
   display: flex;
-  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
   color: white;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
-  position: relative;
-  overflow: hidden;
-}
-
-/* Decoración verde neón sutil */
-.member-summary::after {
-  content: "";
-  position: absolute;
-  top: -50px;
-  right: -50px;
-  width: 250px;
-  height: 250px;
-  background: var(--primary-color);
-  filter: blur(90px);
-  opacity: 0.3;
-  border-radius: 50%;
-  pointer-events: none;
+  box-shadow: 0 10px 25px rgba(211, 20, 17, 0.2);
 }
 
 .member-stat-label {
-  font-size: 11px;
-  color: rgba(255, 255, 255, 0.6);
-  margin-bottom: 6px;
-  font-weight: 700;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.8);
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
 }
 
 .member-stat-value {
-  font-size: 32px;
-  font-weight: 800;
-  letter-spacing: -0.5px;
+  font-size: 28px;
+  font-weight: 700;
 }
 
-/* --- TARJETAS GENERALES --- */
+/* --- TARJETAS DE PRODUCTO/SERVICIO --- */
 .card {
-  background-color: #FFFFFF;
-  border: 1px solid #F0F0F0; /* Borde muy sutil */
-  border-radius: 24px;
-  margin-bottom: 30px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
-  transition: transform 0.3s ease;
+  background-color: var(--card-background);
+  border: 1px solid var(--border-color);
+  border-radius: 4px; /* Estética más cuadrada y seria */
+  margin-bottom: 25px;
+  transition: box-shadow 0.3s ease;
 }
 
 .card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
 }
 
 .card-header {
-  padding: 24px 30px;
-  border-bottom: none;
-  background-color: transparent;
-  color: var(--text-color);
-  font-size: 20px;
-  font-weight: 800;
-}
-
-.card-body {
-  padding: 0 30px 30px 30px;
-}
-
-/* --- BOTONES (CORRECCIÓN VERDE) --- */
-.btn {
-  /* Forzamos el color VERDE IMAGIN */
-  background: var(--primary-color) !important;
-  background-color: var(--primary-color) !important;
-  
-  /* Texto NEGRO */
-  color: #000000 !important;
-  
-  border: none;
-  border-radius: 50px; /* Pill shape */
+  padding: 20px;
+  border-bottom: 1px solid var(--border-color);
   font-weight: 700;
-  font-size: 16px;
-  padding: 14px 32px;
-  cursor: pointer;
-  width: 100%;
-  display: inline-block;
-  text-align: center;
-  transition: all 0.3s ease;
-  
-  /* Sombra Verde Sutil (NO roja) */
-  box-shadow: 0 8px 20px rgba(0, 227, 159, 0.3);
-  position: relative;
-  overflow: hidden;
+  color: var(--secondary-color);
+  font-size: 18px;
 }
 
-.btn::before { display: none; } /* Quitamos efectos raros anteriores */
+/* --- BOTONES MAPFRE --- */
+.btn {
+  background-color: var(--primary-color) !important;
+  color: #FFFFFF !important;
+  border: none;
+  border-radius: 4px; /* Botón rectangular/corporativo */
+  font-weight: 600;
+  font-size: 15px;
+  padding: 12px 24px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
 
 .btn:hover {
-  transform: translateY(-2px);
-  background-color: #00C98D !important; /* Un poco más oscuro al hover */
-  box-shadow: 0 12px 25px rgba(0, 227, 159, 0.4);
+  background-color: #b0110e !important;
+  box-shadow: 0 4px 12px rgba(211, 20, 17, 0.2);
 }
 
-/* Botones Secundarios: Negros */
-.btn-secondary, .btn-outline-primary {
-  background: #000000 !important;
-  background-color: #000000 !important;
-  color: #FFFFFF !important;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+/* Botón secundario Azul */
+.btn-secondary {
+  background-color: var(--secondary-color) !important;
 }
 
-.btn-secondary:hover {
-  background-color: #333333 !important;
-}
-
-/* --- STEPPER (PROMOS) --- */
+/* --- STEPPER (TRÉBOLES/HITOS) --- */
 .promotion-step .step-circle {
-  background: #FFFFFF;
-  border: 2px solid #E0E0E0;
-  color: #999;
-  font-weight: 700;
+  background: #FFF;
+  border: 2px solid var(--border-color);
+  color: var(--text-light);
 }
 
-/* Paso Completado: Verde */
+/* Paso Completado: Rojo Mapfre con Trébol */
 .promotion-step.completed .step-circle {
   background: var(--primary-color);
   border-color: var(--primary-color);
-  color: #000; /* Texto negro sobre verde */
-  box-shadow: 0 0 10px rgba(0, 227, 159, 0.4);
-}
-
-/* Paso Actual: Borde Negro */
-.promotion-step.current .step-circle {
-  border-color: #000000;
-  color: #000000;
-  background: #FFF;
+  color: #FFF;
 }
 
 .step-progress-fill {
-  background: var(--primary-color); /* Barra verde */
-}
-
-.current-value {
-  color: #000000;
-  font-weight: 800;
-}
-
-.promotion-step.completed .current-value {
-  color: #008f63; /* Verde oscuro para texto */
+  background: var(--primary-color);
 }
 
 /* --- FORMULARIOS --- */
 .form-control {
-  background-color: #F7F7F7;
-  border: 1px solid transparent;
-  border-radius: 16px;
-  padding: 16px;
-  font-size: 15px;
-  color: #000;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  padding: 12px;
+  transition: border-color 0.2s;
 }
 
 .form-control:focus {
-  background-color: #FFFFFF;
-  border-color: #000;
-  box-shadow: none;
+  border-color: var(--secondary-color);
   outline: none;
 }
 
-.form-label {
-  font-size: 12px;
-  font-weight: 700;
-  text-transform: uppercase;
-  margin-left: 4px;
-  color: #707070;
-}
-
-/* --- FOOTER --- */
+/* --- FOOTER OSCURO --- */
 .app-footer {
-  background-color: #FAFAFA;
-  border-top: none;
-  padding: 40px 0;
-  margin-top: 60px;
+  background-color: #2c2c2c;
+  color: #adb5bd;
+  padding: 50px 0;
+  font-size: 14px;
 }
 
-/* --- BADGES Y OTROS --- */
-.tier-progress-fill {
-  background-color: var(--primary-color); /* Verde */
-}
+/* --- PERSONALIZACIÓN POR NIVELES --- */
+.tier-gold { border-top: 4px solid #D4AF37; }
+.tier-platinum { border-top: 4px solid #333333; }
+.tier-diamond { border-top: 4px solid var(--primary-color); }
 
-.alert {
-  border: none;
-  background: #F9F9F9;
-  border-radius: 16px;
-}
-
-.alert-success {
-  background-color: rgba(0, 227, 159, 0.15);
-  color: #005c40;
-}
-
-/* Media Queries */
 @media (max-width: 768px) {
-  .page-title { font-size: 32px; }
-  .member-summary { padding: 30px; }
+  .member-summary { flex-direction: column; text-align: center; gap: 20px; }
+  .page-title { font-size: 28px; }
 }

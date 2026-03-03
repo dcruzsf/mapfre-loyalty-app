@@ -1,83 +1,86 @@
-// config/tiers.js - Sistema de niveles CaixaBank Experience (estilo Revolut)
 module.exports = {
-  // Definición de niveles con beneficios digitales
+  // Definición de niveles basada en el programa "Te Cuidamos" de Mapfre
   tiers: [
     {
-      name: 'Bronze',
+      name: 'Plata',
       threshold: 0,
-      displayName: 'Basic',
-      color: '#B87333',
+      displayName: 'Cliente Plata',
+      color: '#A0A0A0',
       benefits: [
-        'Caixapoints base en operaciones digitales',
-        'Acceso a recompensas básicas',
-        'App móvil sin comisiones'
+        'Acumulación base de Tréboles en tus seguros',
+        'Acceso a descuentos en la Red de Talleres Distinguidos',
+        'Servicio de Bricolaje en el hogar (según póliza)',
+        'Acceso a promociones en ocio y viajes'
       ]
     },
     {
-      name: 'Silver',
+      name: 'Oro',
       threshold: 500,
-      displayName: 'Plus',
-      color: '#B8BEC5',
+      displayName: 'Cliente Oro',
+      color: '#D4AF37',
       benefits: [
-        'Caixapoints + 15% de bonus',
-        'Cashback mejorado (1% en compras)',
-        'Transferencias internacionales sin comisión',
-        'Tarjetas virtuales ilimitadas'
+        'Bonificación del 5% extra en Tréboles',
+        'Revisión gratuita de seguridad del vehículo',
+        'Asesoramiento médico telefónico 24h',
+        'Descuentos exclusivos en renovación de primas'
       ]
     },
     {
-      name: 'Gold',
-      threshold: 1000,
-      displayName: 'Premium',
-      color: '#F4C542',
+      name: 'Platino',
+      threshold: 1500,
+      displayName: 'Cliente Platino',
+      color: '#333333', // Estilo tarjeta Black/Premium
       benefits: [
-        'Caixapoints + 30% de bonus',
-        'Cashback premium (2% en compras)',
-        'Asesoría financiera digital por videollamada',
-        'Acceso prioritario a nuevas funcionalidades',
-        'Sin comisiones en operaciones internacionales'
+        'Bonificación del 15% extra en Tréboles',
+        'Gestor de seguros personal dedicado',
+        'Prioridad en asistencia en carretera (menos de 30 min)',
+        'Servicio de defensa jurídica ampliada',
+        'Acceso gratuito a eventos culturales Mapfre'
       ]
     },
     {
-      name: 'Platinum',
-      threshold: 2000,
-      displayName: 'Elite',
-      color: '#C9D5E0',
+      name: 'Diamante',
+      threshold: 3000,
+      displayName: 'Cliente Diamante',
+      color: '#D31411', // El rojo corporativo como nivel máximo de confianza
       benefits: [
-        'Caixapoints + 50% de bonus',
-        'Cashback elite (3% en compras)',
-        'Gestor personal 24/7',
-        'Acceso VIP a eventos exclusivos',
-        'Inversión asistida por IA premium',
-        'Upgrade gratuito de tarjeta a metal premium'
+        'Máxima bonificación en Tréboles (25%)',
+        'Coche de sustitución garantizado en cualquier percance',
+        'Chequeo médico anual preventivo incluido',
+        'Atención prioritaria "Sin Esperas" en oficinas y teléfono',
+        'Descuento directo del 10% en nuevos ramos contratados'
       ]
     }
   ],
 
-  // Configuración de progreso
-  maxPoints: 2000,
+  // Configuración de progreso (Ajustado a un scoring de fidelidad más amplio)
+  maxPoints: 3000,
   
-  // Configuración para cálculo de progreso
+  // Lógica de cálculo (Mantenemos la robustez de tu código original)
   getProgressCalculation: (currentPoints, currentTier, nextTier) => {
     if (!nextTier) return 100;
     const pointsDifference = nextTier.threshold - currentTier.threshold;
     const pointsProgress = currentPoints - currentTier.threshold;
-    return Math.round((pointsProgress / pointsDifference) * 100);
+    // Evitamos valores negativos si el usuario está justo en el umbral
+    const percentage = (pointsProgress / pointsDifference) * 100;
+    return Math.min(Math.max(Math.round(percentage), 0), 100);
   },
 
-  // Función para obtener tier actual basado en puntos
+  // Función para obtener tier actual basado en Tréboles/Puntos
   getTierByPoints: function(points) {
-    const sortedTiers = [...this.tiers].sort((a, b) => b.threshold - a.threshold);
-    return sortedTiers.find(tier => points >= tier.threshold) || this.tiers[0];
+    // Clonamos y revertimos para encontrar el nivel más alto alcanzado
+    return [...this.tiers].reverse().find(tier => points >= tier.threshold) || this.tiers[0];
   },
 
-  // Función para obtener el siguiente tier
+  // Función para obtener el siguiente nivel
   getNextTier: function(currentTierName) {
     const currentIndex = this.tiers.findIndex(tier => tier.name === currentTierName);
-    return currentIndex < this.tiers.length - 1 ? this.tiers[currentIndex + 1] : null;
+    return (currentIndex !== -1 && currentIndex < this.tiers.length - 1) 
+      ? this.tiers[currentIndex + 1] 
+      : null;
   },
 
-  // Función para obtener tier por nombre
+  // Identificador de beneficios por nombre
   getTierByName: function(tierName) {
     return this.tiers.find(tier => tier.name === tierName);
   }

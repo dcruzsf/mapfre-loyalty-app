@@ -1,4 +1,3 @@
-// config/index.js - Configuración maestra que exporta toda la configuración centralizada
 const brandConfig = require('./brand');
 const catalogConfig = require('./catalog');
 const tiersConfig = require('./tiers');
@@ -8,29 +7,31 @@ module.exports = {
   catalog: catalogConfig,
   tiers: tiersConfig,
   
-  // Configuraciones del sistema
+  // Configuraciones del sistema Mapfre
   system: {
-    initialBalance: 250, // Saldo inicial para nuevos miembros
-    maxAchievements: 10, // Número máximo de logros para scoring
-    sessionDuration: 24 * 60 * 60 * 1000, // 24 horas en milisegundos
+    initialBalance: 50, // Los "Tréboles" son más valiosos que los puntos estándar (1 Trébol suele equivaler a 1€ en Mapfre)
+    maxAchievements: 15, // Mapfre tiene muchos hitos (antigüedad, no siniestralidad, multirriesgo)
+    sessionDuration: 12 * 60 * 60 * 1000, // 12 horas (más restrictivo por seguridad corporativa)
     
-    // Configuración de scoring para leaderboard
+    // Configuración de scoring para el ranking de "Mejor Cliente"
     scoring: {
       weights: {
-        achievements: 0.40,  // 40% - Logros desbloqueados
-        levelPoints:  0.25,  // 25% - Puntos de nivel
-        rewardPoints: 0.15,  // 15% - Puntos de rewards
-        tier:         0.15,  // 15% - Nivel alcanzado
-        balance:      0.05   // 5%  - Saldo restante
+        achievements: 0.30,  // 30% - Hitos (ej: 10 años sin partes)
+        levelPoints:  0.30,  // 30% - Volumen de pólizas (Tréboles totales)
+        rewardPoints: 0.10,  // 10% - Uso de beneficios
+        tier:         0.25,  // 25% - El nivel de cliente (Plata, Oro, etc.) pesa más aquí
+        balance:      0.05   // 5%  - Tréboles acumulados actualmente
       },
-      maxLevelPoints: 2000, // Puntos de referencia para el máximo
+      maxLevelPoints: 3000, // Ajustado al threshold del nivel Diamante definido en tiers.js
+      
+      // Semántica adaptada a una relación de confianza cliente-aseguradora
       engagementLevels: {
-        90: 'Experto',
-        75: 'Entusiasta', 
-        60: 'Comprometido',
-        40: 'Activo',
-        20: 'Casual',
-        0: 'Principiante'
+        90: 'Socio de Honor',
+        75: 'Cliente Vitalicio', 
+        60: 'Cliente Preferente',
+        40: 'Cliente Vinculado',
+        20: 'Cliente Iniciado',
+        0: 'Nuevo Cliente'
       }
     }
   },
@@ -39,25 +40,26 @@ module.exports = {
   validate: function() {
     const errors = [];
     
-    // Validar que todos los productos tengan imágenes
+    // 1. Validar productos
     catalogConfig.products.forEach(product => {
       if (!product.image) {
-        errors.push(`Producto ${product.name} no tiene imagen definida`);
+        errors.push(`Servicio/Beneficio ${product.name} no tiene imagen definida`);
       }
     });
     
-    // Validar que todos los tiers tengan colores en brand
+    // 2. Validar colores de Tiers (Corregido para que coincida exactamente con tiers.js)
     tiersConfig.tiers.forEach(tier => {
-      const colorKey = tier.name.toLowerCase() + 'Color';
-      if (!brandConfig.colors.tierColors[tier.name.toLowerCase()]) {
-        errors.push(`Tier ${tier.name} no tiene color definido en brand.colors.tierColors`);
+      // Usamos el nombre del tier en minúsculas para buscar en brand.js
+      const tierKey = tier.name.toLowerCase();
+      if (!brandConfig.colors.tierColors[tierKey]) {
+        errors.push(`El nivel ${tier.name} no tiene un color asignado en brand.colors.tierColors`);
       }
     });
     
-    // Validar que exista logro de bienvenida
+    // 3. Validar hito de bienvenida
     const welcomeAchievement = catalogConfig.achievements.find(a => a.autoUnlock);
     if (!welcomeAchievement) {
-      errors.push('No se encontró logro de bienvenida con autoUnlock: true');
+      errors.push('Falta el hito de "Bienvenida al Plan Te Cuidamos" (autoUnlock: true)');
     }
     
     return errors;

@@ -1,187 +1,135 @@
-// main.js - Interactividad para la aplicación loyalty-demo-interactive
+// main.js - Interactividad para Mapfre Te Cuidamos
 
 document.addEventListener('DOMContentLoaded', function() {
-  // Configurar todos los elementos con data-width (barras de progreso)
+  // Configurar barras de progreso (Niveles de fidelidad)
   const progressBars = document.querySelectorAll('[data-width]');
   progressBars.forEach(bar => {
     const width = bar.getAttribute('data-width');
     if (width) {
       bar.style.width = width + '%';
+      // Color institucional Mapfre para la carga
+      bar.style.backgroundColor = '#D31411';
     }
   });
 
-  // Manejo de pestañas
+  // Manejo de pestañas (Dashboard de Cliente)
   const tabs = document.querySelectorAll('.tab');
   if (tabs.length > 0) {
     tabs.forEach(tab => {
       tab.addEventListener('click', function() {
-        // Obtener el contenido de la pestaña
         const target = this.getAttribute('data-target');
         
-        // Desactivar todas las pestañas y contenidos
         document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
         document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
         
-        // Activar la pestaña seleccionada y su contenido
         this.classList.add('active');
+        // El estilo active ahora se controla desde CSS con el borde rojo inferior
         document.getElementById(target).style.display = 'block';
       });
     });
   }
   
-  // Mostrar notificaciones
+  // Notificaciones Mapfre Te Cuidamos
   const showNotification = (title, message, points = null) => {
-    // Crear el elemento de notificación
     const notification = document.createElement('div');
     notification.className = 'notification';
     
+    // Icono de trébol por defecto para Mapfre
+    const icon = points !== null ? '🍀' : '🔔';
+    
     let content = `
-      <div class="notification-title">${title}</div>
+      <div class="notification-title">${icon} ${title}</div>
       <div class="notification-body">${message}</div>
     `;
     
     if (points !== null) {
-      content += `<div class="notification-points">${points > 0 ? '+' : ''}${points} puntos</div>`;
+      content += `<div class="notification-points">${points > 0 ? '+' : ''}${points} tréboles</div>`;
     }
     
     notification.innerHTML = content;
-    
-    // Añadir al cuerpo del documento
     document.body.appendChild(notification);
     
-    // Forzar un reflow para que la transición funcione
     notification.offsetHeight;
-    
-    // Mostrar la notificación
     notification.classList.add('show');
 
-    // Ocultar después de 2 segundos
     setTimeout(() => {
       notification.classList.remove('show');
-
-      // Eliminar del DOM después de que termine la transición
       setTimeout(() => {
-        document.body.removeChild(notification);
+        if (notification.parentNode) document.body.removeChild(notification);
       }, 300);
-    }, 2000);
+    }, 3500); // Un poco más de tiempo para leer mensajes de confianza
   };
   
-  // Manejar formularios de compra
-  const purchaseForms = document.querySelectorAll('.purchase-form');
-  if (purchaseForms.length > 0) {
-    purchaseForms.forEach(form => {
-      form.addEventListener('submit', function(e) {
-        // Animación visual del botón
+  // Manejar formularios de contratación y canje
+  const handleFormLoading = (forms) => {
+    forms.forEach(form => {
+      form.addEventListener('submit', function() {
         const button = this.querySelector('button[type="submit"]');
         if (button) {
-          button.innerHTML = '<span class="spinner">Procesando...</span>';
+          button.disabled = true;
+          button.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Procesando...';
+          button.style.backgroundColor = '#666'; // Color neutro durante carga
         }
       });
     });
-  }
+  };
+
+  handleFormLoading(document.querySelectorAll('.purchase-form, .redeem-form'));
   
-  // Manejar formularios de canje
-  const redeemForms = document.querySelectorAll('.redeem-form');
-  if (redeemForms.length > 0) {
-    redeemForms.forEach(form => {
-      form.addEventListener('submit', function(e) {
-        // Animación visual del botón
-        const button = this.querySelector('button[type="submit"]');
-        if (button) {
-          button.innerHTML = '<span class="spinner">Procesando...</span>';
-        }
-      });
-    });
-  }
-  
-  // Añadir efecto hover a las tarjetas
+  // Efecto hover profesional (menos agresivo que el estilo "gaming")
   const cards = document.querySelectorAll('.product-card, .reward-card, .achievement-card');
   cards.forEach(card => {
-    card.addEventListener('mouseenter', function() {
-      this.style.transform = 'translateY(-5px)';
-      this.style.boxShadow = '0 10px 20px rgba(0,0,0,0.1)';
+    card.addEventListener('mouseenter', () => {
+      card.style.transform = 'translateY(-3px)';
+      card.style.borderColor = '#D31411';
     });
-    
-    card.addEventListener('mouseleave', function() {
-      this.style.transform = '';
-      this.style.boxShadow = '';
+    card.addEventListener('mouseleave', () => {
+      card.style.transform = '';
+      card.style.borderColor = '';
     });
   });
   
-  // Verificar si hay mensaje de éxito en la URL
+  // Mensajes de éxito basados en URL
   const urlParams = new URLSearchParams(window.location.search);
-  const message = urlParams.get('message');
-  const points = urlParams.get('points');
-  
-  if (message) {
-    showNotification('¡Éxito!', message, points ? parseInt(points) : null);
+  if (urlParams.get('message')) {
+    showNotification('Gestión Completada', urlParams.get('message'), urlParams.get('points') ? parseInt(urlParams.get('points')) : null);
   }
   
-  // Manejar logros nuevos
-  const hasNewAchievement = urlParams.get('newAchievement');
-  if (hasNewAchievement === 'true') {
-    const achievementName = urlParams.get('achievementName');
-    const achievementPoints = urlParams.get('achievementPoints');
-    
-    if (achievementName) {
-      showNotification('¡LOGRO DESBLOQUEADO!', achievementName, achievementPoints ? parseInt(achievementPoints) : null);
-    }
-  }
-  
-  // Añadir animación a los elementos
-  const animateElements = document.querySelectorAll('.animate-in');
-  if (animateElements.length > 0) {
-    animateElements.forEach((element, index) => {
-      setTimeout(() => {
-        element.classList.add('fade-in');
-      }, index * 100);
-    });
+  // Desbloqueo de Hitos (Achievements)
+  if (urlParams.get('newAchievement') === 'true') {
+    showNotification('¡NUEVO HITO ALCANZADO!', urlParams.get('achievementName'), urlParams.get('achievementPoints') ? parseInt(urlParams.get('achievementPoints')) : null);
   }
 
-  // Botón de autorelleno mágico en registro
+  // Botón de autorelleno mágico (Actualizado para Mapfre Demo)
   const autofillBtn = document.getElementById('autofillBtn');
   if (autofillBtn) {
-    // Lista de nombres y apellidos españoles
-    const nombres = ['Carlos', 'María', 'José', 'Ana', 'Luis', 'Carmen', 'Miguel', 'Laura', 'Antonio', 'Isabel',
-                     'Javier', 'Elena', 'David', 'Sofía', 'Pablo', 'Marta', 'Sergio', 'Patricia', 'Daniel', 'Cristina'];
-    const apellidos = ['García', 'Rodríguez', 'Martínez', 'López', 'González', 'Fernández', 'Sánchez', 'Pérez',
-                       'Romero', 'Torres', 'Ruiz', 'Ramírez', 'Flores', 'Morales', 'Jiménez', 'Castro', 'Ortiz'];
+    const nombres = ['Ricardo', 'Beatriz', 'Ignacio', 'Margarita', 'Fernando', 'Paula', 'Alberto', 'Teresa'];
+    const apellidos = ['Sanz', 'Vila', 'Heredia', 'Blanco', 'Pascual', 'Domínguez', 'Mora', 'Reyes'];
 
     autofillBtn.addEventListener('click', function() {
-      // Seleccionar nombre y apellido aleatorio
       const nombre = nombres[Math.floor(Math.random() * nombres.length)];
       const apellido = apellidos[Math.floor(Math.random() * apellidos.length)];
       const nombreCompleto = `${nombre} ${apellido}`;
 
-      // Crear email en formato d.cruz+NombreApellido@salesforce.com (sin tildes)
-      const nombreApellidoJunto = (nombre + apellido)
-        .toLowerCase()
-        .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, ''); // Eliminar tildes
-      const email = `d.cruz+${nombreApellidoJunto}@salesforce.com`;
+      const cleanEmail = (nombre + apellido).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+      const email = `mapfre.demo+${cleanEmail}@salesforce.com`;
 
-      // Rellenar los campos
       document.getElementById('name').value = nombreCompleto;
       document.getElementById('email').value = email;
 
-      // Marcar aleatoriamente 1-2 checkboxes de intereses
+      // Marcar intereses de seguros (Auto, Hogar, Salud)
       const checkboxes = document.querySelectorAll('input[name="preferences"]');
-      checkboxes.forEach(cb => cb.checked = false); // Desmarcar todos primero
+      checkboxes.forEach((cb, i) => cb.checked = i < 2); // Activa los dos primeros por defecto
 
-      const numToCheck = Math.floor(Math.random() * 2) + 1; // 1 o 2
-      const indices = [];
-      while(indices.length < numToCheck) {
-        const r = Math.floor(Math.random() * checkboxes.length);
-        if(indices.indexOf(r) === -1) indices.push(r);
-      }
-      indices.forEach(i => checkboxes[i].checked = true);
-
-      // Animación visual
-      this.innerHTML = '<i class="fas fa-check"></i> ¡Rellenado!';
-      this.style.backgroundColor = '#00E676';
+      // Animación estilo Mapfre (Azul -> Gris)
+      this.innerHTML = '✨ Perfil Generado';
+      this.style.backgroundColor = '#00519E';
+      this.style.color = '#FFFFFF';
+      
       setTimeout(() => {
-        this.innerHTML = '<i class="fas fa-magic"></i> Rellenar automáticamente (Demo)';
+        this.innerHTML = '<i class="fas fa-magic"></i> Rellenar Datos de Cliente';
         this.style.backgroundColor = '';
+        this.style.color = '';
       }, 2000);
     });
   }

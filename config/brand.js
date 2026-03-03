@@ -1,81 +1,80 @@
-// config/brand.js - Textos CaixaBank Experience, Colores estilo Imagin
 module.exports = {
-  // Información básica de la marca
-  name: 'Imagin Experience',
-  fullName: 'Imagin Experience',
-  pointsName: 'Puntos',
-  pointsSymbol: '⭐',
+  // Información básica de la marca - Identidad Mapfre
+  name: 'Mapfre Fidelidad',
+  fullName: 'Mapfre Te Cuidamos',
+  pointsName: 'Tréboles', // El sistema de fidelización de Mapfre se basa en Tréboles
+  pointsSymbol: '🍀',
 
-  // Mensajes y textos (ORIGINALES)
+  // Mensajes y textos (ADAPTADOS A MAPFRE)
   messages: {
-    welcome: '¡Bienvenido a Imagin Experience!',
-    welcomeDescription: 'Tu banca digital que premia tu estilo de vida y fidelidad.',
-    tagline: 'Experiencias que suman',
-    joinClub: 'COMENZAR EXPERIENCE',
+    welcome: '¡Bienvenido a Mapfre Te Cuidamos!',
+    welcomeDescription: 'El programa de fidelización diseñado para estar a tu lado y premiar tu confianza.',
+    tagline: 'Tu confianza siempre tiene recompensa',
+    joinClub: 'ACCEDER AL ÁREA DE CLIENTE',
     benefits: {
-      title: 'BENEFICIOS DEL PROGRAMA',
+      title: 'VENTAJAS DEL PROGRAMA',
       list: [
-        'Puntos en todas tus operaciones',
-        'Acceso a productos exclusivos',
-        'Experiencias personalizadas',
-        'Atención prioritaria'
+        'Ahorro en la renovación de tus seguros',
+        'Descuentos exclusivos en marcas asociadas',
+        'Acceso a servicios de salud y bienestar',
+        'Asistencia personalizada 24/7'
       ]
     },
     features: [
       {
-        title: 'Gana Puntos',
-        description: 'Acumula Puntos con tus operaciones diarias, productos contratados y participación digital.'
+        title: 'Acumula Tréboles',
+        description: 'Consigue Tréboles al contratar o renovar tus pólizas y canjéalos por descuentos en tus recibos.'
       },
       {
-        title: 'Desbloquea Logros',
-        description: 'Supera retos financieros y de estilo de vida para conseguir medallas y bonificaciones extra.'
+        title: 'Plan de Fidelización',
+        description: 'Accede a sorteos, eventos exclusivos y beneficios directos por ser cliente de Mapfre.'
       }
     ]
   },
   
-  // Paleta de colores - Estilo Imagin (Vibrante y Contrastado)
+  // Paleta de colores - Estilo Mapfre (Corporativo, Fiable, Rojo Institucional)
   colors: {
-    primary: '#00E39F',        // VERDE IMAGIN (Botones principales, acciones)
-    secondary: '#000000',      // NEGRO (Botones secundarios, textos fuertes)
-    accent: '#FF0049',         // ROSA IMAGIN (Detalles, destacados, iconos)
-    lightGray: '#FAFAFA',      // Fondo casi blanco
-    midGray: '#F2F2F2',        // Fondos de elementos secundarios
-    darkGray: '#707070',       // Texto gris
-    textColor: '#121212',      // Negro casi puro para lectura
-    textLight: '#707070',      // Gris para subtítulos
-    backgroundColor: '#FFFFFF', // Fondo blanco limpio
-    cardBackground: '#FFFFFF',  // Tarjetas blancas
-    borderColor: '#F0F0F0',    // Bordes muy sutiles
-    successColor: '#00E39F',   // Verde Neón para éxito
-    errorColor: '#FF3B30',     // Rojo vibrante
-    warningColor: '#FFCC00',   // Amarillo
-    notificationColor: '#FF0049', // Rosa para notificaciones
+    primary: '#D31411',        // ROJO MAPFRE (Identidad principal)
+    secondary: '#00519E',      // AZUL MAPFRE (Contraste corporativo, botones secundarios)
+    accent: '#D31411',         // Mantenemos el rojo para elementos clave
+    lightGray: '#F4F4F4',      // Gris muy claro para fondos de sección
+    midGray: '#E6E6E6',        // Separadores
+    darkGray: '#4D4D4D',       // Texto secundario
+    textColor: '#333333',      // Gris oscuro (mejor legibilidad que negro puro)
+    textLight: '#666666',      // Subtítulos
+    backgroundColor: '#FFFFFF', // Fondo principal
+    cardBackground: '#FFFFFF',  
+    borderColor: '#D1D1D1',    
+    successColor: '#28A745',   // Verde estándar de éxito
+    errorColor: '#B00020',     // Rojo de error (diferente al corporativo)
+    warningColor: '#FFC107',   // Ámbar de precaución
+    notificationColor: '#00519E', // Azul para avisos informativos
 
-    // Colores de tier - Estilo minimalista/metálico
+    // Colores de tier - Estilo sobrio/distintivo
     tierColors: {
-      bronze: '#CD7F32',       // Bronce
-      silver: '#A0A0A0',       // Plata (más oscuro para contraste sobre blanco)
-      gold: '#EDB328',         // Oro
-      platinum: '#191919'      // Platino/Negro (Estilo tarjeta Infinity)
+      bronze: '#A0522D',       
+      silver: '#808080',       
+      gold: '#C5A021',         
+      platinum: '#2C3E50'      // Azul petróleo profundo
     }
   },
   
-  // Rutas de imágenes
+  // Rutas de imágenes (Actualizadas a la nueva marca)
   images: {
-    logo: '/img/logo.png',
-    background: '/img/background.png',
-    favicon: '/img/favicon.ico'
+    logo: '/img/logo-mapfre.png',
+    background: '/img/bg-mapfre-clean.jpg',
+    favicon: '/img/favicon-mapfre.ico'
   },
   
-  // Categorías (ORIGINALES)
+  // Categorías (Enfoque en Seguros y Protección)
   categories: [
-    { id: 'banking', label: 'Banca del día a día' },
-    { id: 'savings', label: 'Ahorro e Inversión' },
-    { id: 'financing', label: 'Financiación' },
-    { id: 'insurance', label: 'Seguros y Protección' },
-    { id: 'lifestyle', label: 'Ocio y Experiencias' }
+    { id: 'vehicles', label: 'Vehículos' },
+    { id: 'home', label: 'Hogar' },
+    { id: 'health', label: 'Salud' },
+    { id: 'life', label: 'Vida y Planificación' },
+    { id: 'leisure', label: 'Viajes y Ocio' }
   ],
 
   // Copyright
-  copyright: '2024-2025 CaixaBank, S.A. Todos los derechos reservados.'
+  copyright: `© ${new Date().getFullYear()} MAPFRE S.A. Todos los derechos reservados.`
 };
