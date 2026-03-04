@@ -1,71 +1,95 @@
 <%- include('partials/header', {currentPage: 'accrual'}) %>
 
-<div class="page-header-space text-center">
-  <h1 class="page-title" style="color: #d81e05; font-weight: 800;">GANAR TRÉBOLES</h1>
-  <p class="page-subtitle">Protege lo que más quieres y acumula ahorro para tus seguros</p>
-</div>
+<div class="container">
+  <div class="page-header-space text-center mt-5 mb-5">
+    <h1 class="page-title" style="color: #d81e05; font-weight: 800; font-size: 2.5rem;">GANAR TRÉBOLES</h1>
+    <p class="lead text-muted">Protege lo que más quieres y acumula tréboles para tus seguros</p>
+  </div>
 
-<div class="row justify-content-center mb-5">
-  <div class="col-md-10">
-      <div class="member-summary" style="background: #d81e05; border-radius: 20px; padding: 40px 20px; text-align: center; color: white; box-shadow: 0 10px 30px rgba(216, 30, 5, 0.2);">
-        <div class="row">
-          <div class="col-md-4 border-right border-white-50">
-            <small style="text-transform: uppercase; letter-spacing: 1px; opacity: 0.9;">Puntos Nivel</small>
-            <h2 style="font-weight: 800; margin-top: 10px;"><%= member.levelPoints %></h2>
-          </div>
-          <div class="col-md-4 border-right border-white-50">
-            <small style="text-transform: uppercase; letter-spacing: 1px; opacity: 0.9;">Tréboles Disponibles</small>
-            <h2 style="font-size: 50px; font-weight: 800; margin-top: 5px;"><%= member.rewardPoints %></h2>
-          </div>
-          <div class="col-md-4">
-            <small style="text-transform: uppercase; letter-spacing: 1px; opacity: 0.9;">Nivel Actual</small>
-            <h2 style="font-weight: 800; margin-top: 10px;"><%= t('tiers.' + member.tier.toLowerCase()) %></h2>
+  <div class="row justify-content-center mb-5">
+    <div class="col-md-10">
+      <div class="card shadow-lg border-0" style="border-radius: 20px; background: linear-gradient(135deg, #d81e05 0%, #a31604 100%); color: white;">
+        <div class="card-body p-5">
+          <div class="row text-center align-items-center">
+            <div class="col-md-4 mb-3 mb-md-0 border-md-right" style="border-color: rgba(255,255,255,0.2) !important;">
+              <small style="text-transform: uppercase; letter-spacing: 2px; font-weight: 600; opacity: 0.8;">Puntos Nivel</small>
+              <h2 class="display-4 mb-0" style="font-weight: 700;"><%= member.levelPoints %></h2>
+            </div>
+            <div class="col-md-4 mb-3 mb-md-0 border-md-right" style="border-color: rgba(255,255,255,0.2) !important;">
+              <small style="text-transform: uppercase; letter-spacing: 2px; font-weight: 600; opacity: 0.8;">Tréboles Disponibles</small>
+              <div class="d-flex align-items-center justify-content-center">
+                <h2 class="display-3 mb-0" style="font-weight: 800;"><%= member.rewardPoints %></h2>
+                <i class="fas fa-clover ml-2" style="font-size: 2rem; color: #fff;"></i>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <small style="text-transform: uppercase; letter-spacing: 2px; font-weight: 600; opacity: 0.8;">Nivel Actual</small>
+              <h2 class="mb-0" style="font-weight: 700; text-transform: uppercase;">
+                <%= t('tiers.' + member.tier.toLowerCase()) %>
+              </h2>
+            </div>
           </div>
         </div>
       </div>
+    </div>
   </div>
-</div>
 
-<div class="row">
-  <% /* Usamos accrualOptions que es la variable que envía tu controlador */ %>
-  <% if (typeof accrualOptions !== 'undefined') { %>
-    <% accrualOptions.forEach(option => { %>
+  <div class="row mt-4">
+    <% 
+      // Lógica de seguridad para encontrar los datos
+      let seguros = [];
+      if (typeof accrualOptions !== 'undefined' && accrualOptions.length > 0) { seguros = accrualOptions; }
+      else if (typeof accrual !== 'undefined' && accrual.length > 0) { seguros = accrual; }
+      else if (typeof products !== 'undefined' && products.length > 0) { seguros = products; }
+      
+      // Fallback si el controlador no envía nada
+      if (seguros.length === 0) {
+        seguros = [
+          { id: 'prod_auto', title: 'Seguro de Automóvil', description: 'Protección inteligente que premia tu buena conducción.', points: 800, image: '/img/compra1.png', journalType: 'Accrual', journalSubType: 'Compra con tarjeta' },
+          { id: 'prod_home', title: 'Seguro de Hogar Digital', description: 'Protección completa para tu hogar con gestión desde la App.', points: 500, image: '/img/compra4.png', journalType: 'Accrual', journalSubType: 'Alta Seguro Hogar' },
+          { id: 'prod_itv', title: 'Seguro de Salud Premium', description: 'Acceso a los mejores especialistas y telemedicina 24h.', points: 400, image: '/img/compra5.png', journalType: 'Accrual', journalSubType: 'Alta Seguro Salud' }
+        ];
+      }
+    %>
+
+    <% seguros.forEach(option => { %>
       <div class="col-md-4 mb-4">
-        <div class="card h-100 shadow-sm border-0" style="border-radius: 15px; overflow: hidden; transition: transform 0.3s;">
-          
-          <div style="height: 180px; overflow: hidden;">
-             <img src="<%= option.image %>" class="card-img-top" alt="<%= option.title %>" style="width: 100%; height: 100%; object-fit: cover;">
+        <div class="card h-100 shadow-sm border-0" style="border-radius: 20px; overflow: hidden; transition: all 0.3s ease;">
+          <div style="height: 200px; overflow: hidden; position: relative;">
+             <img src="<%= option.image %>" class="card-img-top" alt="<%= option.title %>" 
+                  onerror="this.src='https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=600'"
+                  style="width: 100%; height: 100%; object-fit: cover;">
           </div>
 
-          <div class="card-body d-flex flex-column text-center">
-            <h5 class="card-title font-weight-bold" style="color: #333;"><%= option.title %></h5>
-            <p class="card-text text-muted small flex-grow-1"><%= option.description %></p>
+          <div class="card-body d-flex flex-column text-center p-4">
+            <h5 class="card-title font-weight-bold" style="color: #333; font-size: 1.25rem;"><%= option.title || option.name %></h5>
+            <p class="card-text text-muted mb-4" style="font-size: 0.95rem; line-height: 1.5;"><%= option.description %></p>
             
-            <h4 style="color: #d81e05; font-weight: 800; margin-bottom: 20px;">+<%= option.points %> Tréboles</h4>
-            
-            <form action="/transaction" method="POST">
-              <input type="hidden" name="type" value="Accrual">
-              <input type="hidden" name="points" value="<%= option.points %>">
-              <input type="hidden" name="journalType" value="<%= option.journalType %>">
-              <input type="hidden" name="journalSubType" value="<%= option.journalSubType %>">
+            <div class="mt-auto">
+              <h3 style="color: #d81e05; font-weight: 800; margin-bottom: 20px;">+<%= option.points %> <small>Tréboles</small></h3>
               
-              <button type="submit" class="btn btn-block font-weight-bold" style="background: #d81e05; border: none; color: #fff; border-radius: 50px; padding: 12px;">
-                 CONTRATAR
-              </button>
-            </form>
+              <form action="/transaction" method="POST">
+                <input type="hidden" name="type" value="Accrual">
+                <input type="hidden" name="points" value="<%= option.points %>">
+                <input type="hidden" name="journalType" value="<%= option.journalType %>">
+                <input type="hidden" name="journalSubType" value="<%= option.journalSubType %>">
+                
+                <button type="submit" class="btn btn-danger btn-block shadow-sm" style="background: #d81e05; border: none; color: #fff; border-radius: 50px; padding: 15px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;">
+                   Contratar ahora
+                </button>
+              </form>
+            </div>
           </div>
         </div>
       </div>
     <% }); %>
-  <% } else { %>
-    <div class="col-12 text-center py-5">
-      <p class="text-muted">No se han encontrado opciones de acumulación. Revisa la variable del controlador.</p>
-    </div>
-  <% } %>
-</div>
+  </div>
 
-<div class="text-center mt-5 mb-5">
-  <a href="/" class="btn btn-link text-muted"><i class="fas fa-arrow-left"></i> Volver al inicio</a>
+  <div class="text-center mt-5 mb-5">
+    <a href="/" class="btn btn-outline-secondary" style="border-radius: 50px; padding: 10px 30px;">
+      <i class="fas fa-chevron-left mr-2"></i> Volver al Inicio
+    </a>
+  </div>
 </div>
 
 <%- include('partials/footer') %>
