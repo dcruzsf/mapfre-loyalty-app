@@ -1,85 +1,71 @@
 <%- include('partials/header', {currentPage: 'accrual'}) %>
 
-<nav aria-label="breadcrumb">
-  <ol class="breadcrumb">
-    <li class="breadcrumb-item"><a href="/">Inicio</a></li>
-    <li class="breadcrumb-item active">Ganar Tréboles</li>
-  </ol>
-</nav>
-
 <div class="page-header-space text-center">
-  <h1 class="page-title">Gana Tréboles</h1>
-  <p class="text-muted">Protege lo que más quieres y acumula Tréboles para tus próximos pagos.</p>
+  <h1 class="page-title" style="color: #d81e05; font-weight: 800;">GANAR TRÉBOLES</h1>
+  <p class="page-subtitle">Protege lo que más quieres y acumula ahorro para tus seguros</p>
 </div>
 
-<div class="member-summary">
-  <div class="member-stat">
-    <div class="member-stat-label">PUNTOS NIVEL</div>
-    <div class="member-stat-value"><%= member.levelPoints %></div>
-  </div>
-  <div class="member-stat">
-    <div class="member-stat-label">TRÉBOLES</div>
-    <div class="member-stat-value"><%= member.rewardPoints %></div>
-  </div>
-  <div class="member-stat">
-    <div class="member-stat-label">NIVEL ACTUAL</div>
-    <div class="member-stat-value" style="color: #d81e05; font-weight: bold;">
-        <%= t('tiers.' + (member.tier ? member.tier.toLowerCase() : 'bronze')) %>
-    </div>
-  </div>
-</div>
-
-<%- include('partials/tier-progress', {member: member, locale: locale}) %>
-
-<div class="tabs mt-4">
-  <button class="tab active">OPERACIONES DISPONIBLES</button>
-</div>
-
-<div id="purchases-content" class="tab-content" style="display: block;">
-  <div class="row mt-4">
-    <% 
-      // Lógica de Triple Seguridad: intenta leer de ambas variables posibles
-      let itemsMostrar = [];
-      if (typeof accrual !== 'undefined' && accrual) { itemsMostrar = accrual; }
-      else if (typeof products !== 'undefined' && products) { itemsMostrar = products; }
-    %>
-
-    <% if (itemsMostrar.length > 0) { %>
-      <% itemsMostrar.forEach(item => { %>
-        <div class="col-md-4 mb-4">
-          <div class="card h-100 shadow-sm border-0 animate-in">
-            <div style="height: 180px; background-image: url('<%= item.image %>'), url('https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=500'); background-size: cover; background-position: center; border-radius: 8px 8px 0 0; background-color: #f4f4f4;">
-            </div>
-            
-            <div class="card-body d-flex flex-column text-center">
-              <h5 class="card-title" style="color: #d81e05; font-weight: bold;">
-                  <%= item.title || item.name %>
-              </h5>
-              <p class="card-text" style="font-size: 0.9rem; color: #666; flex-grow: 1;">
-                  <%= item.description %>
-              </p>
-              <div class="mt-3">
-                  <p class="mb-2" style="font-weight: bold; font-size: 1.1rem; color: #d81e05;">
-                      +<%= item.points %> TRÉBOLES
-                  </p>
-                  <form method="POST" action="/accrual/purchase/<%= item.id %>">
-                    <button type="submit" class="btn btn-danger btn-block" style="background-color: #d81e05; border: none; font-weight: bold; text-transform: uppercase;">
-                      Contratar
-                    </button>
-                  </form>
-              </div>
-            </div>
+<div class="row justify-content-center mb-5">
+  <div class="col-md-10">
+      <div class="member-summary" style="background: #d81e05; border-radius: 20px; padding: 40px 20px; text-align: center; color: white; box-shadow: 0 10px 30px rgba(216, 30, 5, 0.2);">
+        <div class="row">
+          <div class="col-md-4 border-right border-white-50">
+            <small style="text-transform: uppercase; letter-spacing: 1px; opacity: 0.9;">Puntos Nivel</small>
+            <h2 style="font-weight: 800; margin-top: 10px;"><%= member.levelPoints %></h2>
+          </div>
+          <div class="col-md-4 border-right border-white-50">
+            <small style="text-transform: uppercase; letter-spacing: 1px; opacity: 0.9;">Tréboles Disponibles</small>
+            <h2 style="font-size: 50px; font-weight: 800; margin-top: 5px;"><%= member.rewardPoints %></h2>
+          </div>
+          <div class="col-md-4">
+            <small style="text-transform: uppercase; letter-spacing: 1px; opacity: 0.9;">Nivel Actual</small>
+            <h2 style="font-weight: 800; margin-top: 10px;"><%= t('tiers.' + member.tier.toLowerCase()) %></h2>
           </div>
         </div>
-      <% }) %>
-    <% } else { %>
-      <div class="col-12 text-center py-5">
-        <i class="fas fa-box-open fa-3x mb-3 text-muted"></i>
-        <p class="lead">Cargando catálogo de Mapfre...</p>
-        <small>Si no aparecen las tarjetas, verifica que el archivo config/catalog.js esté guardado.</small>
       </div>
-    <% } %>
   </div>
+</div>
+
+<div class="row">
+  <% /* Usamos accrualOptions que es la variable que envía tu controlador */ %>
+  <% if (typeof accrualOptions !== 'undefined') { %>
+    <% accrualOptions.forEach(option => { %>
+      <div class="col-md-4 mb-4">
+        <div class="card h-100 shadow-sm border-0" style="border-radius: 15px; overflow: hidden; transition: transform 0.3s;">
+          
+          <div style="height: 180px; overflow: hidden;">
+             <img src="<%= option.image %>" class="card-img-top" alt="<%= option.title %>" style="width: 100%; height: 100%; object-fit: cover;">
+          </div>
+
+          <div class="card-body d-flex flex-column text-center">
+            <h5 class="card-title font-weight-bold" style="color: #333;"><%= option.title %></h5>
+            <p class="card-text text-muted small flex-grow-1"><%= option.description %></p>
+            
+            <h4 style="color: #d81e05; font-weight: 800; margin-bottom: 20px;">+<%= option.points %> Tréboles</h4>
+            
+            <form action="/transaction" method="POST">
+              <input type="hidden" name="type" value="Accrual">
+              <input type="hidden" name="points" value="<%= option.points %>">
+              <input type="hidden" name="journalType" value="<%= option.journalType %>">
+              <input type="hidden" name="journalSubType" value="<%= option.journalSubType %>">
+              
+              <button type="submit" class="btn btn-block font-weight-bold" style="background: #d81e05; border: none; color: #fff; border-radius: 50px; padding: 12px;">
+                 CONTRATAR
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    <% }); %>
+  <% } else { %>
+    <div class="col-12 text-center py-5">
+      <p class="text-muted">No se han encontrado opciones de acumulación. Revisa la variable del controlador.</p>
+    </div>
+  <% } %>
+</div>
+
+<div class="text-center mt-5 mb-5">
+  <a href="/" class="btn btn-link text-muted"><i class="fas fa-arrow-left"></i> Volver al inicio</a>
 </div>
 
 <%- include('partials/footer') %>
