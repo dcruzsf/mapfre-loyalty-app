@@ -1,67 +1,68 @@
-const brandConfig = require('./brand');
-const catalogConfig = require('./catalog');
-const tiersConfig = require('./tiers');
+<%- include('partials/header', {currentPage: 'home'}) %>
 
-module.exports = {
-  brand: brandConfig,
-  catalog: catalogConfig,
-  tiers: tiersConfig,
-  
-  // Configuraciones del sistema Mapfre
-  system: {
-    initialBalance: 50, // Los "Tréboles" son más valiosos que los puntos estándar (1 Trébol suele equivaler a 1€ en Mapfre)
-    maxAchievements: 15, // Mapfre tiene muchos hitos (antigüedad, no siniestralidad, multirriesgo)
-    sessionDuration: 12 * 60 * 60 * 1000, // 12 horas (más restrictivo por seguridad corporativa)
-    
-    // Configuración de scoring para el ranking de "Mejor Cliente"
-    scoring: {
-      weights: {
-        achievements: 0.30,  // 30% - Hitos (ej: 10 años sin partes)
-        levelPoints:  0.30,  // 30% - Volumen de pólizas (Tréboles totales)
-        rewardPoints: 0.10,  // 10% - Uso de beneficios
-        tier:         0.25,  // 25% - El nivel de cliente (Plata, Oro, etc.) pesa más aquí
-        balance:      0.05   // 5%  - Tréboles acumulados actualmente
-      },
-      maxLevelPoints: 3000, // Ajustado al threshold del nivel Diamante definido en tiers.js
-      
-      // Semántica adaptada a una relación de confianza cliente-aseguradora
-      engagementLevels: {
-        90: 'Socio de Honor',
-        75: 'Cliente Vitalicio', 
-        60: 'Cliente Preferente',
-        40: 'Cliente Vinculado',
-        20: 'Cliente Iniciado',
-        0: 'Nuevo Cliente'
-      }
-    }
-  },
+<div class="container mt-5">
+  <div class="row text-center mb-5">
+    <div class="col-12">
+      <h1 class="display-4" style="color: #d81e05; font-weight: 800; text-transform: uppercase;">MAPFRE TE CUIDAMOS</h1>
+      <p class="lead text-muted">Tu confianza siempre tiene recompensa</p>
+    </div>
+  </div>
 
-  // Función de utilidad para validar configuración
-  validate: function() {
-    const errors = [];
-    
-    // 1. Validar productos
-    catalogConfig.products.forEach(product => {
-      if (!product.image) {
-        errors.push(`Servicio/Beneficio ${product.name} no tiene imagen definida`);
-      }
-    });
-    
-    // 2. Validar colores de Tiers (Corregido para que coincida exactamente con tiers.js)
-    tiersConfig.tiers.forEach(tier => {
-      // Usamos el nombre del tier en minúsculas para buscar en brand.js
-      const tierKey = tier.name.toLowerCase();
-      if (!brandConfig.colors.tierColors[tierKey]) {
-        errors.push(`El nivel ${tier.name} no tiene un color asignado en brand.colors.tierColors`);
-      }
-    });
-    
-    // 3. Validar hito de bienvenida
-    const welcomeAchievement = catalogConfig.achievements.find(a => a.autoUnlock);
-    if (!welcomeAchievement) {
-      errors.push('Falta el hito de "Bienvenida al Plan Te Cuidamos" (autoUnlock: true)');
-    }
-    
-    return errors;
-  }
-};
+  <% if (typeof member !== 'undefined' && member) { %>
+    <div class="row justify-content-center">
+      <div class="col-md-10">
+        <div class="card shadow-lg border-0" style="border-radius: 20px; background: linear-gradient(135deg, #d81e05 0%, #a31604 100%); color: white;">
+          <div class="card-body p-5">
+            <h3 class="mb-4" style="font-weight: 600;">Bienvenido, <%= member.name %></h3>
+            
+            <div class="row text-center align-items-center">
+              <div class="col-md-4 border-right border-white-50">
+                <small style="text-transform: uppercase; letter-spacing: 1px; opacity: 0.8; font-weight: 700;">Puntos Nivel</small>
+                <h2 class="display-4 mb-0" style="font-weight: 800;"><%= member.levelPoints %></h2>
+              </div>
+              
+              <div class="col-md-4 border-right border-white-50">
+                <small style="text-transform: uppercase; letter-spacing: 1px; opacity: 0.8; font-weight: 700;">Tréboles</small>
+                <h2 class="display-3 mb-0" style="font-weight: 900;"><%= member.rewardPoints %></h2>
+              </div>
+              
+              <div class="col-md-4">
+                <small style="text-transform: uppercase; letter-spacing: 1px; opacity: 0.8; font-weight: 700;">Nivel Actual</small>
+                <h2 class="display-4 mb-0" style="font-weight: 800; text-transform: uppercase;">
+                  <%= (member.tier) ? member.tier : 'Plata' %>
+                </h2>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row mt-5">
+          <div class="col-md-6 mb-3">
+            <a href="/accrual" class="btn btn-danger btn-lg btn-block shadow-sm" style="background-color: #d81e05; border: none; border-radius: 50px; padding: 20px; font-weight: 800; color: white;">
+              GANAR TRÉBOLES
+            </a>
+          </div>
+          <div class="col-md-6 mb-3">
+            <a href="/redemption" class="btn btn-dark btn-lg btn-block shadow-sm" style="background-color: #333; border: none; border-radius: 50px; padding: 20px; font-weight: 800; color: white;">
+              CANJEAR TRÉBOLES
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% } else { %>
+    <div class="row justify-content-center mt-4">
+      <div class="col-md-8 text-center">
+        <div class="card p-5 shadow-sm border-0" style="border-radius: 30px; background: #fdfdfd;">
+          <h2 class="font-weight-bold mb-3">¡Únete a Mapfre Te Cuidamos!</h2>
+          <p class="text-muted mb-5">Acumula tréboles con cada seguro y gestión digital para ahorrar en tus próximas pólizas.</p>
+          <a href="/register" class="btn btn-danger btn-lg px-5 py-3 shadow" style="background-color: #d81e05; border: none; border-radius: 50px; font-weight: 800; color: white;">
+            COMENZAR AHORA
+          </a>
+        </div>
+      </div>
+    </div>
+  <% } %>
+</div>
+
+<%- include('partials/footer') %>
