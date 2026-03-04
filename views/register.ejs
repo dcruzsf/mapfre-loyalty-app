@@ -2,22 +2,22 @@
 
 <div class="row mt-5">
   <div class="col-md-8 offset-md-2">
-    <div class="card">
-      <div class="card-header">
-        <h2 class="mb-0"><%= t('pages.register.title') %> en <%= brand.fullName %></h2>
+    <div class="card shadow">
+      <div class="card-header bg-white">
+        <h2 class="mb-0" style="color: #d81e05;"><%= t('pages.register.title') %> en <%= brand.fullName %></h2>
       </div>
       <div class="card-body">
         <div class="row">
-          <div class="col-md-4 d-none d-md-block">
+          <div class="col-md-4 d-none d-md-block border-right">
             <div class="text-center mb-4">
-              <img src="https://upload.wikimedia.org/wikipedia/commons/f/fd/LOGO-MAPFRE.jpg" alt="Mapfre" style="max-width: 100%; height: auto; border-radius: 4px;">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/f/fd/LOGO-MAPFRE.jpg" alt="Mapfre" style="max-width: 100%; height: auto;">
             </div>
             
             <div class="benefits-list">
-              <h5><%= brand.messages.benefits.title %></h5>
+              <h5 class="text-muted"><%= brand.messages.benefits.title %></h5>
               <ul class="list-unstyled">
                 <% brand.messages.benefits.list.forEach(benefit => { %>
-                  <li class="mb-2"><i class="fas fa-check mr-2"></i> <%= benefit %></li>
+                  <li class="mb-2"><i class="fas fa-check-circle mr-2" style="color: #d81e05;"></i> <%= benefit %></li>
                 <% }); %>
               </ul>
             </div>
@@ -26,34 +26,42 @@
           <div class="col-md-8">
             <form method="POST" action="/register">
               <div class="form-group">
-                <label for="name" class="form-label"><%= t('pages.register.form.name').toUpperCase() %></label>
+                <label for="name" class="form-label font-weight-bold"><%= t('pages.register.form.name').toUpperCase() %></label>
                 <input type="text" class="form-control" id="name" name="name" required placeholder="Ej: Juan Pérez">
               </div>
 
               <div class="form-group">
-                <label for="email" class="form-label"><%= t('pages.register.form.email').toUpperCase() %></label>
+                <label for="email" class="form-label font-weight-bold"><%= t('pages.register.form.email').toUpperCase() %></label>
                 <input type="email" class="form-control" id="email" name="email" required placeholder="Ej: d.cruz+test@salesforce.com">
-                <small class="form-text text-muted">Cada registro debe tener un email único.</small>
+                <small class="form-text text-muted">Formato: d.cruz+[alias]@salesforce.com</small>
               </div>
               
               <div class="form-group">
-                <label class="form-label"><%= t('pages.register.form.interests').toUpperCase() %></label>
-                <% brand.categories.forEach(category => { %>
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" name="preferences" value="<%= category.id %>" id="<%= category.id %>">
-                    <label class="form-check-label" for="<%= category.id %>"><%= category.label %></label>
-                  </div>
-                <% }); %>
+                <label class="form-label font-weight-bold"><%= t('pages.register.form.interests').toUpperCase() %></label>
+                <div class="row">
+                  <% brand.categories.forEach(category => { %>
+                    <div class="col-6">
+                      <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" name="preferences" value="<%= category.id %>" id="<%= category.id %>">
+                        <label class="form-check-label" for="<%= category.id %>"><%= category.label %></label>
+                      </div>
+                    </div>
+                  <% }); %>
+                </div>
               </div>
               
-              <button type="submit" class="btn btn-primary btn-lg btn-block mt-4" style="background-color: #d81e05; border: none;">
+              <button type="submit" class="btn btn-lg btn-block mt-4 text-white font-weight-bold" style="background-color: #d81e05; border: none; border-radius: 5px;">
                 <%= t('pages.register.form.submit') %>
               </button>
             </form>
 
-            <div class="text-center mt-3">
-              <button type="button" id="autofillBtn" class="btn btn-danger btn-sm" style="font-size: 13px; padding: 10px 20px; background-color: #d81e05 !important; border: none !important; color: white !important;">
-                <i class="fas fa-magic"></i> Rellenar automáticamente (Demo)
+            <div class="text-center mt-4 pt-3 border-top">
+              <button type="button" 
+                      id="btnAutofillMapfre"
+                      onclick="ejecutarRellenoMapfre()" 
+                      class="btn btn-danger btn-sm shadow-sm" 
+                      style="background-color: #d81e05 !important; border: none !important; padding: 10px 20px; font-weight: bold; color: white !important;">
+                <i class="fas fa-magic mr-1"></i> RELLENAR DATOS CLIENTE
               </button>
             </div>
           </div>
@@ -64,31 +72,39 @@
 </div>
 
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const btn = document.getElementById('autofillBtn');
-    if (btn) {
-      btn.addEventListener('click', function() {
-        console.log('Botón clickeado'); // Para verificar en la consola del navegador
-        const names = ['Ricardo Blanco', 'Paula Pascual', 'Fernando Cruz', 'Elena Gomez', 'Roberto Moral'];
-        const randomName = names[Math.floor(Math.random() * names.length)];
-        
-        // Formato: d.cruz+nombre1234@salesforce.com
-        const alias = randomName.toLowerCase().replace(/\s+/g, '');
-        const num = Math.floor(Math.random() * 90000) + 10000;
-        const generatedEmail = `d.cruz+${alias}${num}@salesforce.com`;
+  // Nombre de función nuevo para evitar que el navegador use la versión vieja de su caché
+  function ejecutarRellenoMapfre() {
+    console.log('Ejecutando nueva lógica de Mapfre...');
+    
+    const names = ['Ricardo Blanco', 'Paula Pascual', 'Fernando Cruz', 'Elena Gomez', 'Roberto Moral', 'Lucia Sanz'];
+    const randomName = names[Math.floor(Math.random() * names.length)];
+    
+    // 1. Limpiamos el nombre: quitamos tildes, espacios y caracteres especiales para el alias
+    const cleanAlias = randomName.normalize("NFD")
+                                 .replace(/[\u0300-\u036f]/g, "") // Quita tildes
+                                 .toLowerCase()
+                                 .replace(/[^a-z0-9]/g, ''); // Deja solo letras y números
+                                
+    // 2. Generamos número aleatorio de 5 cifras
+    const num = Math.floor(Math.random() * 90000) + 10000;
+    
+    // 3. Formato exacto solicitado: d.cruz+[nombre+numero]@salesforce.com
+    const generatedEmail = `d.cruz+${cleanAlias}${num}@salesforce.com`;
 
-        document.getElementById('name').value = randomName;
-        document.getElementById('email').value = generatedEmail;
+    // 4. Inyectamos los valores en los campos
+    document.getElementById('name').value = randomName;
+    document.getElementById('email').value = generatedEmail;
 
-        // Marcar un interés al azar
-        const checks = document.querySelectorAll('.form-check-input');
-        if(checks.length > 0) {
-            checks.forEach(c => c.checked = false);
-            checks[Math.floor(Math.random() * checks.length)].checked = true;
-        }
-      });
+    // 5. Marcar un interés al azar
+    const checks = document.querySelectorAll('.form-check-input');
+    checks.forEach(c => c.checked = false);
+    if(checks.length > 0) {
+        const randomIdx = Math.floor(Math.random() * checks.length);
+        checks[randomIdx].checked = true;
     }
-  });
+      
+    console.log('Email generado con éxito:', generatedEmail);
+  }
 </script>
 
 <%- include('partials/footer') %>

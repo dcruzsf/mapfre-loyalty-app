@@ -1,174 +1,102 @@
+// config/catalog.js - Catálogo Adaptado a Mapfre (Respetando nombres de imágenes originales)
 module.exports = {
-  // Productos Mapfre para acumulación de Tréboles
-  products: [
+  
+  // --- GANAR TRÉBOLES (ACCRUAL) ---
+  accrual: [
     {
-      id: 1,
-      name: 'Seguro de Automóvil Pago como Conduzco',
-      price: 0,
-      points: 800,
-      pointsDisplay: '800 Puntos de Nivel + 50 Tréboles',
-      qualifyingPoints: 800,
-      nonQualifyingPoints: 50,
-      image: 'compra1.png',
-      description: 'Seguro inteligente que premia tu buena conducción con Tréboles directos.',
-      category: 'insurance',
-      isPremium: false,
-      digitalOnly: true,
+      id: 'prod_auto',
+      title: 'Seguro de Coche',
+      description: 'Contrata o renueva tu póliza de auto con las mejores coberturas y suma Tréboles.',
+      points: 50,
+      image: '/img/compra1.png', // Imagen original mantenida
+      icon: 'car',
       journalType: 'Accrual',
-      journalSubType: 'Sign an Insurance'
+      journalSubType: 'Compra con tarjeta', // Mantenido para match con SF
+      journalSubTypeId: '0lSJ70000008OMNMA2'
     },
     {
-      id: 2,
-      name: 'Seguro de Hogar Digital',
-      price: 0,
-      points: 500,
-      pointsDisplay: '500 Puntos de Nivel',
-      qualifyingPoints: 500,
-      nonQualifyingPoints: 0,
-      image: 'compra2.png',
-      description: 'Protección completa para tu hogar con gestión de siniestros desde la App.',
-      category: 'insurance',
-      isPremium: false,
-      digitalOnly: true,
+      id: 'prod_home',
+      title: 'Seguro de Hogar',
+      description: 'Protege tu casa frente a cualquier imprevisto y ahorra en tu próxima renovación.',
+      points: 30,
+      image: '/img/compra4.png', // Imagen original mantenida
+      icon: 'home',
       journalType: 'Accrual',
-      journalSubType: 'Sign an Insurance'
+      journalSubType: 'Alta Seguro Hogar'
     },
     {
-      id: 3,
-      name: 'Revisión Oficial Pre-ITV',
-      price: 0,
-      points: 100,
-      pointsDisplay: '100 Puntos + Revisión Gratuita',
-      qualifyingPoints: 100,
-      nonQualifyingPoints: 0,
-      image: 'compra3.png',
-      description: 'Prepara tu coche para la ITV en nuestra red de talleres distinguidos.',
-      category: 'insurance_partner',
-      isPremium: false,
-      digitalOnly: true,
+      id: 'prod_health',
+      title: 'Seguro de Salud',
+      description: 'Tu bienestar y el de tu familia es lo primero. Súmate a Salud Mapfre.',
+      points: 40,
+      image: '/img/compra5.png', // Imagen original mantenida
+      icon: 'heartbeat',
       journalType: 'Accrual',
-      journalSubType: 'Purchase'
+      journalSubType: 'Alta Seguro Salud'
+    },
+    {
+      id: 'health_check',
+      title: 'Revisión Médica Anual',
+      description: 'Completar tu chequeo anual te ayuda a prevenir y te regala Tréboles.',
+      points: 15,
+      image: '/img/compra2.png', // Imagen original mantenida
+      icon: 'user-md',
+      journalType: 'Accrual',
+      journalSubType: 'Actividad Prevencion'
     }
   ],
 
-  // Actividades para ganar Tréboles extra (Prevención y Salud)
-  activities: [
+  // --- CANJEAR TRÉBOLES (REDEMPTION) ---
+  redemption: [
     {
-      id: 1,
-      name: 'Descarga App Mapfre',
-      points: 100,
-      image: 'app-download.png',
-      category: 'app',
-      description: 'Gestiona tus pólizas, partes y asistencia en carretera desde tu móvil.'
-    },
-    {
-      id: 2,
-      name: 'Video-Consulta Médica',
-      points: 150,
-      image: 'telemedicine.png',
-      category: 'health',
-      description: 'Usa el servicio de telemedicina por primera vez y gana Tréboles.'
-    },
-    {
-      id: 3,
-      name: 'Curso de Conducción Segura',
-      points: 300,
-      image: 'driving-course.png',
-      category: 'safety',
-      description: 'Mejora tu seguridad al volante y reduce tu prima anual.'
-    }
-  ],
-
-  // Recompensas del Programa "Te Cuidamos"
-  rewards: [
-    {
-      id: 1,
-      name: 'Descuento en Renovación de Póliza',
-      points: 1, // 1 Trébol = 1€
-      type: 'cashback',
-      image: 'descuento1.png',
-      codePrefix: 'RENEW',
-      description: 'Usa tus Tréboles para pagar menos en tu próximo recibo de seguro.'
-    },
-    {
-      id: 2,
-      name: 'Cheque Carburante 20€',
+      id: 'discount_policy',
+      title: 'Descuento en Recibo',
+      description: 'Usa tus Tréboles para pagar menos en tu próximo recibo de cualquier seguro.',
       points: 20,
-      type: 'experience',
-      image: 'descuento2.png',
-      codePrefix: 'FUEL20',
-      description: 'Canjea tus tréboles por combustible en gasolineras asociadas.'
+      image: '/img/compra3.png', // Imagen original mantenida
+      icon: 'file-invoice-dollar',
+      journalType: 'Redemption',
+      journalSubType: 'Purchase' 
     },
     {
-      id: 3,
-      name: 'Servicio de Bricolaje en el Hogar',
-      points: 0,
-      type: 'service',
-      image: 'descuento3.png',
-      codePrefix: 'BRICO',
-      description: 'Gratis por ser nivel Oro o superior. Un profesional en tu casa.',
-      isSpecial: true
+      id: 'amazon_gift',
+      title: 'Cheque Amazon',
+      description: 'Canjea tus Tréboles por saldo para tus compras en Amazon.es.',
+      points: 100,
+      image: '/img/experiencia4.png', // Imagen original mantenida
+      icon: 'gift',
+      journalType: 'Redemption',
+      journalSubType: 'Tarjeta Amazon'
     },
     {
-      id: 4,
-      name: 'Amazon Gift Card (Cuidamos tu ocio)',
+      id: 'fuel_card',
+      title: 'Tarjeta Combustible',
+      description: 'Consigue descuentos directos al repostar en gasolineras asociadas.',
       points: 50,
-      type: 'service',
-      image: 'descuento4.png',
-      codePrefix: 'AMZMAPFRE',
-      description: 'Tarjeta regalo de 50€ canjeando tus Tréboles acumulados.'
-    }
-  ],
-
-  // Retos de Fidelidad
-  challenges: [
-    {
-      id: 'safe_driver',
-      name: 'Conductor Ejemplar',
-      description: 'Mantén tu historial sin partes de accidente durante 12 meses',
-      reward: 500,
-      goal: 1,
-      type: 'insurance'
+      image: '/img/descuento1.png', // Imagen original mantenida
+      icon: 'gas-pump',
+      journalType: 'Redemption',
+      journalSubType: 'Vale Combustible'
     },
     {
-      id: 'multi_policy',
-      name: 'Protección Total',
-      description: 'Protege tu Coche, Hogar y Salud con Mapfre',
-      reward: 1000,
-      goal: 3,
-      type: 'insurance'
-    }
-  ],
-
-  // Logros (Achievements) Mapfre
-  achievements: [
-    {
-      id: 'welcome',
-      name: 'Bienvenido a Te Cuidamos',
-      description: 'Tu viaje hacia la tranquilidad total comienza aquí.',
-      points: 50,
-      icon: 'shield-alt',
-      category: 'general',
-      autoUnlock: true
-    },
-    {
-      id: 'tier_plus',
-      name: 'Ascenso a Nivel Oro',
-      description: 'Has demostrado ser un cliente comprometido con su seguridad.',
+      id: 'avios',
+      title: 'Avios Iberia',
+      description: 'Canjea tus Tréboles por Avios y vuela más cerca de tu próximo destino.',
       points: 500,
-      icon: 'medal',
-      category: 'tier',
-      trigger: 'tier_update',
-      tierRequired: 'Oro'
+      image: '/img/experiencia1.png', // Imagen original mantenida
+      icon: 'plane',
+      journalType: 'Redemption',
+      journalSubType: 'Uso Avios'
     },
     {
-      id: 'no_claims',
-      name: 'Muro de Contención',
-      description: 'Un año completo sin siniestros. ¡Felicidades!',
-      points: 200,
-      icon: 'user-shield',
-      category: 'safety',
-      trigger: 'purchase'
+      id: 'vip_lounge',
+      title: 'Sala VIP Aeropuerto',
+      description: 'Acceso exclusivo a salas VIP antes de tu vuelo por ser cliente Platino.',
+      points: 800,
+      image: '/img/experiencia2.png', // Imagen original mantenida
+      icon: 'glass-cheers',
+      journalType: 'Redemption',
+      journalSubType: 'Acceso VIP'
     }
   ]
 };
