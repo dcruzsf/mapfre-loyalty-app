@@ -62,7 +62,7 @@
                   value="<%= typeof formData !== 'undefined' ? formData.email : '' %>"
                 >
                 <small class="form-text text-muted">
-                  <%= locale === 'es' ? 'Cada email solo puede registrarse una vez.' : 'Each email can only be registered once.' %>
+                  Cada email es único. Usaremos el formato d.cruz+alias@salesforce.com para la demo.
                 </small>
               </div>
               
@@ -82,7 +82,7 @@
             </form>
 
             <div class="text-center mt-3">
-              <button type="button" id="autofillBtn" class="btn btn-secondary btn-sm" style="font-size: 13px; padding: 8px 16px;">
+              <button type="button" id="autofillBtn" class="btn btn-danger btn-sm" style="font-size: 13px; padding: 8px 16px;">
                 <i class="fas fa-magic"></i> Rellenar automáticamente (Demo)
               </button>
             </div>
@@ -99,5 +99,26 @@
     </div>
   </div>
 </div>
+
+<script>
+  document.getElementById('autofillBtn').addEventListener('click', function() {
+    const names = ['Ricardo Blanco', 'Paula Pascual', 'Fernando Cruz', 'Elena Gomez', 'Roberto Moral'];
+    const randomName = names[Math.floor(Math.random() * names.length)];
+    
+    // Formato: d.cruz+nombre_aleatorio@salesforce.com
+    const nameAlias = randomName.toLowerCase().replace(/\s+/g, '');
+    const randomNum = Math.floor(Math.random() * 10000);
+    const generatedEmail = `d.cruz+${nameAlias}${randomNum}@salesforce.com`;
+
+    document.getElementById('name').value = randomName;
+    document.getElementById('email').value = generatedEmail;
+
+    // Seleccionar intereses aleatorios
+    const checkboxes = document.querySelectorAll('.form-check-input');
+    checkboxes.forEach(cb => cb.checked = false);
+    const randomIdx = Math.floor(Math.random() * checkboxes.length);
+    if(checkboxes[randomIdx]) checkboxes[randomIdx].checked = true;
+  });
+</script>
 
 <%- include('partials/footer') %>

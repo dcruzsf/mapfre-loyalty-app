@@ -48,18 +48,27 @@
     "accrual": {
       "title": "Ganar Tréboles",
       "description": "Protege lo que más quieres y acumula Tréboles",
+      "breadcrumb": "Ganar Tréboles",
       "tabs": {
         "purchases": "Seguros",
         "activities": "Prevención"
+      },
+      "product": {
+        "buy": "Contratar",
+        "points": "Tréboles",
+        "insufficientBalance": "Saldo insuficiente",
+        "performActivity": "Realizar Actividad"
       }
     },
     "redemption": {
       "title": "Canjear Tréboles",
       "description": "Usa tus Tréboles para descontar en tus próximos recibos",
+      "breadcrumb": "Canjear Tréboles",
       "reward": {
         "cost": "Precio",
-        "points": "tréboles",
-        "redeem": "Canjear"
+        "points": "Tréboles",
+        "redeem": "Canjear",
+        "insufficientPoints": "Tréboles insuficientes"
       }
     }
   },
@@ -89,5 +98,8 @@
       "levelPoints": "Puntos Nivel",
       "rewardPoints": "Tréboles"
     }
+  },
+  "footer": {
+    "deleteAccount": "Reiniciar demo y borrar cuenta"
   }
 }
