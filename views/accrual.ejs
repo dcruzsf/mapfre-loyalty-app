@@ -24,17 +24,17 @@
 
 <div class="member-summary">
   <div class="member-stat">
-    <div class="member-stat-label"><%= t('member.levelPoints') %></div>
+    <div class="member-stat-label">PUNTOS NIVEL</div>
     <div class="member-stat-value"><%= member.levelPoints %></div>
   </div>
 
   <div class="member-stat">
-    <div class="member-stat-label"><%= t('member.rewardPoints') %></div>
+    <div class="member-stat-label">TRÉBOLES</div>
     <div class="member-stat-value"><%= member.rewardPoints %></div>
   </div>
 
   <div class="member-stat">
-    <div class="member-stat-label"><%= t('member.tier') %></div>
+    <div class="member-stat-label">NIVEL ACTUAL</div>
     <div class="member-stat-value tier-<%= member.tier.toLowerCase() %>">
         <%= t('tiers.' + (member.tier ? member.tier.toLowerCase() : 'bronze')) %>
     </div>
@@ -44,46 +44,44 @@
 <%- include('partials/tier-progress', {member: member, locale: locale}) %>
 
 <div class="tabs">
-  <button class="tab active" data-target="purchases-content"><%= t('pages.accrual.tabs.purchases') %></button>
+  <button class="tab active" data-target="purchases-content">OPERACIONES DISPONIBLES</button>
 </div>
 
 <div id="purchases-content" class="tab-content" style="display: block;">
   <div class="row mt-4">
-    <% products.forEach(product => { %>
-      <div class="col-md-4 mb-4">
-        <div class="card h-100 shadow-sm border-0 animate-in">
-          <% 
-            // CORRECCIÓN AQUÍ: Forzamos el ID a String para evitar el error de toLowerCase
-            const productIdSafe = String(product.id).toLowerCase();
-            const imagePath = `/img/${productIdSafe}.jpg`; 
-          %>
-          <div style="height: 180px; background-image: url('<%= imagePath %>'); background-size: cover; background-position: center; border-radius: 8px 8px 0 0; background-color: #f4f4f4;">
-            <div class="d-flex align-items-center justify-content-center h-100" style="color: #ccc; font-size: 10px; text-align: center;">
-              <% /* Si no carga la imagen, al menos se verá el nombre del producto */ %>
+    <% if (typeof accrual !== 'undefined') { %>
+      <% accrual.forEach(item => { %>
+        <div class="col-md-4 mb-4">
+          <div class="card h-100 shadow-sm border-0 animate-in">
+            <% 
+              // Intentar cargar imagen local, si no, poner un color de fondo corporativo
+              const imagePath = item.image; 
+            %>
+            <div class="product-image" style="height: 180px; background-image: url('<%= imagePath %>'); background-size: cover; background-position: center; border-radius: 8px 8px 0 0; background-color: #f8f9fa;">
             </div>
-          </div>
-          
-          <div class="card-body d-flex flex-column">
-            <h5 class="card-title" style="color: #d81e05; font-weight: bold;">
-                <%= product.name %>
-            </h5>
-            <p class="card-text" style="font-size: 0.9rem; color: #666; flex-grow: 1;">
-                <%= product.description %>
-            </p>
-            <div class="mt-3 text-center">
-                <p class="mb-2" style="font-weight: bold; font-size: 1.1rem; color: #d81e05;">
-                    +<%= product.points %> <%= t('pages.accrual.product.points') %>
-                </p>
-                <form method="POST" action="/accrual/purchase/<%= product.id %>">
-                  <button type="submit" class="btn btn-danger btn-block" style="background-color: #d81e05; border: none; font-weight: 500;">
-                    <%= t('pages.accrual.product.buy') %>
-                  </button>
-                </form>
+            
+            <div class="card-body d-flex flex-column text-center">
+              <h5 class="card-title" style="color: #d81e05; font-weight: bold;">
+                  <%= item.title %>
+              </h5>
+              <p class="card-text" style="font-size: 0.9rem; color: #666; flex-grow: 1;">
+                  <%= item.description %>
+              </p>
+              <div class="mt-3">
+                  <p class="mb-2" style="font-weight: bold; font-size: 1.1rem; color: #d81e05;">
+                      +<%= item.points %> TRÉBOLES
+                  </p>
+                  <form method="POST" action="/accrual/purchase/<%= item.id %>">
+                    <button type="submit" class="btn btn-danger btn-block" style="background-color: #d81e05; border: none; font-weight: bold;">
+                      CONTRATAR
+                    </button>
+                  </form>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    <% }) %>
+      <% }) %>
+    <% } %>
   </div>
 </div>
 
