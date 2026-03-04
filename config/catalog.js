@@ -9,7 +9,7 @@ module.exports = {
       pointsDisplay: '800 Puntos de Nivel + 50 Tréboles',
       qualifyingPoints: 800,
       nonQualifyingPoints: 50,
-      image: 'car-insurance.png',
+      image: 'compra1.png',
       description: 'Seguro inteligente que premia tu buena conducción con Tréboles directos.',
       category: 'insurance',
       isPremium: false,
@@ -25,7 +25,7 @@ module.exports = {
       pointsDisplay: '500 Puntos de Nivel',
       qualifyingPoints: 500,
       nonQualifyingPoints: 0,
-      image: 'home-insurance.png',
+      image: 'compra2.png',
       description: 'Protección completa para tu hogar con gestión de siniestros desde la App.',
       category: 'insurance',
       isPremium: false,
@@ -41,7 +41,7 @@ module.exports = {
       pointsDisplay: '100 Puntos + Revisión Gratuita',
       qualifyingPoints: 100,
       nonQualifyingPoints: 0,
-      image: 'itv-service.png',
+      image: 'compra3.png',
       description: 'Prepara tu coche para la ITV en nuestra red de talleres distinguidos.',
       category: 'insurance_partner',
       isPremium: false,
@@ -86,7 +86,7 @@ module.exports = {
       name: 'Descuento en Renovación de Póliza',
       points: 1, // 1 Trébol = 1€
       type: 'cashback',
-      image: 'discount-policy.png',
+      image: 'descuento1.png',
       codePrefix: 'RENEW',
       description: 'Usa tus Tréboles para pagar menos en tu próximo recibo de seguro.'
     },
@@ -95,7 +95,7 @@ module.exports = {
       name: 'Cheque Carburante 20€',
       points: 20,
       type: 'experience',
-      image: 'fuel-card.png',
+      image: 'descuento2.png',
       codePrefix: 'FUEL20',
       description: 'Canjea tus tréboles por combustible en gasolineras asociadas.'
     },
@@ -104,7 +104,7 @@ module.exports = {
       name: 'Servicio de Bricolaje en el Hogar',
       points: 0,
       type: 'service',
-      image: 'handyman.png',
+      image: 'descuento3.png',
       codePrefix: 'BRICO',
       description: 'Gratis por ser nivel Oro o superior. Un profesional en tu casa.',
       isSpecial: true
@@ -114,7 +114,7 @@ module.exports = {
       name: 'Amazon Gift Card (Cuidamos tu ocio)',
       points: 50,
       type: 'service',
-      image: 'amazon-card.png',
+      image: 'descuento4.png',
       codePrefix: 'AMZMAPFRE',
       description: 'Tarjeta regalo de 50€ canjeando tus Tréboles acumulados.'
     }
