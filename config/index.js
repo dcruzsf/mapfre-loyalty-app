@@ -38,12 +38,12 @@
 
         <div class="row mt-5">
           <div class="col-md-6 mb-3">
-            <a href="/accrual" class="btn btn-danger btn-lg btn-block shadow-sm" style="background-color: #d81e05; border: none; border-radius: 50px; padding: 20px; font-weight: 800; color: white;">
+            <a href="/accrual" class="btn btn-danger btn-lg btn-block shadow-sm" style="background-color: #d81e05; border: none; border-radius: 50px; padding: 20px; font-weight: 800; color: white; display: block; text-align: center; text-decoration: none;">
               GANAR TRÉBOLES
             </a>
           </div>
           <div class="col-md-6 mb-3">
-            <a href="/redemption" class="btn btn-dark btn-lg btn-block shadow-sm" style="background-color: #333; border: none; border-radius: 50px; padding: 20px; font-weight: 800; color: white;">
+            <a href="/redemption" class="btn btn-dark btn-lg btn-block shadow-sm" style="background-color: #333; border: none; border-radius: 50px; padding: 20px; font-weight: 800; color: white; display: block; text-align: center; text-decoration: none;">
               CANJEAR TRÉBOLES
             </a>
           </div>
@@ -56,7 +56,7 @@
         <div class="card p-5 shadow-sm border-0" style="border-radius: 30px; background: #fdfdfd;">
           <h2 class="font-weight-bold mb-3">¡Únete a Mapfre Te Cuidamos!</h2>
           <p class="text-muted mb-5">Acumula tréboles con cada seguro y gestión digital para ahorrar en tus próximas pólizas.</p>
-          <a href="/register" class="btn btn-danger btn-lg px-5 py-3 shadow" style="background-color: #d81e05; border: none; border-radius: 50px; font-weight: 800; color: white;">
+          <a href="/register" class="btn btn-danger btn-lg px-5 py-3 shadow" style="background-color: #d81e05; border: none; border-radius: 50px; font-weight: 800; color: white; text-decoration: none; display: inline-block;">
             COMENZAR AHORA
           </a>
         </div>
