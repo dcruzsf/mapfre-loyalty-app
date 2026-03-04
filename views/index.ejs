@@ -17,35 +17,36 @@
 
           <div class="member-summary">
             <div class="member-stat">
-              <div class="member-stat-label"><%= t('member.levelPoints') %></div>
+              <div class="member-stat-label">PUNTOS NIVEL</div>
               <div class="member-stat-value"><%= member.levelPoints %></div>
             </div>
 
             <div class="member-stat">
-              <div class="member-stat-label"><%= t('member.rewardPoints') %></div>
+              <div class="member-stat-label">TRÉBOLES</div>
               <div class="member-stat-value"><%= member.rewardPoints %></div>
             </div>
 
             <div class="member-stat">
-              <div class="member-stat-label"><%= t('member.tier') %></div>
-              <div class="member-stat-value tier-<%= member.tier.toLowerCase() %>"><%= t('tiers.' + member.tier.toLowerCase()) %></div>
+              <div class="member-stat-label">NIVEL ACTUAL</div>
+              <div class="member-stat-value tier-<%= member.tier.toLowerCase() %>">
+                <%= t('tiers.' + (member.tier ? member.tier.toLowerCase() : 'basic')) %>
+              </div>
             </div>
           </div>
 
           <%- include('partials/tier-progress', {member: member, locale: locale}) %>
           
-          <!-- Sección de acciones destacada -->
           <div class="action-section">
-            <h4><%= t('home.whatToDo') %></h4>
+            <h4>¿Qué quieres hacer hoy?</h4>
             <div class="row">
               <div class="col-md-6 mb-3">
                 <a href="/accrual" class="btn action-btn">
-                  <i class="fas fa-coins"></i> <%= t('navigation.earnPoints') %>
+                  <i class="fas fa-coins"></i> Consigue Tréboles
                 </a>
               </div>
               <div class="col-md-6 mb-3">
                 <a href="/redemption" class="btn action-btn">
-                  <i class="fas fa-gift"></i> <%= t('navigation.redeemPoints') %>
+                  <i class="fas fa-gift"></i> Canjear Tréboles
                 </a>
               </div>
             </div>
@@ -55,28 +56,6 @@
     </div>
   </div>
 <% } else { %>
-  <div class="row mt-4">
-    <div class="col-md-8 offset-md-2">
-      <div class="card">
-        <div class="card-body text-center">
-          <h2 class="mb-4"><%= brand.messages.welcome %></h2>
-          <p class="lead mb-4"><%= t('home.joinDescription') %></p>
-          <a href="/register" class="btn btn-primary btn-lg mb-3"><%= t('navigation.register') %></a>
-          <div class="row mt-4">
-            <% brand.messages.features.forEach(feature => { %>
-              <div class="col-md-4 text-center">
-                <div class="card-body">
-                  <i class="fas fa-<%= feature.title === 'Gana recompensas' ? 'gift' : feature.title === 'Consigue logros' ? 'trophy' : 'level-up-alt' %> fa-3x mb-3"></i>
-                  <h4><%= feature.title %></h4>
-                  <p><%= feature.description %></p>
-                </div>
-              </div>
-            <% }); %>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-<% } %>
+  <% } %>
 
 <%- include('partials/footer') %>

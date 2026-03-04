@@ -2,9 +2,9 @@
   "navigation": {
     "home": "Inicio",
     "register": "Comenzar",
-    "earnPoints": "Ganar Puntos",
-    "redeemPoints": "Canjear Puntos",
-    "promotions": "Promociones",
+    "earnPoints": "Ganar Tréboles",
+    "redeemPoints": "Canjear Tréboles",
+    "promotions": "Mis Retos",
     "leaderboard": "Ranking"
   },
   "common": {
@@ -14,173 +14,80 @@
     "continue": "Continuar",
     "back": "Volver",
     "close": "Cerrar",
-    "edit": "Editar",
-    "delete": "Eliminar",
-    "search": "Buscar",
     "loading": "Cargando...",
     "error": "Error",
-    "success": "Éxito",
-    "warning": "Advertencia",
-    "info": "Información",
-    "yes": "Sí",
-    "no": "No",
-    "select": "Seleccionar",
-    "language": "Idioma",
-    "available": "disponibles"
+    "success": "Éxito"
   },
   "member": {
     "name": "Usuario",
     "email": "Email",
     "balance": "Saldo",
-    "levelPoints": "Caixapoints",
-    "rewardPoints": "Cashback",
+    "levelPoints": "Puntos Nivel",
+    "rewardPoints": "Tréboles",
     "tier": "Nivel",
-    "pointsToNext": "Caixapoints para",
-    "welcome": "Bienvenido"
+    "pointsToNext": "Puntos para",
+    "welcome": "Bienvenido a Mapfre Te Cuidamos"
   },
   "pages": {
     "home": {
-      "title": "Inicio",
-      "memberSummary": "Resumen del Miembro"
+      "title": "Área Cliente",
+      "memberSummary": "Tu ahorro en Tréboles"
     },
     "register": {
-      "title": "Registro",
+      "title": "Alta en Mapfre Te Cuidamos",
       "form": {
         "name": "Nombre completo",
         "email": "Correo electrónico",
-        "phone": "Teléfono",
-        "submit": "Registrarse",
-        "interests": "Intereses",
-        "demoNote": "Esta es una demo.",
-        "demoDescription": "Los datos se almacenan temporalmente y se borrarán tras la finalización de la misma.",
+        "submit": "Darse de alta",
+        "interests": "Mis Seguros",
+        "demoNote": "Demo Mapfre.",
+        "demoDescription": "Sincronización en tiempo real con Salesforce Loyalty Management.",
         "welcomeBonus": "REGALO DE BIENVENIDA"
       }
     },
     "accrual": {
-      "title": "Ganar Puntos",
-      "description": "Acumula puntos con operaciones digitales",
-      "breadcrumb": "Ganar Puntos",
+      "title": "Ganar Tréboles",
+      "description": "Protege lo que más quieres y acumula Tréboles",
       "tabs": {
-        "purchases": "Operaciones",
-        "activities": "Actividades"
-      },
-      "product": {
-        "price": "Precio",
-        "points": "puntos",
-        "buy": "Realizar",
-        "insufficientBalance": "Saldo insuficiente",
-        "performActivity": "Completar actividad"
-      },
-      "notification": {
-        "success": "¡Genial!",
-        "pointsEarned": "puntos ganados"
+        "purchases": "Seguros",
+        "activities": "Prevención"
       }
     },
     "redemption": {
-      "title": "Canjear Puntos",
-      "description": "Canjea tu Cashback por recompensas exclusivas",
-      "breadcrumb": "Canjear Puntos",
+      "title": "Canjear Tréboles",
+      "description": "Usa tus Tréboles para descontar en tus próximos recibos",
       "reward": {
-        "cost": "Costo",
-        "points": "puntos",
-        "redeem": "Canjear",
-        "insufficientPoints": "Puntos insuficientes"
-      },
-      "notification": {
-        "success": "¡Perfecto!",
-        "pointsRedeemed": "puntos canjeados"
+        "cost": "Precio",
+        "points": "tréboles",
+        "redeem": "Canjear"
       }
-    },
-    "promotions": {
-      "title": "Promociones Activas",
-      "subtitle": "Descubre tus promociones acumulativas y sigue tu progreso en cada una",
-      "breadcrumb": "Promociones"
-    },
-    "leaderboard": {
-      "title": "Leaderboard",
-      "description": "Ranking de los mejores miembros",
-      "breadcrumb": "Leaderboard",
-      "position": "Posición",
-      "member": "Miembro",
-      "points": "Puntos",
-      "tier": "Nivel",
-      "you": "Tú",
-      "categories": {
-        "level": "Por Puntos de Nivel",
-        "rewards": "Por Puntos de Rewards"
-      }
-    },
-    "error": {
-      "title": "Error",
-      "notFound": "Página no encontrada",
-      "internalError": "Error interno del servidor",
-      "goHome": "Volver al Inicio"
     }
   },
-  "forms": {
-    "required": "Campo requerido",
-    "invalidEmail": "Email no válido",
-    "invalidPhone": "Teléfono no válido",
-    "passwordMismatch": "Las contraseñas no coinciden"
-  },
-  "messages": {
-    "memberRegistered": "Miembro registrado exitosamente",
-    "pointsEarned": "Puntos ganados exitosamente",
-    "pointsRedeemed": "Puntos canjeados exitosamente",
-    "achievementUnlocked": "¡Logro desbloqueado!",
-    "sessionExpired": "Sesión expirada",
-    "unauthorized": "No autorizado",
-    "pageNotFound": "Página no encontrada",
-    "internalError": "Error interno del servidor",
-    "authRequired": "Debes registrarte para acceder a esta función",
-    "sessionExpiredAuth": "Tu sesión ha expirado. Por favor, regístrate nuevamente",
-    "productNotFound": "Producto no encontrado",
-    "rewardNotFound": "Recompensa no encontrada",
-    "purchaseSuccess": "Compra exitosa",
-    "activitySuccess": "Actividad completada exitosamente",
-    "redemptionSuccess": "Canje exitoso",
-    "error": "Error",
-    "activityNotFound": "Actividad no encontrada"
-  },
   "tiers": {
-    "bronze": "Bronce",
+    "plata": "Plata",
+    "oro": "Oro",
+    "platino": "Platino",
+    "diamante": "Diamante",
     "silver": "Plata",
     "gold": "Oro",
     "platinum": "Platino",
-    "basic": "Bronce",
-    "plus": "Plata",
-    "premium": "Oro",
-    "elite": "Platino"
-  },
-  "footer": {
-    "deleteAccount": "Eliminar mi cuenta y reiniciar demo",
-    "confirmDelete": "¿Seguro que deseas eliminar tu cuenta y reiniciar la demo? Esta acción no se puede deshacer."
-  },
-  "units": {
-    "currency": "€",
-    "points": "puntos"
+    "diamond": "Diamante",
+    "basic": "Básico",
+    "bronze": "Básico"
   },
   "home": {
-    "whatToDo": "¿Qué quieres hacer hoy?",
+    "whatToDo": "¿Cómo quieres ahorrar hoy?",
     "pathToLevel": "Tu progreso hacia",
     "youAreHere": "¡ESTÁS AQUÍ!",
-    "recentTransactions": "Actividad Reciente",
-    "noTransactions": "Aún no tienes actividad. ¡Empieza a acumular puntos!",
-    "joinDescription": "Únete a CaixaBank Experience, la banca 100% digital que premia cada operación. Acumula puntos, desbloquea beneficios exclusivos y evoluciona tu nivel con cada acción digital.",
+    "recentTransactions": "Últimos movimientos",
+    "noTransactions": "Aún no tienes movimientos de Tréboles.",
+    "joinDescription": "Bienvenido a Mapfre Te Cuidamos. Acumula Tréboles con cada seguro contratado y úsalos para pagar menos en tus renovaciones.",
     "transactionColumns": {
       "date": "Fecha",
       "type": "Tipo",
-      "description": "Descripción",
-      "levelPoints": "Caixapoints",
-      "rewardPoints": "Cashback"
-    }
-  },
-  "transactions": {
-    "types": {
-      "Accrual": "Acumulación",
-      "Redemption": "Canje",
-      "Purchase": "Compra",
-      "System": "Sistema"
+      "description": "Concepto",
+      "levelPoints": "Puntos Nivel",
+      "rewardPoints": "Tréboles"
     }
   }
 }
