@@ -2,40 +2,28 @@
 
 <nav aria-label="breadcrumb">
   <ol class="breadcrumb">
-    <li class="breadcrumb-item"><a href="/"><%= t('navigation.home') %></a></li>
-    <li class="breadcrumb-item active"><%= t('pages.accrual.breadcrumb') %></li>
+    <li class="breadcrumb-item"><a href="/">Inicio</a></li>
+    <li class="breadcrumb-item active">Ganar Tréboles</li>
   </ol>
 </nav>
 
 <div class="page-header-space text-center">
-  <h1 class="page-title"><%= t('pages.accrual.title') %></h1>
-  <p class="text-muted"><%= t('pages.accrual.description') %></p>
+  <h1 class="page-title">Gana Tréboles</h1>
+  <p class="text-muted">Protege lo que más quieres y acumula Tréboles para tus próximos pagos.</p>
 </div>
-
-<% if (typeof message !== 'undefined' && message) { %>
-    <div class="notification show">
-      <div class="notification-title"><%= t('pages.accrual.notification.success') %></div>
-      <div class="notification-body"><%= message %></div>
-      <% if (typeof pointsEarned !== 'undefined' && pointsEarned) { %>
-          <div class="notification-points">+<%= pointsEarned %> <%= t('pages.accrual.notification.pointsEarned') %></div>
-      <% } %>
-    </div>
-<% } %>
 
 <div class="member-summary">
   <div class="member-stat">
     <div class="member-stat-label">PUNTOS NIVEL</div>
     <div class="member-stat-value"><%= member.levelPoints %></div>
   </div>
-
   <div class="member-stat">
     <div class="member-stat-label">TRÉBOLES</div>
     <div class="member-stat-value"><%= member.rewardPoints %></div>
   </div>
-
   <div class="member-stat">
     <div class="member-stat-label">NIVEL ACTUAL</div>
-    <div class="member-stat-value tier-<%= member.tier.toLowerCase() %>">
+    <div class="member-stat-value" style="color: #d81e05; font-weight: bold;">
         <%= t('tiers.' + (member.tier ? member.tier.toLowerCase() : 'bronze')) %>
     </div>
   </div>
@@ -43,26 +31,29 @@
 
 <%- include('partials/tier-progress', {member: member, locale: locale}) %>
 
-<div class="tabs">
-  <button class="tab active" data-target="purchases-content">OPERACIONES DISPONIBLES</button>
+<div class="tabs mt-4">
+  <button class="tab active">OPERACIONES DISPONIBLES</button>
 </div>
 
 <div id="purchases-content" class="tab-content" style="display: block;">
   <div class="row mt-4">
-    <% if (typeof accrual !== 'undefined') { %>
-      <% accrual.forEach(item => { %>
+    <% 
+      // Lógica de Triple Seguridad: intenta leer de ambas variables posibles
+      let itemsMostrar = [];
+      if (typeof accrual !== 'undefined' && accrual) { itemsMostrar = accrual; }
+      else if (typeof products !== 'undefined' && products) { itemsMostrar = products; }
+    %>
+
+    <% if (itemsMostrar.length > 0) { %>
+      <% itemsMostrar.forEach(item => { %>
         <div class="col-md-4 mb-4">
           <div class="card h-100 shadow-sm border-0 animate-in">
-            <% 
-              // Intentar cargar imagen local, si no, poner un color de fondo corporativo
-              const imagePath = item.image; 
-            %>
-            <div class="product-image" style="height: 180px; background-image: url('<%= imagePath %>'); background-size: cover; background-position: center; border-radius: 8px 8px 0 0; background-color: #f8f9fa;">
+            <div style="height: 180px; background-image: url('<%= item.image %>'), url('https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=500'); background-size: cover; background-position: center; border-radius: 8px 8px 0 0; background-color: #f4f4f4;">
             </div>
             
             <div class="card-body d-flex flex-column text-center">
               <h5 class="card-title" style="color: #d81e05; font-weight: bold;">
-                  <%= item.title %>
+                  <%= item.title || item.name %>
               </h5>
               <p class="card-text" style="font-size: 0.9rem; color: #666; flex-grow: 1;">
                   <%= item.description %>
@@ -72,8 +63,8 @@
                       +<%= item.points %> TRÉBOLES
                   </p>
                   <form method="POST" action="/accrual/purchase/<%= item.id %>">
-                    <button type="submit" class="btn btn-danger btn-block" style="background-color: #d81e05; border: none; font-weight: bold;">
-                      CONTRATAR
+                    <button type="submit" class="btn btn-danger btn-block" style="background-color: #d81e05; border: none; font-weight: bold; text-transform: uppercase;">
+                      Contratar
                     </button>
                   </form>
               </div>
@@ -81,6 +72,12 @@
           </div>
         </div>
       <% }) %>
+    <% } else { %>
+      <div class="col-12 text-center py-5">
+        <i class="fas fa-box-open fa-3x mb-3 text-muted"></i>
+        <p class="lead">Cargando catálogo de Mapfre...</p>
+        <small>Si no aparecen las tarjetas, verifica que el archivo config/catalog.js esté guardado.</small>
+      </div>
     <% } %>
   </div>
 </div>
