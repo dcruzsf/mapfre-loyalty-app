@@ -3,40 +3,42 @@
 <div class="container mt-5">
   <div class="row text-center mb-5">
     <div class="col-12">
-      <h1 class="display-4" style="color: #d81e05; font-weight: 800; text-transform: uppercase;">Club MAPFRE</h1>
-      <p class="lead text-muted">Tu confianza siempre tiene recompensa</p>
+      <h1 class="display-4" style="color: var(--primary-color); font-weight: 800; text-transform: uppercase;">Club MAPFRE</h1>
+      <p class="lead text-muted">Bienvenido al programa que premia tu confianza</p>
     </div>
   </div>
 
   <% 
-    // Fallback de seguridad
     let user = (typeof member !== 'undefined' && member) ? member : { name: 'Socio', levelPoints: 0, rewardPoints: 0, tier: 'plata' };
     
-    // Mapeo manual para evitar tiers.plata
-    const tiersMap = { 'basic': 'Plata', 'bronze': 'Plata', 'plata': 'Plata', 'silver': 'Oro', 'oro': 'Oro', 'gold': 'Platino', 'platino': 'Platino' };
-    let currentTier = tiersMap[(user.tier || 'plata').toLowerCase().replace('tiers.', '')] || 'Plata';
+    const getTierLabel = (t) => {
+      if (!t) return 'Plata';
+      const clean = t.toLowerCase().replace('tiers.', '').trim();
+      const tiersMap = { 'basic': 'Plata', 'bronze': 'Plata', 'plata': 'Plata', 'silver': 'Oro', 'oro': 'Oro', 'gold': 'Platino', 'platino': 'Platino' };
+      return tiersMap[clean] || 'Plata';
+    };
   %>
 
   <div class="row justify-content-center">
     <div class="col-md-10">
-      <div class="card shadow-lg border-0" style="border-radius: 20px; background: linear-gradient(135deg, #d81e05 0%, #a31604 100%); color: white;">
+      <div class="card shadow-lg border-0" style="border-radius: 20px; background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%); color: white;">
         <div class="card-body p-5">
           <h3 class="mb-4" style="font-weight: 700;">Hola, <%= user.name %></h3>
           
           <div class="row text-center align-items-center">
             <div class="col-md-4 border-right border-white-50">
-              <small style="text-transform: uppercase; font-weight: 700; opacity: 0.8;">Puntos Nivel</small>
+              <small style="text-transform: uppercase; font-weight: 700; opacity: 0.8;"><%= t('member.levelPoints') %></small>
               <h2 class="display-4 mb-0" style="font-weight: 800;"><%= user.levelPoints %></h2>
             </div>
-            
             <div class="col-md-4 border-right border-white-50">
-              <small style="text-transform: uppercase; font-weight: 700; opacity: 0.8;">Tréboles</small>
+              <small style="text-transform: uppercase; font-weight: 700; opacity: 0.8;"><%= t('member.rewardPoints') %></small>
               <h2 class="display-3 mb-0" style="font-weight: 900;"><%= user.rewardPoints %></h2>
             </div>
-            
             <div class="col-md-4">
-              <small style="text-transform: uppercase; font-weight: 700; opacity: 0.8;">Categoría</small>
-              <h2 class="display-4 mb-0" style="font-weight: 800; text-transform: uppercase;"><%= currentTier %></h2>
+              <small style="text-transform: uppercase; font-weight: 700; opacity: 0.8;"><%= t('member.tier') %></small>
+              <h2 class="display-4 mb-0" style="font-weight: 800; text-transform: uppercase;">
+                <%= getTierLabel(user.tier) %>
+              </h2>
             </div>
           </div>
         </div>
@@ -44,13 +46,13 @@
 
       <div class="row mt-5 text-center">
         <div class="col-md-6 mb-3">
-          <a href="/accrual" class="btn btn-danger btn-lg btn-block shadow-sm py-3" style="background-color: #d81e05; border: none; border-radius: 50px; font-weight: 800; color: white; display: block; text-decoration: none;">
-            GANAR TRÉBOLES
+          <a href="/accrual" class="btn btn-danger btn-lg btn-block shadow-sm py-3" style="background-color: var(--primary-color); border: none; border-radius: 50px; font-weight: 800; color: white;">
+            <%= t('navigation.earnPoints') %>
           </a>
         </div>
         <div class="col-md-6 mb-3">
-          <a href="/redemption" class="btn btn-dark btn-lg btn-block shadow-sm py-3" style="background-color: #333; border: none; border-radius: 50px; font-weight: 800; color: white; display: block; text-decoration: none;">
-            CANJEAR TRÉBOLES
+          <a href="/redemption" class="btn btn-dark btn-lg btn-block shadow-sm py-3" style="background-color: var(--secondary-color); border: none; border-radius: 50px; font-weight: 800; color: white;">
+            <%= t('navigation.redeemPoints') %>
           </a>
         </div>
       </div>
