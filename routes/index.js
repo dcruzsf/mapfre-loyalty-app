@@ -4,14 +4,12 @@ const Member = require('../models/member');
 const { getCurrentMember } = require('../middleware/auth');
 const salesforceLoyalty = require('../modules/salesforceLoyalty');
 
-// Middleware para asegurar que tenemos al miembro
 router.use(getCurrentMember);
 
 router.get('/', async (req, res) => {
   const member = req.member;
   let recentTransactions = [];
 
-  // Intentar sincronizar con Salesforce si existe el miembro
   if (member && member.salesforceId && process.env.USE_SALESFORCE === 'true') {
     try {
       await salesforceLoyalty.syncMemberPoints(member, member.salesforceId);
@@ -21,7 +19,18 @@ router.get('/', async (req, res) => {
     }
   }
 
-  // OBJETO BRAND DE SEGURIDAD (VITAL para evitar el error de favicon y colores)
+  // --- NUEVA LÓGICA DE TIERS Y PROGRESO ---
+  // Definimos los umbrales (puedes ajustarlos a tu gusto)
+  const tierThresholds = { 'Plata': 500, 'Oro': 1500, 'Platino': 5000 };
+  const nextTierMap = { 'Plata': 'Oro', 'Oro': 'Platino', 'Platino': 'Diamante' };
+  
+  const currentTier = member ? (member.tier || 'Plata') : 'Plata';
+  const currentLevelPoints = member ? (member.levelPoints || 0) : 0;
+  const nextThreshold = tierThresholds[currentTier] || 500;
+  
+  // Calculamos el porcentaje (máximo 100%)
+  const progressPercent = Math.min(Math.round((currentLevelPoints / nextThreshold) * 100), 100);
+
   const safeBrand = {
     fullName: 'Club MAPFRE',
     images: { 
@@ -58,17 +67,21 @@ router.get('/', async (req, res) => {
 
   res.render('index', {
     member: member || null,
-    user: member || null,      // Doble check para el header
-    brand: safeBrand,          // Inyección directa de la marca
+    user: member || null,
+    brand: safeBrand,
     transactions: recentTransactions,
-    t: req.t || ((key) => key), // Si t falla, devolvemos la clave para que no pete
+    // --- VARIABLES DE PROGRESO ENVIADAS A LA VISTA ---
+    nextTier: nextTierMap[currentTier] || 'Máximo',
+    nextThreshold: nextThreshold,
+    progressPercent: progressPercent,
+    // ------------------------------------------------
+    t: req.t || ((key) => key.split('.').pop().toUpperCase()), 
     locale: req.locale || 'es',
     currentPage: 'home',
     message: req.query.message || null
   });
 });
 
-// Arreglo de la ruta reset-account (para que el botón del footer funcione)
 router.post('/reset-account', (req, res) => {
   req.session.destroy(() => res.redirect('/register?message=Demo restablecida'));
 });
