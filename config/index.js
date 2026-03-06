@@ -3,7 +3,7 @@
 <div class="container mt-5">
   <div class="row text-center mb-5">
     <div class="col-12">
-      <h1 class="display-4" style="color: #d81e05; font-weight: 800; text-transform: uppercase;">MAPFRE TE CUIDAMOS</h1>
+      <h1 class="display-4" style="color: #d81e05; font-weight: 800; text-transform: uppercase;">CLUB MAPFRE</h1>
       <p class="lead text-muted">Bienvenido al programa que premia tu confianza</p>
     </div>
   </div>

@@ -1,13 +1,13 @@
 module.exports = {
   // Información básica de la marca - Identidad Mapfre
   name: 'Mapfre Fidelidad',
-  fullName: 'Mapfre Te Cuidamos',
+  fullName: 'Club Mapfre',
   pointsName: 'Tréboles', // El sistema de fidelización de Mapfre se basa en Tréboles
   pointsSymbol: '🍀',
 
   // Mensajes y textos (ADAPTADOS A MAPFRE)
   messages: {
-    welcome: '¡Bienvenido a Mapfre Te Cuidamos!',
+    welcome: '¡Bienvenido al Club Mapfre!',
     welcomeDescription: 'El programa de fidelización diseñado para estar a tu lado y premiar tu confianza.',
     tagline: 'Tu confianza siempre tiene recompensa',
     joinClub: 'ACCEDER AL ÁREA DE CLIENTE',

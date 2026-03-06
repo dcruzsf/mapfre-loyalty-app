@@ -26,7 +26,7 @@
     "rewardPoints": "Tréboles",
     "tier": "Nivel",
     "pointsToNext": "Puntos para",
-    "welcome": "Bienvenido a Mapfre Te Cuidamos"
+    "welcome": "Bienvenido al Club Mapfre"
   },
   "pages": {
     "home": {
@@ -34,7 +34,7 @@
       "memberSummary": "Tu ahorro en Tréboles"
     },
     "register": {
-      "title": "Alta en Mapfre Te Cuidamos",
+      "title": "Alta en Club Mapfre",
       "form": {
         "name": "Nombre completo",
         "email": "Correo electrónico",
@@ -90,7 +90,7 @@
     "youAreHere": "¡ESTÁS AQUÍ!",
     "recentTransactions": "Últimos movimientos",
     "noTransactions": "Aún no tienes movimientos de Tréboles.",
-    "joinDescription": "Bienvenido a Mapfre Te Cuidamos. Acumula Tréboles con cada seguro contratado y úsalos para pagar menos en tus renovaciones.",
+    "joinDescription": "Bienvenido al Club Mapfre. Acumula Tréboles con cada seguro contratado y úsalos para pagar menos en tus renovaciones.",
     "transactionColumns": {
       "date": "Fecha",
       "type": "Tipo",
