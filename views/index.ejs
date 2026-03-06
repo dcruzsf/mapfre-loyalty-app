@@ -9,16 +9,12 @@
   </div>
 
   <% 
-    // Fallback si no hay miembro logueado
+    // Fallback de seguridad
     let user = (typeof member !== 'undefined' && member) ? member : { name: 'Socio', levelPoints: 0, rewardPoints: 0, tier: 'plata' };
     
-    // Mapeo manual de categorías para evitar 'tiers.basic' o similares
-    const getTierLabel = (t) => {
-      if (!t) return 'Plata';
-      const clean = t.toLowerCase().replace('tiers.', '').trim();
-      const tiersMap = { 'basic': 'Plata', 'bronze': 'Plata', 'plata': 'Plata', 'silver': 'Oro', 'oro': 'Oro', 'gold': 'Platino', 'platino': 'Platino' };
-      return tiersMap[clean] || 'Plata';
-    };
+    // Mapeo manual para evitar tiers.plata
+    const tiersMap = { 'basic': 'Plata', 'bronze': 'Plata', 'plata': 'Plata', 'silver': 'Oro', 'oro': 'Oro', 'gold': 'Platino', 'platino': 'Platino' };
+    let currentTier = tiersMap[(user.tier || 'plata').toLowerCase().replace('tiers.', '')] || 'Plata';
   %>
 
   <div class="row justify-content-center">
@@ -29,20 +25,18 @@
           
           <div class="row text-center align-items-center">
             <div class="col-md-4 border-right border-white-50">
-              <small style="text-transform: uppercase; font-weight: 700; opacity: 0.8; letter-spacing: 1px;">Puntos Nivel</small>
+              <small style="text-transform: uppercase; font-weight: 700; opacity: 0.8;">Puntos Nivel</small>
               <h2 class="display-4 mb-0" style="font-weight: 800;"><%= user.levelPoints %></h2>
             </div>
             
             <div class="col-md-4 border-right border-white-50">
-              <small style="text-transform: uppercase; font-weight: 700; opacity: 0.8; letter-spacing: 1px;">Tréboles</small>
+              <small style="text-transform: uppercase; font-weight: 700; opacity: 0.8;">Tréboles</small>
               <h2 class="display-3 mb-0" style="font-weight: 900;"><%= user.rewardPoints %></h2>
             </div>
             
             <div class="col-md-4">
-              <small style="text-transform: uppercase; font-weight: 700; opacity: 0.8; letter-spacing: 1px;">Categoría</small>
-              <h2 class="display-4 mb-0" style="font-weight: 800; text-transform: uppercase;">
-                <%= getTierLabel(user.tier) %>
-              </h2>
+              <small style="text-transform: uppercase; font-weight: 700; opacity: 0.8;">Categoría</small>
+              <h2 class="display-4 mb-0" style="font-weight: 800; text-transform: uppercase;"><%= currentTier %></h2>
             </div>
           </div>
         </div>
@@ -50,12 +44,12 @@
 
       <div class="row mt-5 text-center">
         <div class="col-md-6 mb-3">
-          <a href="/accrual" class="btn btn-danger btn-lg btn-block shadow-sm py-3" style="background-color: #d81e05; border: none; border-radius: 50px; font-weight: 800; text-decoration: none; color: white; display: block;">
+          <a href="/accrual" class="btn btn-danger btn-lg btn-block shadow-sm py-3" style="background-color: #d81e05; border: none; border-radius: 50px; font-weight: 800; color: white; display: block; text-decoration: none;">
             GANAR TRÉBOLES
           </a>
         </div>
         <div class="col-md-6 mb-3">
-          <a href="/redemption" class="btn btn-dark btn-lg btn-block shadow-sm py-3" style="background-color: #333; border: none; border-radius: 50px; font-weight: 800; text-decoration: none; color: white; display: block;">
+          <a href="/redemption" class="btn btn-dark btn-lg btn-block shadow-sm py-3" style="background-color: #333; border: none; border-radius: 50px; font-weight: 800; color: white; display: block; text-decoration: none;">
             CANJEAR TRÉBOLES
           </a>
         </div>
