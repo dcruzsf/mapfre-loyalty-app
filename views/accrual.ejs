@@ -92,7 +92,7 @@
             <div class="mt-auto">
               <h4 style="color: #d81e05; font-weight: 800; margin-bottom: 15px;">+<%= option.points %> <small>Tréboles</small></h4>
               
-              <form action="/transaction" method="POST">
+              <form action="/accrual/transaction" method="POST">
                 <input type="hidden" name="type" value="Accrual">
                 <input type="hidden" name="points" value="<%= option.points %>">
                 <input type="hidden" name="journalType" value="<%= option.journalType %>">

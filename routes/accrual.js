@@ -6,12 +6,17 @@ const { requireAuth } = require('../middleware/auth');
 const i18n = require('../modules/i18n');
 const salesforceLoyalty = require('../modules/salesforceLoyalty');
 
-// IMPORTANTE: Objeto de marca para evitar errores en el header
+// Objeto de marca para evitar errores en el header
 const safeBrand = {
   fullName: 'Club MAPFRE',
-  images: { favicon: '/img/favicon.ico', logo: 'https://upload.wikimedia.org/wikipedia/commons/f/fd/LOGO-MAPFRE.jpg' },
+  images: { 
+    favicon: '/img/favicon.ico', 
+    logo: 'https://upload.wikimedia.org/wikipedia/commons/f/fd/LOGO-MAPFRE.jpg' 
+  },
   colors: {
-    primary: '#d81e05', secondary: '#333333', accent: '#a31604',
+    primary: '#d81e05', 
+    secondary: '#333333', 
+    accent: '#a31604',
     tierColors: { bronze: '#CD7F32', silver: '#C0C0C0', gold: '#FFD700', platinum: '#E5E4E2' }
   }
 };
@@ -40,7 +45,7 @@ router.get('/', async (req, res) => {
 
   res.render('accrual', {
     member,
-    brand: safeBrand, // <--- ESTO EVITA EL ERROR DE FAVICON
+    brand: safeBrand, 
     nextTier: nextTierMap[currentTier] || 'MÁXIMO',
     nextThreshold,
     progressPercent,
@@ -58,16 +63,20 @@ router.get('/', async (req, res) => {
   });
 });
 
-// NUEVA RUTA: Para procesar el formulario de "Registrar Compra" que tienes en el EJS
+/**
+ * IMPORTANTE: Esta ruta procesa el botón "Registrar Compra".
+ * Si en tu EJS el formulario dice action="/transaction", cámbialo 
+ * a action="/accrual/transaction" para que llegue aquí.
+ */
 router.post('/transaction', async (req, res) => {
   const { points, journalType, journalSubType } = req.body;
   const member = req.member;
 
-  if (!member.salesforceId || process.env.USE_SALESFORCE !== 'true') {
-    return res.redirect('/accrual?message=Error: Sin conexión con Salesforce');
-  }
-
   try {
+    if (!member.salesforceId || process.env.USE_SALESFORCE !== 'true') {
+      throw new Error('Sin conexión con Salesforce');
+    }
+
     const activityDate = new Date().toISOString();
     
     // 1. Procesar en Salesforce
@@ -81,15 +90,18 @@ router.post('/transaction', async (req, res) => {
       activityDate
     );
 
-    // 2. Sincronizar puntos actualizados
+    // 2. Sincronizar puntos actualizados inmediatamente
     await salesforceLoyalty.syncMemberPoints(member, member.salesforceId);
     Member.save(member);
 
-    // 3. Redirigir de vuelta con éxito
-    res.redirect(`/accrual?message=Compra registrada: ${journalSubType}&points=${points}`);
+    // 3. Redirigir usando la ruta completa para evitar errores de contexto
+    res.redirect('/accrual?message=' + encodeURIComponent(`¡Éxito! Has sumado ${points} tréboles por ${journalSubType}`) + '&points=' + points);
+
   } catch (error) {
     console.error('❌ Error en transacción:', error.message);
-    res.redirect(`/accrual?message=Error al registrar: ${error.message}`);
+    // IMPORTANTE: Al redirigir en caso de error, el GET de arriba se encargará 
+    // de volver a pasar el objeto 'brand' y 't', evitando el error de undefined.
+    res.redirect('/accrual?message=' + encodeURIComponent('Error: ' + error.message));
   }
 });
 
