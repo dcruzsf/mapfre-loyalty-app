@@ -39,7 +39,7 @@ router.get('/', async (req, res) => {
     member: member || null,
     message: message || null,
     // Podrías añadir aquí variables de marca si tu EJS las requiere
-    brandName: 'Mapfre Te Cuidamos'
+    brandName: 'Club Mapfre'
   });
 });
 
