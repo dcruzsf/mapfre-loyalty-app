@@ -2,8 +2,8 @@
 
 <div class="container">
   <div class="page-header-space text-center mt-5 mb-5">
-    <h1 class="page-title" style="color: #d81e05; font-weight: 800; font-size: 2.5rem;">GANAR TRÉBOLES</h1>
-    <p class="lead text-muted">Protege lo que más quieres y acumula tréboles para tus seguros</p>
+    <h1 class="page-title" style="color: #d81e05; font-weight: 800; font-size: 2.5rem; text-transform: uppercase;">Club MAPFRE</h1>
+    <p class="lead text-muted">Suma tréboles con tus compras diarias y ahorra en tus seguros</p>
   </div>
 
   <div class="row justify-content-center mb-5">
@@ -23,9 +23,9 @@
               </div>
             </div>
             <div class="col-md-4">
-              <small style="text-transform: uppercase; letter-spacing: 2px; font-weight: 600; opacity: 0.8;">Nivel Actual</small>
+              <small style="text-transform: uppercase; letter-spacing: 2px; font-weight: 600; opacity: 0.8;">Categoría</small>
               <h2 class="mb-0" style="font-weight: 700; text-transform: uppercase;">
-                <%= t('tiers.' + member.tier.toLowerCase()) %>
+                <%= member.tier %>
               </h2>
             </div>
           </div>
@@ -36,37 +36,61 @@
 
   <div class="row mt-4">
     <% 
-      // Lógica de seguridad para encontrar los datos
-      let seguros = [];
-      if (typeof accrualOptions !== 'undefined' && accrualOptions.length > 0) { seguros = accrualOptions; }
-      else if (typeof accrual !== 'undefined' && accrual.length > 0) { seguros = accrual; }
-      else if (typeof products !== 'undefined' && products.length > 0) { seguros = products; }
-      
-      // Fallback si el controlador no envía nada
-      if (seguros.length === 0) {
-        seguros = [
-          { id: 'prod_auto', title: 'Seguro de Automóvil', description: 'Protección inteligente que premia tu buena conducción.', points: 800, image: '/img/compra1.png', journalType: 'Accrual', journalSubType: 'Compra con tarjeta' },
-          { id: 'prod_home', title: 'Seguro de Hogar Digital', description: 'Protección completa para tu hogar con gestión desde la App.', points: 500, image: '/img/compra4.png', journalType: 'Accrual', journalSubType: 'Alta Seguro Hogar' },
-          { id: 'prod_itv', title: 'Seguro de Salud Premium', description: 'Acceso a los mejores especialistas y telemedicina 24h.', points: 400, image: '/img/compra5.png', journalType: 'Accrual', journalSubType: 'Alta Seguro Salud' }
-        ];
-      }
+      // Definimos las nuevas acciones comerciales de Club MAPFRE
+      const accionesClub = [
+        { 
+          id: 'eci', 
+          title: 'Compra en El Corte Inglés', 
+          description: 'Obtén tréboles por tus compras en moda, tecnología y hogar en centros asociados.', 
+          points: 15, 
+          image: '/img/compra1.png', 
+          journalType: 'Accrual', 
+          journalSubType: 'Compra en El Corte Inglés' 
+        },
+        { 
+          id: 'amazon', 
+          title: 'Compra en Amazon', 
+          description: 'Tus compras online ahora te ayudan a reducir el coste de tu próxima póliza.', 
+          points: 10, 
+          image: '/img/compra4.png', 
+          journalType: 'Accrual', 
+          journalSubType: 'Compra en Amazon' 
+        },
+        { 
+          id: 'repsol', 
+          title: 'Repostaje en Repsol', 
+          description: 'Suma tréboles en cada repostaje de carburante en la red de estaciones Repsol.', 
+          points: 25, 
+          image: '/img/compra5.png', 
+          journalType: 'Accrual', 
+          journalSubType: 'Repostaje en Repsol' 
+        },
+        { 
+          id: 'tarjeta_mapfre', 
+          title: 'Pago con Tarjeta MAPFRE', 
+          description: 'Bonificación exclusiva por utilizar tu tarjeta de crédito MAPFRE en cualquier establecimiento.', 
+          points: 50, 
+          image: '/img/compra2.png', 
+          journalType: 'Accrual', 
+          journalSubType: 'Pago con Tarjeta Mapfre' 
+        }
+      ];
     %>
 
-    <% seguros.forEach(option => { %>
-      <div class="col-md-4 mb-4">
-        <div class="card h-100 shadow-sm border-0" style="border-radius: 20px; overflow: hidden; transition: all 0.3s ease;">
-          <div style="height: 200px; overflow: hidden; position: relative;">
+    <% accionesClub.forEach(option => { %>
+      <div class="col-md-3 mb-4"> <div class="card h-100 shadow-sm border-0" style="border-radius: 20px; overflow: hidden; transition: all 0.3s ease;">
+          <div style="height: 160px; overflow: hidden; position: relative;">
              <img src="<%= option.image %>" class="card-img-top" alt="<%= option.title %>" 
-                  onerror="this.src='https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=600'"
+                  onerror="this.src='https://images.unsplash.com/photo-1556742049-13e7323fbb5a?w=400'"
                   style="width: 100%; height: 100%; object-fit: cover;">
           </div>
 
-          <div class="card-body d-flex flex-column text-center p-4">
-            <h5 class="card-title font-weight-bold" style="color: #333; font-size: 1.25rem;"><%= option.title || option.name %></h5>
-            <p class="card-text text-muted mb-4" style="font-size: 0.95rem; line-height: 1.5;"><%= option.description %></p>
+          <div class="card-body d-flex flex-column text-center p-3">
+            <h5 class="card-title font-weight-bold" style="color: #333; font-size: 1.1rem; min-height: 2.5rem;"><%= option.title %></h5>
+            <p class="card-text text-muted mb-3" style="font-size: 0.85rem; line-height: 1.4;"><%= option.description %></p>
             
             <div class="mt-auto">
-              <h3 style="color: #d81e05; font-weight: 800; margin-bottom: 20px;">+<%= option.points %> <small>Tréboles</small></h3>
+              <h4 style="color: #d81e05; font-weight: 800; margin-bottom: 15px;">+<%= option.points %> <small>Tréboles</small></h4>
               
               <form action="/transaction" method="POST">
                 <input type="hidden" name="type" value="Accrual">
@@ -74,8 +98,8 @@
                 <input type="hidden" name="journalType" value="<%= option.journalType %>">
                 <input type="hidden" name="journalSubType" value="<%= option.journalSubType %>">
                 
-                <button type="submit" class="btn btn-danger btn-block shadow-sm" style="background: #d81e05; border: none; color: #fff; border-radius: 50px; padding: 15px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;">
-                   Contratar ahora
+                <button type="submit" class="btn btn-danger btn-block shadow-sm" style="background: #d81e05; border: none; color: #fff; border-radius: 50px; padding: 10px; font-weight: 700; font-size: 0.8rem; letter-spacing: 1px; text-transform: uppercase;">
+                   Registrar Compra
                 </button>
               </form>
             </div>

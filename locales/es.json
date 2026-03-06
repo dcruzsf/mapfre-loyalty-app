@@ -1,105 +1,51 @@
 {
   "navigation": {
     "home": "Inicio",
-    "register": "Comenzar",
-    "earnPoints": "Ganar Tréboles",
-    "redeemPoints": "Canjear Tréboles",
-    "promotions": "Mis Retos",
-    "leaderboard": "Ranking"
-  },
-  "common": {
-    "save": "Guardar",
-    "cancel": "Cancelar",
-    "submit": "Enviar",
-    "continue": "Continuar",
-    "back": "Volver",
-    "close": "Cerrar",
-    "loading": "Cargando...",
-    "error": "Error",
-    "success": "Éxito"
+    "accrual": "Sumar Tréboles",
+    "redemption": "Canjear Tréboles"
   },
   "member": {
-    "name": "Usuario",
-    "email": "Email",
-    "balance": "Saldo",
-    "levelPoints": "Puntos Nivel",
     "rewardPoints": "Tréboles",
-    "tier": "Nivel",
-    "pointsToNext": "Puntos para",
-    "welcome": "Bienvenido al Club Mapfre"
+    "levelPoints": "Puntos Nivel",
+    "tier": "Categoría",
+    "id": "Nº Socio"
+  },
+  "tiers": {
+    "bronze": "Plata",
+    "silver": "Oro",
+    "gold": "Platino"
   },
   "pages": {
     "home": {
-      "title": "Área Cliente",
-      "memberSummary": "Tu ahorro en Tréboles"
-    },
-    "register": {
-      "title": "Alta en Club Mapfre",
-      "form": {
-        "name": "Nombre completo",
-        "email": "Correo electrónico",
-        "submit": "Darse de alta",
-        "interests": "Mis Seguros",
-        "demoNote": "Demo Mapfre.",
-        "demoDescription": "Sincronización en tiempo real con Salesforce Loyalty Management.",
-        "welcomeBonus": "REGALO DE BIENVENIDA"
-      }
+      "title": "Bienvenido a Club MAPFRE",
+      "subtitle": "Tu fidelidad siempre tiene recompensa"
     },
     "accrual": {
-      "title": "Ganar Tréboles",
-      "description": "Protege lo que más quieres y acumula Tréboles",
       "breadcrumb": "Ganar Tréboles",
-      "tabs": {
-        "purchases": "Seguros",
-        "activities": "Prevención"
-      },
-      "product": {
-        "buy": "Contratar",
-        "points": "Tréboles",
-        "insufficientBalance": "Saldo insuficiente",
-        "performActivity": "Realizar Actividad"
+      "title": "Club MAPFRE",
+      "description": "Suma tréboles con tus compras diarias y ahorra en tus seguros",
+      "notification": {
+        "success": "¡Operación registrada con éxito!",
+        "pointsEarned": "Tréboles sumados a tu cuenta de socio"
+      }
+    },
+    "register": {
+      "title": "Únete a Club MAPFRE",
+      "form": {
+        "submit": "Darse de alta en el Club"
       }
     },
     "redemption": {
-      "title": "Canjear Tréboles",
-      "description": "Usa tus Tréboles para descontar en tus próximos recibos",
+      "title": "Catálogo de Beneficios",
       "breadcrumb": "Canjear Tréboles",
-      "reward": {
-        "cost": "Precio",
-        "points": "Tréboles",
-        "redeem": "Canjear",
-        "insufficientPoints": "Tréboles insuficientes"
+      "notification": {
+        "success": "¡Canje realizado!",
+        "pointsRedeemed": "Tréboles utilizados"
       }
     }
   },
-  "tiers": {
-    "plata": "Plata",
-    "oro": "Oro",
-    "platino": "Platino",
-    "diamante": "Diamante",
-    "silver": "Plata",
-    "gold": "Oro",
-    "platinum": "Platino",
-    "diamond": "Diamante",
-    "basic": "Básico",
-    "bronze": "Básico"
-  },
-  "home": {
-    "whatToDo": "¿Cómo quieres ahorrar hoy?",
-    "pathToLevel": "Tu progreso hacia",
-    "youAreHere": "¡ESTÁS AQUÍ!",
-    "recentTransactions": "Últimos movimientos",
-    "noTransactions": "Aún no tienes movimientos de Tréboles.",
-    "joinDescription": "Bienvenido al Club Mapfre. Acumula Tréboles con cada seguro contratado y úsalos para pagar menos en tus renovaciones.",
-    "transactionColumns": {
-      "date": "Fecha",
-      "type": "Tipo",
-      "description": "Concepto",
-      "levelPoints": "Puntos Nivel",
-      "rewardPoints": "Tréboles"
-    }
-  },
-  "footer": {
-    "deleteAccount": "Reiniciar demo y borrar cuenta"
+  "common": {
+    "available": "disponibles",
+    "back": "Volver"
   }
 }
