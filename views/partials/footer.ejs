@@ -1,17 +1,19 @@
-</div><!-- /container -->
-  
-<!-- Footer con panel de control -->
-<footer class="app-footer">
-  <div class="container">
+</div><footer class="app-footer" style="background-color: #191919; color: white; padding: 40px 0; border-top: 3px solid #D31411; margin-top: 50px;">
+  <div class="container text-center">
     <div class="footer-content">
-      <div class="copyright">
-        &copy; <%= brand.copyright %>
+      <div class="copyright mb-3" style="opacity: 0.7; font-size: 14px;">
+        &copy; <%= new Date().getFullYear() %> MAPFRE S.A. Todos los derechos reservados.
       </div>
+      
       <div class="demo-panel">
-        <% if (typeof session !== 'undefined' && session.memberId) { %>
-          <!-- Control para eliminar cuenta individual (solo si hay sesión activa) -->
-          <form method="POST" action="/reset-account" onsubmit="return confirm('<%= t('footer.confirmDelete') %>')" style="display: inline-block;">
-            <button type="submit" class="btn btn-sm btn-warning"><%= t('footer.deleteAccount') %></button>
+        <% 
+          // Verificamos si hay sesión para mostrar el botón de reset
+          if (typeof member !== 'undefined' && member) { 
+        %>
+          <form method="POST" action="/reset-account" onsubmit="return confirm('¿Estás seguro de que quieres borrar todos los datos de esta demo?')">
+            <button type="submit" class="btn btn-sm btn-outline-danger" style="border-radius: 50px; font-weight: 700; text-transform: uppercase; font-size: 11px; padding: 8px 20px; letter-spacing: 1px;">
+               BORRAR CUENTA Y REINICIAR DEMO
+            </button>
           </form>
         <% } %>
       </div>
@@ -19,29 +21,20 @@
   </div>
 </footer>
 
-<!-- jQuery, Popper.js, and Bootstrap JS -->
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-<!-- Custom JS -->
 <script src="/js/main.js"></script>
 
-<!-- Script para mostrar información de debug en desarrollo -->
-<% if (process.env.NODE_ENV === 'development') { %>
 <script>
-  console.log('=== <%= brand.name.toUpperCase() %> LOYALTY CLUB DEBUG INFO ===');
+  console.log('=== CLUB MAPFRE DEBUG INFO ===');
   <% if (typeof member !== 'undefined' && member) { %>
-    console.log('Usuario actual:', '<%= member.name %> (<%= member.email %>)');
-    console.log('ID de sesión:', '<%= member.id %>');
-    console.log('Puntos de nivel:', '<%= member.levelPoints %>');
-    console.log('Puntos de rewards:', '<%= member.rewardPoints %>');
-    console.log('Tier:', '<%= member.tier %>');
+    console.log('Socio:', '<%= member.name %>');
+    console.log('Tréboles:', '<%= member.rewardPoints %>');
+    console.log('Nivel:', '<%= member.tier %>');
   <% } else { %>
-    console.log('No hay usuario autenticado');
+    console.log('Estado: Invitado');
   <% } %>
-  console.log('Total de usuarios registrados:', 'No disponible en cliente');
-  console.log('=====================================');
 </script>
-<% } %>
 </body>
 </html>
