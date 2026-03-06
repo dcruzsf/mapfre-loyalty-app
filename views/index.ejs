@@ -4,20 +4,19 @@
   <div class="row text-center mb-5">
     <div class="col-12">
       <h1 class="display-4" style="color: #d81e05; font-weight: 800; text-transform: uppercase;">Club MAPFRE</h1>
-      <p class="lead text-muted">Bienvenido al programa que premia tu confianza</p>
+      <p class="lead text-muted">Tu confianza siempre tiene recompensa</p>
     </div>
   </div>
 
   <% 
-    // Lógica de seguridad para la Demo
-    let user = (typeof member !== 'undefined' && member) ? member : { name: 'Elena Gomez', levelPoints: 25, rewardPoints: 25, tier: 'plata' };
+    let user = (typeof member !== 'undefined' && member) ? member : { name: 'Elena Gomez', levelPoints: 0, rewardPoints: 0, tier: 'plata' };
     
-    // Función para traducir el Tier de forma segura
-    const getTierDisplayName = (tierValue) => {
-        if (!tierValue) return 'Plata';
-        const clean = tierValue.toLowerCase().replace('tiers.', '').trim();
-        const map = { 'basic': 'Plata', 'bronze': 'Plata', 'plata': 'Plata', 'silver': 'Oro', 'oro': 'Oro', 'gold': 'Platino', 'platino': 'Platino' };
-        return map[clean] || clean.charAt(0).toUpperCase() + clean.slice(1);
+    // Función de seguridad para el nombre del nivel
+    const getTierName = (tVal) => {
+      if(!tVal) return 'Plata';
+      const clean = tVal.toLowerCase().replace('tiers.', '').trim();
+      const map = { 'basic': 'Plata', 'bronze': 'Plata', 'plata': 'Plata', 'silver': 'Oro', 'oro': 'Oro', 'gold': 'Platino', 'platino': 'Platino' };
+      return map[clean] || 'Plata';
     };
   %>
 
@@ -29,25 +28,19 @@
           
           <div class="row text-center align-items-center">
             <div class="col-md-4 border-right border-white-50">
-              <small style="text-transform: uppercase; letter-spacing: 1px; opacity: 0.8; font-weight: 700;">
-                <%= t('member.levelPoints') %>
-              </small>
+              <small style="text-transform: uppercase; font-weight: 700; opacity: 0.8;">PUNTOS NIVEL</small>
               <h2 class="display-4 mb-0" style="font-weight: 800;"><%= user.levelPoints %></h2>
             </div>
             
             <div class="col-md-4 border-right border-white-50">
-              <small style="text-transform: uppercase; letter-spacing: 1px; opacity: 0.8; font-weight: 700;">
-                <%= t('member.rewardPoints') %>
-              </small>
+              <small style="text-transform: uppercase; font-weight: 700; opacity: 0.8;">TRÉBOLES</small>
               <h2 class="display-3 mb-0" style="font-weight: 900;"><%= user.rewardPoints %></h2>
             </div>
             
             <div class="col-md-4">
-              <small style="text-transform: uppercase; letter-spacing: 1px; opacity: 0.8; font-weight: 700;">
-                <%= t('member.tier') %>
-              </small>
+              <small style="text-transform: uppercase; font-weight: 700; opacity: 0.8;">NIVEL ACTUAL</small>
               <h2 class="display-4 mb-0" style="font-weight: 800; text-transform: uppercase;">
-                <%= getTierDisplayName(user.tier) %>
+                <%= getTierName(user.tier) %>
               </h2>
             </div>
           </div>
@@ -56,13 +49,13 @@
 
       <div class="row mt-5 text-center">
         <div class="col-md-6 mb-3">
-          <a href="/accrual" class="btn btn-danger btn-lg btn-block shadow-sm py-3" style="background-color: #d81e05; border: none; border-radius: 50px; font-weight: 800; color: white; text-decoration: none; display: block;">
-            <%= t('navigation.earnPoints') %>
+          <a href="/accrual" class="btn btn-danger btn-lg btn-block shadow-sm py-3" style="background-color: #d81e05; border: none; border-radius: 50px; font-weight: 800;">
+            GANAR TRÉBOLES
           </a>
         </div>
         <div class="col-md-6 mb-3">
-          <a href="/redemption" class="btn btn-dark btn-lg btn-block shadow-sm py-3" style="background-color: #333; border: none; border-radius: 50px; font-weight: 800; color: white; text-decoration: none; display: block;">
-            <%= t('navigation.redeemPoints') %>
+          <a href="/redemption" class="btn btn-dark btn-lg btn-block shadow-sm py-3" style="background-color: #333; border: none; border-radius: 50px; font-weight: 800;">
+            CANJEAR TRÉBOLES
           </a>
         </div>
       </div>
