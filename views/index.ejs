@@ -9,14 +9,15 @@
   </div>
 
   <% 
-    let user = (typeof member !== 'undefined' && member) ? member : { name: 'Elena Gomez', levelPoints: 0, rewardPoints: 0, tier: 'plata' };
+    // Fallback si no hay miembro logueado
+    let user = (typeof member !== 'undefined' && member) ? member : { name: 'Socio', levelPoints: 0, rewardPoints: 0, tier: 'plata' };
     
-    // Función de seguridad para el nombre del nivel
-    const getTierName = (tVal) => {
-      if(!tVal) return 'Plata';
-      const clean = tVal.toLowerCase().replace('tiers.', '').trim();
-      const map = { 'basic': 'Plata', 'bronze': 'Plata', 'plata': 'Plata', 'silver': 'Oro', 'oro': 'Oro', 'gold': 'Platino', 'platino': 'Platino' };
-      return map[clean] || 'Plata';
+    // Mapeo manual de categorías para evitar 'tiers.basic' o similares
+    const getTierLabel = (t) => {
+      if (!t) return 'Plata';
+      const clean = t.toLowerCase().replace('tiers.', '').trim();
+      const tiersMap = { 'basic': 'Plata', 'bronze': 'Plata', 'plata': 'Plata', 'silver': 'Oro', 'oro': 'Oro', 'gold': 'Platino', 'platino': 'Platino' };
+      return tiersMap[clean] || 'Plata';
     };
   %>
 
@@ -24,23 +25,23 @@
     <div class="col-md-10">
       <div class="card shadow-lg border-0" style="border-radius: 20px; background: linear-gradient(135deg, #d81e05 0%, #a31604 100%); color: white;">
         <div class="card-body p-5">
-          <h3 class="mb-4" style="font-weight: 600;">Hola, <%= user.name %></h3>
+          <h3 class="mb-4" style="font-weight: 700;">Hola, <%= user.name %></h3>
           
           <div class="row text-center align-items-center">
             <div class="col-md-4 border-right border-white-50">
-              <small style="text-transform: uppercase; font-weight: 700; opacity: 0.8;">PUNTOS NIVEL</small>
+              <small style="text-transform: uppercase; font-weight: 700; opacity: 0.8; letter-spacing: 1px;">Puntos Nivel</small>
               <h2 class="display-4 mb-0" style="font-weight: 800;"><%= user.levelPoints %></h2>
             </div>
             
             <div class="col-md-4 border-right border-white-50">
-              <small style="text-transform: uppercase; font-weight: 700; opacity: 0.8;">TRÉBOLES</small>
+              <small style="text-transform: uppercase; font-weight: 700; opacity: 0.8; letter-spacing: 1px;">Tréboles</small>
               <h2 class="display-3 mb-0" style="font-weight: 900;"><%= user.rewardPoints %></h2>
             </div>
             
             <div class="col-md-4">
-              <small style="text-transform: uppercase; font-weight: 700; opacity: 0.8;">NIVEL ACTUAL</small>
+              <small style="text-transform: uppercase; font-weight: 700; opacity: 0.8; letter-spacing: 1px;">Categoría</small>
               <h2 class="display-4 mb-0" style="font-weight: 800; text-transform: uppercase;">
-                <%= getTierName(user.tier) %>
+                <%= getTierLabel(user.tier) %>
               </h2>
             </div>
           </div>
@@ -49,12 +50,12 @@
 
       <div class="row mt-5 text-center">
         <div class="col-md-6 mb-3">
-          <a href="/accrual" class="btn btn-danger btn-lg btn-block shadow-sm py-3" style="background-color: #d81e05; border: none; border-radius: 50px; font-weight: 800;">
+          <a href="/accrual" class="btn btn-danger btn-lg btn-block shadow-sm py-3" style="background-color: #d81e05; border: none; border-radius: 50px; font-weight: 800; text-decoration: none; color: white; display: block;">
             GANAR TRÉBOLES
           </a>
         </div>
         <div class="col-md-6 mb-3">
-          <a href="/redemption" class="btn btn-dark btn-lg btn-block shadow-sm py-3" style="background-color: #333; border: none; border-radius: 50px; font-weight: 800;">
+          <a href="/redemption" class="btn btn-dark btn-lg btn-block shadow-sm py-3" style="background-color: #333; border: none; border-radius: 50px; font-weight: 800; text-decoration: none; color: white; display: block;">
             CANJEAR TRÉBOLES
           </a>
         </div>
