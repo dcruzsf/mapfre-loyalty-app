@@ -2,9 +2,15 @@
   "navigation": {
     "home": "Inicio",
     "accrual": "Sumar Tréboles",
-    "redemption": "Canjear Tréboles"
+    "earnPoints": "Ganar Tréboles",
+    "redemption": "Canjear Tréboles",
+    "redeemPoints": "Canjear Tréboles",
+    "promotions": "Mis Retos",
+    "register": "Únete al Club"
   },
   "member": {
+    "name": "Nombre",
+    "email": "Correo electrónico",
     "rewardPoints": "Tréboles",
     "levelPoints": "Puntos Nivel",
     "tier": "Categoría",
@@ -13,7 +19,11 @@
   "tiers": {
     "bronze": "Plata",
     "silver": "Oro",
-    "gold": "Platino"
+    "gold": "Platino",
+    "basic": "Plata",
+    "plata": "Plata",
+    "oro": "Oro",
+    "platino": "Platino"
   },
   "pages": {
     "home": {
@@ -27,12 +37,18 @@
       "notification": {
         "success": "¡Operación registrada con éxito!",
         "pointsEarned": "Tréboles sumados a tu cuenta de socio"
+      },
+      "product": {
+        "buy": "Registrar Compra"
       }
     },
     "register": {
       "title": "Únete a Club MAPFRE",
       "form": {
-        "submit": "Darse de alta en el Club"
+        "submit": "Darse de alta en el Club",
+        "name": "Nombre completo",
+        "email": "Correo electrónico",
+        "interests": "Tus intereses"
       }
     },
     "redemption": {

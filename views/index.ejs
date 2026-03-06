@@ -1,61 +1,73 @@
 <%- include('partials/header', {currentPage: 'home'}) %>
 
-<div class="row page-header-space text-center">
-  <div class="col-md-12">
-    <h1 class="page-title"><%= brand.fullName %></h1>
-    <p class="page-subtitle"><%= brand.messages.tagline %></p>
+<div class="container mt-5">
+  <div class="row text-center mb-5">
+    <div class="col-12">
+      <h1 class="display-4" style="color: #d81e05; font-weight: 800; text-transform: uppercase;">Club MAPFRE</h1>
+      <p class="lead text-muted">Bienvenido al programa que premia tu confianza</p>
+    </div>
   </div>
-</div>
 
-<% if (member) { %>
-  <div class="row">
-    <div class="col-md-12">
-      <div class="card">
-        <div class="card-body">
-          <h3><%= t('member.name') %>: <%= member.name %></h3>
-          <p><strong><%= t('member.email') %>:</strong> <%= member.email %></p>
+  <% 
+    // Lógica de seguridad para la Demo
+    let user = (typeof member !== 'undefined' && member) ? member : { name: 'Elena Gomez', levelPoints: 25, rewardPoints: 25, tier: 'plata' };
+    
+    // Función para traducir el Tier de forma segura
+    const getTierDisplayName = (tierValue) => {
+        if (!tierValue) return 'Plata';
+        const clean = tierValue.toLowerCase().replace('tiers.', '').trim();
+        const map = { 'basic': 'Plata', 'bronze': 'Plata', 'plata': 'Plata', 'silver': 'Oro', 'oro': 'Oro', 'gold': 'Platino', 'platino': 'Platino' };
+        return map[clean] || clean.charAt(0).toUpperCase() + clean.slice(1);
+    };
+  %>
 
-          <div class="member-summary">
-            <div class="member-stat">
-              <div class="member-stat-label">PUNTOS NIVEL</div>
-              <div class="member-stat-value"><%= member.levelPoints %></div>
-            </div>
-
-            <div class="member-stat">
-              <div class="member-stat-label">TRÉBOLES</div>
-              <div class="member-stat-value"><%= member.rewardPoints %></div>
-            </div>
-
-            <div class="member-stat">
-              <div class="member-stat-label">NIVEL ACTUAL</div>
-              <div class="member-stat-value tier-<%= member.tier.toLowerCase() %>">
-                <%= t('tiers.' + (member.tier ? member.tier.toLowerCase() : 'basic')) %>
-              </div>
-            </div>
-          </div>
-
-          <%- include('partials/tier-progress', {member: member, locale: locale}) %>
+  <div class="row justify-content-center">
+    <div class="col-md-10">
+      <div class="card shadow-lg border-0" style="border-radius: 20px; background: linear-gradient(135deg, #d81e05 0%, #a31604 100%); color: white;">
+        <div class="card-body p-5">
+          <h3 class="mb-4" style="font-weight: 600;">Hola, <%= user.name %></h3>
           
-          <div class="action-section">
-            <h4>¿Qué quieres hacer hoy?</h4>
-            <div class="row">
-              <div class="col-md-6 mb-3">
-                <a href="/accrual" class="btn action-btn">
-                  <i class="fas fa-coins"></i> Consigue Tréboles
-                </a>
-              </div>
-              <div class="col-md-6 mb-3">
-                <a href="/redemption" class="btn action-btn">
-                  <i class="fas fa-gift"></i> Canjear Tréboles
-                </a>
-              </div>
+          <div class="row text-center align-items-center">
+            <div class="col-md-4 border-right border-white-50">
+              <small style="text-transform: uppercase; letter-spacing: 1px; opacity: 0.8; font-weight: 700;">
+                <%= t('member.levelPoints') %>
+              </small>
+              <h2 class="display-4 mb-0" style="font-weight: 800;"><%= user.levelPoints %></h2>
+            </div>
+            
+            <div class="col-md-4 border-right border-white-50">
+              <small style="text-transform: uppercase; letter-spacing: 1px; opacity: 0.8; font-weight: 700;">
+                <%= t('member.rewardPoints') %>
+              </small>
+              <h2 class="display-3 mb-0" style="font-weight: 900;"><%= user.rewardPoints %></h2>
+            </div>
+            
+            <div class="col-md-4">
+              <small style="text-transform: uppercase; letter-spacing: 1px; opacity: 0.8; font-weight: 700;">
+                <%= t('member.tier') %>
+              </small>
+              <h2 class="display-4 mb-0" style="font-weight: 800; text-transform: uppercase;">
+                <%= getTierDisplayName(user.tier) %>
+              </h2>
             </div>
           </div>
         </div>
       </div>
+
+      <div class="row mt-5 text-center">
+        <div class="col-md-6 mb-3">
+          <a href="/accrual" class="btn btn-danger btn-lg btn-block shadow-sm py-3" style="background-color: #d81e05; border: none; border-radius: 50px; font-weight: 800; color: white; text-decoration: none; display: block;">
+            <%= t('navigation.earnPoints') %>
+          </a>
+        </div>
+        <div class="col-md-6 mb-3">
+          <a href="/redemption" class="btn btn-dark btn-lg btn-block shadow-sm py-3" style="background-color: #333; border: none; border-radius: 50px; font-weight: 800; color: white; text-decoration: none; display: block;">
+            <%= t('navigation.redeemPoints') %>
+          </a>
+        </div>
+      </div>
     </div>
   </div>
-<% } else { %>
-  <% } %>
+</div>
 
 <%- include('partials/footer') %>
