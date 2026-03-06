@@ -3,12 +3,12 @@ const router = express.Router();
 const Member = require('../models/member');
 const { getCurrentMember } = require('../middleware/auth');
 const salesforceLoyalty = require('../modules/salesforceLoyalty');
-const config = require('../config/index'); // Importamos la config maestra
 
+// Middleware para obtener el miembro
 router.use(getCurrentMember);
 
 router.get('/', async (req, res) => {
-  const { message } = req.query;
+  const { newAchievement, achievementName, achievementPoints, message } = req.query;
   const member = req.member;
   let recentTransactions = [];
 
@@ -17,28 +17,38 @@ router.get('/', async (req, res) => {
       await salesforceLoyalty.syncMemberPoints(member, member.salesforceId);
       Member.save(member);
       recentTransactions = await salesforceLoyalty.getMemberTransactions(member.salesforceId, 5);
-    } catch (syncError) {
-      console.warn('⚠️ Sync Warning:', syncError.message);
-    }
+    } catch (e) { console.warn('Sync error:', e.message); }
   }
 
-  // IMPORTANTE: Pasamos 'user' y 'brand' para que el header no falle
+  // OBJETO DE SEGURIDAD TOTAL
+  const safeBrand = {
+    fullName: 'Club MAPFRE',
+    images: { favicon: '/img/favicon.ico', logo: 'https://upload.wikimedia.org/wikipedia/commons/f/fd/LOGO-MAPFRE.jpg' },
+    colors: {
+      primary: '#D31411', secondary: '#00519E', accent: '#D31411',
+      textColor: '#333333', textLight: '#666666', notificationColor: '#00519E',
+      tierColors: { bronze: '#A0522D', silver: '#808080', gold: '#C5A021', platinum: '#2C3E50' }
+    },
+    messages: { tagline: 'Tu confianza siempre tiene recompensa', welcome: '¡Bienvenido al Club MAPFRE!' }
+  };
+
   res.render('index', {
     member: member || null,
-    user: member || null, 
+    user: member || null,
+    brand: safeBrand,
     transactions: recentTransactions,
+    t: req.t || ((key) => key), // Fallback si 't' no es una función
+    locale: req.locale || 'es',
+    currentPage: 'home',
     message: message || null,
-    brand: config.brand, 
-    t: req.t,
-    locale: req.locale || 'es'
+    newAchievement: newAchievement === 'true',
+    achievementName: achievementName,
+    achievementPoints: achievementPoints
   });
 });
 
-// Arreglo de la ruta reset-account (Error 404)
 router.post('/reset-account', (req, res) => {
-  req.session.destroy(() => {
-    res.redirect('/register?message=Demo de Club MAPFRE restablecida');
-  });
+  req.session.destroy(() => res.redirect('/register?message=Demo restablecida'));
 });
 
 module.exports = router;

@@ -1,39 +1,47 @@
 <%- include('partials/header', {currentPage: 'home'}) %>
 
-<div class="row page-header-space text-center">
-  <div class="col-md-12">
-    <h1 class="page-title" style="color: #d81e05; font-weight: 800;"><%= brand.fullName %></h1>
-    <p class="page-subtitle"><%= brand.messages.tagline %></p>
+<div class="container mt-5">
+  <div class="row text-center mb-5">
+    <div class="col-12">
+      <h1 class="display-4" style="color: #D31411; font-weight: 800; text-transform: uppercase;">Club MAPFRE</h1>
+      <p class="lead text-muted">Tu confianza siempre tiene recompensa</p>
+    </div>
   </div>
-</div>
 
-<% if (member) { %>
-  <div class="row">
-    <div class="col-md-8 offset-md-2 text-center"> 
-      <h2 class="mb-4" style="font-weight: 800;">Hola, <%= member.name.split(' ')[0] %> 👋</h2>
-      
-      <div class="member-summary" style="background: #191919; border-radius: 30px; padding: 50px 20px; margin-bottom: 30px;">
-        <div class="member-stat">
-          <div class="member-stat-label" style="color: #FFFFFF; letter-spacing: 2px; font-weight: 700; opacity: 0.8;">MIS TRÉBOLES</div>
-          <div class="member-stat-value" style="font-size: 80px; font-weight: 800; color: #d81e05;"><%= member.rewardPoints %></div>
+  <% if (member) { %>
+    <div class="row justify-content-center">
+      <div class="col-md-8 text-center">
+        <h2 class="mb-4">Hola, <%= member.name.split(' ')[0] %> 👋</h2>
+        
+        <div class="member-summary" style="background: #191919; border-radius: 30px; padding: 50px 20px; color: white;">
+          <div class="member-stat">
+            <div style="opacity: 0.8; letter-spacing: 2px; font-weight: 700;">MIS TRÉBOLES</div>
+            <div style="font-size: 80px; font-weight: 900; color: #D31411;"><%= member.rewardPoints %></div>
+          </div>
         </div>
-      </div>
 
-      <div class="row mt-4">
-        <div class="col-md-6 mb-3">
-          <a href="/accrual" class="btn btn-danger btn-block py-3" style="background: #d81e05; border-radius: 50px; font-weight: 700;">GANAR TRÉBOLES</a>
-        </div>
-        <div class="col-md-6 mb-3">
-          <a href="/redemption" class="btn btn-dark btn-block py-3" style="border-radius: 50px; font-weight: 700;">CANJEAR</a>
+        <div class="row mt-5">
+          <div class="col-md-6 mb-3">
+            <a href="/accrual" class="btn btn-danger btn-lg btn-block" style="background: #D31411; border-radius: 50px; font-weight: 700; padding: 15px;">
+              GANAR TRÉBOLES
+            </a>
+          </div>
+          <div class="col-md-6 mb-3">
+            <a href="/redemption" class="btn btn-dark btn-lg btn-block" style="border-radius: 50px; padding: 15px; font-weight: 700;">
+              CANJEAR
+            </a>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-<% } else { %>
-  <div class="text-center py-5">
-    <h2 class="display-4" style="font-weight: 800;"><%= brand.messages.welcome %></h2>
-    <a href="/register" class="btn btn-danger btn-lg mt-4" style="background: #d81e05; border-radius: 50px; padding: 15px 40px;">ÚNETE AL CLUB</a>
-  </div>
-<% } %>
+  <% } else { %>
+    <div class="text-center py-5">
+      <h2 style="font-weight: 800;">¡Bienvenido al Club MAPFRE!</h2>
+      <a href="/register" class="btn btn-danger btn-lg mt-4" style="background: #D31411; border-radius: 50px; padding: 15px 40px; font-weight: 700;">
+        ÚNETE AL CLUB
+      </a>
+    </div>
+  <% } %>
+</div>
 
 <%- include('partials/footer') %>
