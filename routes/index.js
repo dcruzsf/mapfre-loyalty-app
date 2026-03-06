@@ -7,51 +7,46 @@ const salesforceLoyalty = require('../modules/salesforceLoyalty');
 router.use(getCurrentMember);
 
 router.get('/', async (req, res) => {
-  const message = req.query.message;
-  let member = req.member;
+  const { newAchievement, achievementName, achievementPoints, message } = req.query;
+  const member = req.member;
+  let recentTransactions = [];
 
   if (member && member.salesforceId && process.env.USE_SALESFORCE === 'true') {
     try {
+      // Sincronización con Salesforce Club MAPFRE
       await salesforceLoyalty.syncMemberPoints(member, member.salesforceId);
       Member.save(member);
-    } catch (err) {
-      console.warn('⚠️ Club MAPFRE Sync Error:', err.message);
+      recentTransactions = await salesforceLoyalty.getMemberTransactions(member.salesforceId, 5);
+    } catch (syncError) {
+      console.warn('⚠️ Sync Warning:', syncError.message);
     }
   }
 
   res.render('index', {
     member: member || null,
+    user: member || null, // Vital para el header.ejs
+    transactions: recentTransactions,
     message: message || null,
-    currentPage: 'home',
-    t: req.t,
-    locale: req.locale || 'es',
-    // ESTA ES LA ESTRUCTURA QUE TU HEADER NECESITA
-    brand: {
-      fullName: 'Club MAPFRE',
-      images: { favicon: '/img/favicon.ico' },
-      colors: {
-        primary: '#d81e05',
-        secondary: '#333333',
-        accent: '#a31604',
-        lightGray: '#f4f4f4',
-        midGray: '#999999',
-        darkGray: '#444444',
-        textColor: '#333333',
-        textLight: '#777777',
-        backgroundColor: '#ffffff',
-        cardBackground: '#ffffff',
-        borderColor: '#dddddd',
-        successColor: '#28a745',
-        errorColor: '#dc3545',
-        notificationColor: '#d81e05',
-        tierColors: {
-          bronze: '#CD7F32',
-          silver: '#C0C0C0',
-          gold: '#FFD700',
-          platinum: '#E5E4E2'
-        }
-      }
-    }
+    newAchievement: newAchievement === 'true',
+    achievementName: achievementName,
+    achievementPoints: achievementPoints,
+    // Aseguramos que brand se pase si el middleware global no lo hace
+    brand: req.app.get('brandConfig') || {} 
+  });
+});
+
+router.post('/reset-account', (req, res) => {
+  if (!req.session.memberId) return res.redirect('/register');
+  
+  const member = Member.findById(req.session.memberId);
+  if (member) {
+    const members = Member.getAll();
+    const idx = members.findIndex(m => m.id === member.id);
+    if (idx !== -1) members.splice(idx, 1);
+  }
+  
+  req.session.destroy(() => {
+    res.redirect('/register?message=Cuenta de Club MAPFRE eliminada');
   });
 });
 
