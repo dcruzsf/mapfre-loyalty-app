@@ -14,55 +14,27 @@ router.get('/', async (req, res) => {
     try {
       await salesforceLoyalty.syncMemberPoints(member, member.salesforceId);
       recentTransactions = await salesforceLoyalty.getMemberTransactions(member.salesforceId, 5);
-    } catch (e) { 
-      console.warn('Sync error ignored for stability:', e.message); 
-    }
+    } catch (e) { console.warn('Sync error:', e.message); }
   }
 
-  // --- NUEVA LÓGICA DE TIERS Y PROGRESO ---
-  // Definimos los umbrales (puedes ajustarlos a tu gusto)
+  // --- LÓGICA DE PROGRESO DE NIVEL ---
   const tierThresholds = { 'Plata': 500, 'Oro': 1500, 'Platino': 5000 };
-  const nextTierMap = { 'Plata': 'Oro', 'Oro': 'Platino', 'Platino': 'Diamante' };
+  const nextTierMap = { 'Plata': 'ORO', 'Oro': 'PLATINO', 'Platino': 'DIAMANTE' };
   
   const currentTier = member ? (member.tier || 'Plata') : 'Plata';
   const currentLevelPoints = member ? (member.levelPoints || 0) : 0;
   const nextThreshold = tierThresholds[currentTier] || 500;
-  
-  // Calculamos el porcentaje (máximo 100%)
   const progressPercent = Math.min(Math.round((currentLevelPoints / nextThreshold) * 100), 100);
 
+  // OBJETO DE MARCA FIJO (Evita errores de favicon/colores)
   const safeBrand = {
-    fullName: 'Club MAPFRE',
-    images: { 
-        favicon: '/img/favicon.ico', 
-        logo: 'https://upload.wikimedia.org/wikipedia/commons/f/fd/LOGO-MAPFRE.jpg' 
-    },
+    fullName: 'CLUB MAPFRE',
+    images: { favicon: '/img/favicon.ico', logo: 'https://upload.wikimedia.org/wikipedia/commons/f/fd/LOGO-MAPFRE.jpg' },
     colors: {
-      primary: '#D31411', 
-      secondary: '#00519E', 
-      accent: '#D31411',
-      lightGray: '#F4F4F4',
-      midGray: '#E6E6E6',
-      darkGray: '#4D4D4D',
-      textColor: '#333333',
-      textLight: '#666666',
-      backgroundColor: '#FFFFFF',
-      cardBackground: '#FFFFFF',
-      borderColor: '#D1D1D1',
-      successColor: '#28A745',
-      errorColor: '#B00020',
-      notificationColor: '#00519E',
-      tierColors: { 
-          bronze: '#A0522D', 
-          silver: '#808080', 
-          gold: '#C5A021', 
-          platinum: '#2C3E50' 
-      }
+      primary: '#D31411', secondary: '#00519E', accent: '#D31411',
+      tierColors: { bronze: '#A0522D', silver: '#808080', gold: '#C5A021', platinum: '#2C3E50' }
     },
-    messages: { 
-        tagline: 'Tu confianza siempre tiene recompensa', 
-        welcome: '¡Bienvenido al Club MAPFRE!' 
-    }
+    messages: { tagline: 'Tu confianza siempre tiene recompensa' }
   };
 
   res.render('index', {
@@ -70,20 +42,28 @@ router.get('/', async (req, res) => {
     user: member || null,
     brand: safeBrand,
     transactions: recentTransactions,
-    // --- VARIABLES DE PROGRESO ENVIADAS A LA VISTA ---
-    nextTier: nextTierMap[currentTier] || 'Máximo',
+    // Variables de progreso
+    nextTier: nextTierMap[currentTier] || 'MÁXIMO',
     nextThreshold: nextThreshold,
     progressPercent: progressPercent,
-    // ------------------------------------------------
-    t: req.t || ((key) => key.split('.').pop().toUpperCase()), 
-    locale: req.locale || 'es',
-    currentPage: 'home',
-    message: req.query.message || null
+    // TRADUCTOR FORZADO A ESPAÑOL
+    t: (key) => {
+        const dictionary = {
+            'navigation.home': 'Inicio',
+            'navigation.earnPoints': 'Ganar Tréboles',
+            'navigation.redeemPoints': 'Canjear Tréboles',
+            'navigation.promotions': 'Mis Retos',
+            'navigation.register': 'Únete al Club'
+        };
+        return dictionary[key] || key.split('.').pop().toUpperCase();
+    },
+    locale: 'es',
+    currentPage: 'home'
   });
 });
 
 router.post('/reset-account', (req, res) => {
-  req.session.destroy(() => res.redirect('/register?message=Demo restablecida'));
+  req.session.destroy(() => res.redirect('/register'));
 });
 
 module.exports = router;

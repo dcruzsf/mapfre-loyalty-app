@@ -1,84 +1,61 @@
 <%- include('partials/header', {currentPage: 'home'}) %>
 
 <div class="container mt-5">
-  <div class="row text-center mb-5">
-    <div class="col-12">
-      <h1 class="display-4" style="color: <%= brand.colors.primary %>; font-weight: 800; text-transform: uppercase;">
-        <%= brand.fullName %>
-      </h1>
-      <p class="lead text-muted"><%= brand.messages.tagline %></p>
-    </div>
+  <div class="text-center mb-5">
+    <h1 class="display-4 font-weight-bold" style="color: #D31411; letter-spacing: -2px;">CLUB MAPFRE</h1>
+    <p class="lead text-muted">Tu confianza siempre tiene recompensa</p>
   </div>
 
   <% if (member) { %>
     <div class="row justify-content-center">
-      <div class="col-md-10 text-center">
+      <div class="col-md-9 text-center">
         <h2 class="mb-4" style="font-weight: 700;">Hola, <%= member.name.split(' ')[0] %> 👋</h2>
         
-        <div class="card shadow-lg border-0" style="border-radius: 30px; background: #191919; color: white; padding: 50px 20px;">
+        <div class="card shadow-lg border-0" style="border-radius: 40px; background: #121212; color: white; padding: 45px;">
           <div class="card-body">
-            <small style="text-transform: uppercase; letter-spacing: 2px; font-weight: 700; opacity: 0.8;">MIS TRÉBOLES</small>
-            <h2 class="display-1 mb-0" style="font-weight: 900; color: <%= brand.colors.primary %>;">
-              <%= member.rewardPoints || 0 %>
-            </h2>
-            <div class="mt-3">
-              <span class="badge badge-pill p-2 px-4" style="background: <%= brand.colors.accent %>; font-size: 1rem;">
-                Nivel: <%= member.tier || 'Plata' %>
-              </span>
+            <div class="row align-items-center">
+              <div class="col-6 border-right border-secondary">
+                <small style="text-transform: uppercase; letter-spacing: 2px; font-weight: 700; opacity: 0.6;">MIS TRÉBOLES</small>
+                <h2 class="display-2 mb-0" style="font-weight: 900; color: #D31411;"><%= member.rewardPoints %></h2>
+              </div>
+              <div class="col-6">
+                <small style="text-transform: uppercase; letter-spacing: 2px; font-weight: 700; opacity: 0.6;">PUNTOS NIVEL</small>
+                <h2 class="display-4 mb-0" style="font-weight: 800;"><%= member.levelPoints %></h2>
+                <div class="mt-2">
+                    <span class="badge badge-danger px-3 py-2" style="border-radius: 50px; background: #D31411;">Nivel: <%= member.tier %></span>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-5 px-3">
+              <div class="d-flex justify-content-between mb-2">
+                <small style="font-weight: 600; opacity: 0.8; text-transform: uppercase;">Hacia nivel <%= nextTier %></small>
+                <small style="font-weight: 700;"><%= member.levelPoints %> / <%= nextThreshold %></small>
+              </div>
+              <div class="progress" style="height: 12px; border-radius: 20px; background: #2a2a2a;">
+                <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                     role="progressbar" 
+                     style="width: <%= progressPercent %>%; background-color: #D31411;" 
+                     aria-valuenow="<%= progressPercent %>" aria-valuemin="0" aria-valuemax="100">
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
         <div class="row mt-5">
           <div class="col-md-6 mb-3">
-            <a href="/accrual" class="btn btn-block py-3" style="background: <%= brand.colors.primary %>; color: white; border-radius: 50px; font-weight: 800; font-size: 1.1rem; box-shadow: 0 4px 15px rgba(211, 20, 17, 0.3);">
+            <a href="/accrual" class="btn btn-danger btn-lg btn-block shadow-lg py-3" style="background: #D31411; border-radius: 50px; font-weight: 800; border: none;">
               GANAR TRÉBOLES
             </a>
           </div>
           <div class="col-md-6 mb-3">
-            <a href="/redemption" class="btn btn-dark btn-block py-3" style="background: #333; color: white; border-radius: 50px; font-weight: 800; font-size: 1.1rem;">
+            <a href="/redemption" class="btn btn-dark btn-lg btn-block shadow-lg py-3" style="background: #222; border-radius: 50px; font-weight: 800; border: none;">
               CANJEAR TRÉBOLES
             </a>
           </div>
         </div>
-
-        <% if (typeof transactions !== 'undefined' && transactions && transactions.length > 0) { %>
-          <div class="card mt-5 border-0 shadow-sm" style="border-radius: 20px; overflow: hidden;">
-            <div class="card-header bg-white border-0 py-3">
-              <h5 class="mb-0 font-weight-bold">Últimos Movimientos</h5>
-            </div>
-            <div class="table-responsive">
-              <table class="table table-hover mb-0">
-                <thead class="thead-light">
-                  <tr>
-                    <th>Fecha</th>
-                    <th>Concepto</th>
-                    <th class="text-right">Tréboles</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <% transactions.forEach(tx => { %>
-                    <tr>
-                      <td><%= tx.date %></td>
-                      <td><strong><%= tx.description %></strong></td>
-                      <td class="text-right font-weight-bold" style="color: <%= tx.isNegative ? '#ff4444' : brand.colors.primary %>">
-                        <%= tx.isNegative ? '-' : '+' %><%= tx.amount %>
-                      </td>
-                    </tr>
-                  <% }) %>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        <% } %>
       </div>
-    </div>
-  <% } else { %>
-    <div class="text-center py-5">
-      <h2 class="mb-4" style="font-weight: 800;"><%= brand.messages.welcome %></h2>
-      <a href="/register" class="btn btn-danger btn-lg px-5 shadow-lg" style="background: <%= brand.colors.primary %>; border: none; border-radius: 50px; font-weight: 800;">
-        ÚNETE AL CLUB
-      </a>
     </div>
   <% } %>
 </div>
