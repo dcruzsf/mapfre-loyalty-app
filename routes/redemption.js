@@ -3,13 +3,10 @@ const router = express.Router();
 const Member = require('../models/member');
 const { requireAuth } = require('../middleware/auth');
 const salesforceLoyalty = require('../modules/salesforceLoyalty');
-
-// Importar configuración centralizada
 const catalogConfig = require('../config/catalog');
 const catalogTranslations = require('../modules/catalogTranslations');
 const i18n = require('../modules/i18n');
 
-// Objeto de marca para evitar errores en el header
 const safeBrand = {
   fullName: 'Club MAPFRE',
   images: { 
@@ -33,7 +30,6 @@ const generateRedemptionCode = (prefix) => {
   return code;
 };
 
-// Mostrar página de redención
 router.get('/', async (req, res) => {
   const member = req.member; 
   const locale = req.locale || 'es';
@@ -47,26 +43,21 @@ router.get('/', async (req, res) => {
     }
   }
 
-  // Lógica de progreso para la tarjeta del header
   const tierThresholds = { 'Plata': 500, 'Oro': 1500, 'Platino': 5000 };
   const nextTierMap = { 'Plata': 'ORO', 'Oro': 'PLATINO', 'Platino': 'DIAMANTE' };
   const currentTier = member.tier || 'Plata';
   const nextThreshold = tierThresholds[currentTier] || 500;
   const progressPercent = Math.min(Math.round((member.levelPoints / nextThreshold) * 100), 100);
 
-  // Obtener catálogo traducido
   const translatedCatalog = catalogTranslations.getTranslatedCatalog(catalogConfig, locale);
   
-  const message = req.query.message;
-  const pointsRedeemed = req.query.points ? parseInt(req.query.points) : null;
-  const codeGenerated = req.query.code || null;
-  const rewardId = req.query.rewardId ? parseInt(req.query.rewardId) : null;
-  const redeemedReward = rewardId ? translatedCatalog.rewards.find(r => r.id === rewardId) : null;
+  // Aseguramos que rewards sea siempre un array para evitar el error .filter()
+  const rewardsList = (translatedCatalog && translatedCatalog.rewards) ? translatedCatalog.rewards : [];
 
   res.render('redemption', {
     member,
-    brand: safeBrand, // <--- VITAL PARA EL HEADER
-    rewards: translatedCatalog.rewards,
+    brand: safeBrand,
+    rewards: rewardsList, 
     nextTier: nextTierMap[currentTier] || 'MÁXIMO',
     nextThreshold,
     progressPercent,
@@ -78,43 +69,38 @@ router.get('/', async (req, res) => {
         };
         return dict[key] || key.split('.').pop().toUpperCase();
     },
-    message,
-    pointsRedeemed,
-    codeGenerated,
-    redeemedReward,
+    message: req.query.message || null,
+    pointsRedeemed: req.query.points ? parseInt(req.query.points) : null,
+    codeGenerated: req.query.code || null,
+    redeemedReward: req.query.rewardId ? rewardsList.find(r => r.id === parseInt(req.query.rewardId)) : null,
     locale
   });
 });
 
-// Procesar redención
 router.post('/redeem/:id', async (req, res) => {
   const rewardId = parseInt(req.params.id);
   const reward = catalogConfig.rewards.find(r => r.id === rewardId);
-  const locale = req.locale || 'es';
 
-  if (!reward) {
-    return res.redirect(`/redemption?message=Recompensa no encontrada`);
-  }
+  if (!reward) return res.redirect(`/redemption?message=Error: Recompensa no encontrada`);
 
   const member = req.member;
-
   if (!member.salesforceId || process.env.USE_SALESFORCE !== 'true') {
-    return res.redirect(`/redemption?message=Modo Salesforce requerido`);
+    return res.redirect(`/redemption?message=Error: Modo Salesforce requerido`);
   }
 
   try {
     const redemptionCode = generateRedemptionCode(reward.codePrefix);
-    const activityDate = new Date().toISOString();
-
-    // REGISTRO EN SALESFORCE (Usando tu función processTransaction corregida)
+    
+    // Proceso de canje en Salesforce
+    // IMPORTANTE: Asegúrate de que jType sea 'Redemption'
     await salesforceLoyalty.processTransaction(
       member.salesforceId,
       'Redemption',
-      -reward.points, // Importante: Negativo para restar tréboles
-      'Tréboles',     // Nombre exacto de tu moneda
-      'Redemption',   // Journal Type
-      'Redemption',   // Journal SubType
-      activityDate
+      -reward.points, // Valor negativo para restar Tréboles
+      'Tréboles',
+      'Redemption', 
+      'Redemption',
+      new Date().toISOString()
     );
 
     await salesforceLoyalty.syncMemberPoints(member, member.salesforceId);
@@ -123,7 +109,7 @@ router.post('/redeem/:id', async (req, res) => {
     res.redirect(`/redemption?message=¡Canje realizado con éxito!&points=${reward.points}&code=${redemptionCode}&rewardId=${reward.id}`);
   } catch (error) {
     console.error('⚠️ Error al canjear:', error.message);
-    res.redirect(`/redemption?message=Error: ${error.message}`);
+    res.redirect(`/redemption?message=Error en el proceso: ${error.message}`);
   }
 });
 
