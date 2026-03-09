@@ -19,7 +19,7 @@ module.exports = {
       title: 'Compra en Amazon',
       description: 'Tus compras online ahora te ayudan a reducir el coste de tu próxima póliza.',
       points: 10,
-      image: '/img/compra4.png',
+      image: '/img/compra2.png',
       icon: 'amazon',
       journalType: 'Accrual',
       journalSubType: 'Compra en Amazon'
@@ -29,7 +29,7 @@ module.exports = {
       title: 'Repostaje en Repsol',
       description: 'Suma tréboles en cada repostaje de carburante en la red de estaciones Repsol.',
       points: 25,
-      image: '/img/compra5.png',
+      image: '/img/compra3.png',
       icon: 'gas-pump',
       journalType: 'Accrual',
       journalSubType: 'Repostaje en Repsol'
@@ -39,7 +39,7 @@ module.exports = {
       title: 'Pago con Tarjeta MAPFRE',
       description: 'Bonificación exclusiva por utilizar tu tarjeta de crédito MAPFRE en cualquier establecimiento.',
       points: 50,
-      image: '/img/compra2.png',
+      image: '/img/compra4.png',
       icon: 'credit-card',
       journalType: 'Accrual',
       journalSubType: 'Pago con Tarjeta Mapfre'
