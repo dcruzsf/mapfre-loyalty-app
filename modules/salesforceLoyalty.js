@@ -6,7 +6,6 @@ class SalesforceLoyalty {
     this.apiVersion = process.env.SF_API_VERSION || 'v61.0';
     this.loyaltyProgramName = process.env.SF_LOYALTY_PROGRAM_NAME || 'Club Mapfre';
     
-    // Mapa de Partners
     this.partnerMap = {
       'Compra en El Corte Inglés': '0ldJ70000000052IAA',
       'Compra en Amazon': '0ldJ7000000004xIAA',
@@ -36,12 +35,42 @@ class SalesforceLoyalty {
     }
   }
 
-  // 1. GESTIÓN DE MIEMBROS Y PUNTOS
+  // 1. REGISTRO DE MIEMBROS (Restaurado para que vuelva a funcionar)
+  async enrollMember(memberData) {
+    try {
+      const headers = await this.getHeaders();
+      const instanceUrl = await this.getInstanceUrl();
+      const membershipNumber = `MAP-${Date.now()}`;
+      
+      const payload = {
+        enrollmentDate: new Date().toISOString(),
+        membershipNumber: membershipNumber,
+        associatedContactDetails: {
+          firstName: memberData.name.split(' ')[0],
+          lastName: memberData.name.split(' ').slice(1).join(' ') || 'Socio',
+          email: memberData.email,
+          allowDuplicateRecords: "false"
+        },
+        memberStatus: "Active",
+        enrollmentChannel: "Web"
+      };
+
+      const url = `${instanceUrl}/services/data/${this.apiVersion}/loyalty-programs/${encodeURIComponent(this.loyaltyProgramName)}/individual-member-enrollments`;
+      const res = await axios.post(url, payload, { headers, timeout: 20000 });
+      console.log('✅ Miembro registrado en SF:', res.data.loyaltyProgramMemberId);
+      return res.data; 
+    } catch (error) { 
+      console.error('❌ Error en enrollMember:', error.response ? JSON.stringify(error.response.data) : error.message);
+      throw error; 
+    }
+  }
+
   async syncMemberPoints(member, salesforceMemberId) {
     try {
       if (!salesforceMemberId) return member;
       const instanceUrl = await this.getInstanceUrl();
       const headers = await this.getHeaders();
+      
       const q = `SELECT Name, PointsBalance FROM LoyaltyMemberCurrency WHERE LoyaltyMemberId = '${salesforceMemberId}'`;
       const res = await axios.get(`${instanceUrl}/services/data/${this.apiVersion}/query?q=${encodeURIComponent(q)}`, { headers });
       
@@ -51,47 +80,30 @@ class SalesforceLoyalty {
              if (c.Name === 'Puntos_Nivel') member.levelPoints = c.PointsBalance;
           });
       }
-      const tierQ = `SELECT Name FROM LoyaltyMemberTier WHERE LoyaltyMemberId = '${salesforceMemberId}' ORDER BY EffectiveDate DESC LIMIT 1`;
-      const tierRes = await axios.get(`${instanceUrl}/services/data/${this.apiVersion}/query?q=${encodeURIComponent(tierQ)}`, { headers });
-      if (tierRes.data.records?.length > 0) member.tier = tierRes.data.records[0].Name;
       return member;
     } catch (error) { return member; }
   }
 
-  // 2. PROCESAMIENTO DE TRANSACCIONES (Corregido Partner e IDs)
+  // 2. PROCESAMIENTO DE TRANSACCIONES (Corregido y Simplificado)
   async processTransaction(memberId, type, points, currency, jType, jSubType, date, journalSubTypeId) {
     try {
-      console.log(`🍀 Club MAPFRE: Procesando Journal ${jType} para ${jSubType}...`);
       const instanceUrl = await this.getInstanceUrl();
       const headers = await this.getHeaders();
 
-      // Buscamos IDs base
+      // IDs de metadatos
       const programId = await this.getIdByQuery(`SELECT Id FROM LoyaltyProgram WHERE Name = '${this.loyaltyProgramName}'`);
       
-      // Buscamos el ID del Tipo de Journal (Accrual o Redemption) enviado por el router
-      const journalTypeId = await this.getIdByQuery(`SELECT Id FROM JournalType WHERE Name = '${jType}'`);
+      // Usamos el jType que viene (Accrual o Redemption) para buscar el ID
+      const journalTypeId = await this.getIdByQuery(`SELECT Id FROM JournalType WHERE Name = '${jType || 'Accrual'}'`);
       
-      /**
-       * GESTIÓN DE SUBTIPO:
-       * Si el router envía un ID específico (como el de Redemption), lo usamos.
-       * Si no, usamos el ID fijo de Accrual que nos indicaste.
-       */
-      const finalSubTypeId = journalSubTypeId || '0lS7Q000000srPgUAI'; 
-
-      /**
-       * GESTIÓN DE PARTNER:
-       * Si es 'Pago con Tarjeta Mapfre', forzamos el partner a NULL 
-       * para evitar que se asocie erróneamente a Repsol.
-       */
+      // Si jSubType es Tarjeta, partner es null. Si no, buscamos en el mapa.
       let partnerId = null;
       if (jSubType !== 'Pago con Tarjeta Mapfre') {
         partnerId = this.partnerMap[jSubType] || null;
       }
 
-      if (!programId || !journalTypeId) {
-        console.error('❌ Error metadatos:', { programId, journalTypeId });
-        return null;
-      }
+      // El ID de subtipo: si el router envía uno (redención), lo usamos. Si no, el fijo de Accrual.
+      const finalSubTypeId = journalSubTypeId || '0lS7Q000000srPgUAI';
 
       const payload = {
         ActivityDate: date || new Date().toISOString(),
@@ -100,22 +112,22 @@ class SalesforceLoyalty {
         JournalTypeId: journalTypeId,
         JournalSubTypeId: finalSubTypeId,
         PartnerId: partnerId,
-        TransactionAmount: Math.abs(points), // SF Loyalty procesa según Journal Type
+        TransactionAmount: Math.abs(points),
         Status: 'Pending'
       };
 
       const url = `${instanceUrl}/services/data/${this.apiVersion}/sobjects/TransactionJournal`;
       const txRes = await axios.post(url, payload, { headers });
       
-      console.log(`✅ Tx enviada: ${jType} | SubTypeID: ${finalSubTypeId} | Partner: ${partnerId || 'Ninguno'}`);
+      console.log(`✅ Transacción registrada: ${jType} - Partner: ${partnerId || 'None'}`);
       return txRes.data;
     } catch (error) { 
-      console.error('❌ Error en processTransaction:', error.message); 
+      console.error('❌ Error en processTransaction:', error.response ? JSON.stringify(error.response.data) : error.message); 
       return null;
     }
   }
 
-  async getMemberTransactions(identifier, limit = 10) { return []; }
+  async getMemberTransactions() { return []; }
   async getMemberBadges() { return []; }
 }
 
