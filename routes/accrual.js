@@ -84,9 +84,9 @@ router.post('/transaction', async (req, res) => {
       member.salesforceId,
       journalType || 'Accrual',
       parseFloat(points),
-      'treboles',
+      'Tréboles',
       journalType || 'Accrual',
-      journalSubType || 'Compra',
+      journalSubType || 'Purchase',
       activityDate
     );
 
