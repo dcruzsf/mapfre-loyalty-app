@@ -10,7 +10,8 @@ class SalesforceLoyalty {
     this.partnerMap = {
       'Compra en El Corte Inglés': '0ldJ70000000052IAA',
       'Compra en Amazon': '0ldJ7000000004xIAA',
-      'Repostaje en Repsol': '0ldJ70000000057IAA'
+      'Repostaje en Repsol': '0ldJ70000000057IAA',
+      'Pago con Tarjeta Mapfre': '0ldJ70000000057IAA' 
     };
   }
 
@@ -72,6 +73,7 @@ class SalesforceLoyalty {
       
       if (res.data.records) {
           res.data.records.forEach(c => {
+             // Sincronización de Tréboles y Puntos Nivel
              if (c.Name === 'Tréboles') {
                  member.rewardPoints = c.PointsBalance;
              } 
@@ -80,27 +82,41 @@ class SalesforceLoyalty {
              }
           });
       }
+
+      // Sincronizar Categoría (Tier)
+      const tierQ = `SELECT Name FROM LoyaltyMemberTier WHERE LoyaltyMemberId = '${salesforceMemberId}' ORDER BY EffectiveDate DESC LIMIT 1`;
+      const tierRes = await axios.get(`${instanceUrl}/services/data/${this.apiVersion}/query?q=${encodeURIComponent(tierQ)}`, { headers });
+      if (tierRes.data.records?.length > 0) {
+          member.tier = tierRes.data.records[0].Name;
+      }
+
       return member;
     } catch (error) { return member; }
   }
 
-  // 2. PROCESAMIENTO DE TRANSACCIONES (Actualizado con PartnerId)
+  // 2. PROCESAMIENTO DE TRANSACCIONES (ID de Subtipo Corregido para Accrual)
   async processTransaction(memberId, type, points, currency, jType, jSubType, date) {
     try {
       console.log(`🍀 Club MAPFRE: Registrando ${points} Tréboles para socio ${memberId}...`);
       const instanceUrl = await this.getInstanceUrl();
       const headers = await this.getHeaders();
 
-      // Buscamos IDs base
+      // Buscamos IDs base (Programa y Tipo)
       const programId = await this.getIdByQuery(`SELECT Id FROM LoyaltyProgram WHERE Name = '${this.loyaltyProgramName}'`);
       const journalTypeId = await this.getIdByQuery(`SELECT Id FROM JournalType WHERE Name = 'Accrual'`);
-      const journalSubTypeId = await this.getIdByQuery(`SELECT Id FROM JournalSubType WHERE Name = 'Purchase'`);
+      
+      /**
+       * ID DE SUBTIPO FIJO PARA ACCRUAL:
+       * Forzamos el ID '0lS7Q000000srPgUAI' para evitar que Salesforce 
+       * lo confunda con el ID de Redemption.
+       */
+      const journalSubTypeId = '0lS7Q000000srPgUAI'; 
 
-      // Identificamos el PartnerId basado en el jSubType que viene de la vista
+      // Identificamos el PartnerId basado en el jSubType (Nombre del comercio)
       const partnerId = this.partnerMap[jSubType] || null;
 
-      if (!programId || !journalTypeId || !journalSubTypeId) {
-        console.error('❌ Error metadatos:', { programId, journalTypeId, journalSubTypeId });
+      if (!programId || !journalTypeId) {
+        console.error('❌ Error metadatos:', { programId, journalTypeId });
         return null;
       }
 
@@ -109,8 +125,8 @@ class SalesforceLoyalty {
         LoyaltyProgramId: programId,
         MemberId: memberId,
         JournalTypeId: journalTypeId,
-        JournalSubTypeId: journalSubTypeId,
-        PartnerId: partnerId, // <--- Aquí se inyecta el ID del comercio (0ldJ...)
+        JournalSubTypeId: journalSubTypeId, // ID correcto de Accrual/Purchase
+        PartnerId: partnerId,
         TransactionAmount: Math.abs(points),
         Status: 'Pending'
       };
@@ -118,10 +134,10 @@ class SalesforceLoyalty {
       const url = `${instanceUrl}/services/data/${this.apiVersion}/sobjects/TransactionJournal`;
       const txRes = await axios.post(url, payload, { headers });
       
-      console.log(`✅ Tx enviada con éxito. Partner: ${jSubType} (${partnerId}). ID: ${txRes.data.id}`);
+      console.log(`✅ Tx enviada con éxito (ACCRUAL). Partner: ${jSubType} (${partnerId}). ID: ${txRes.data.id}`);
       return txRes.data;
     } catch (error) { 
-      console.error('❌ Error en processTransaction:', error.response ? JSON.stringify(error.response.data) : error.message); 
+      console.error('❌ Error detallado en processTransaction:', error.response ? JSON.stringify(error.response.data) : error.message); 
       return null;
     }
   }
