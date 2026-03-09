@@ -9,13 +9,24 @@ const catalogConfig = require('../config/catalog');
 const catalogTranslations = require('../modules/catalogTranslations');
 const i18n = require('../modules/i18n');
 
-// Aplicar middleware de autenticación a todas las rutas
+// Objeto de marca para evitar errores en el header
+const safeBrand = {
+  fullName: 'Club MAPFRE',
+  images: { 
+    favicon: '/img/favicon.ico', 
+    logo: 'https://upload.wikimedia.org/wikipedia/commons/f/fd/LOGO-MAPFRE.jpg' 
+  },
+  colors: {
+    primary: '#d81e05', secondary: '#333333', accent: '#a31604',
+    tierColors: { bronze: '#CD7F32', silver: '#C0C0C0', gold: '#FFD700', platinum: '#E5E4E2' }
+  }
+};
+
 router.use(requireAuth);
 
-// Función para generar un código aleatorio
 const generateRedemptionCode = (prefix) => {
   const characters = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-  let code = prefix + '-';
+  let code = (prefix || 'MAP') + '-';
   for (let i = 0; i < 5; i++) {
     code += characters.charAt(Math.floor(Math.random() * characters.length));
   }
@@ -24,37 +35,54 @@ const generateRedemptionCode = (prefix) => {
 
 // Mostrar página de redención
 router.get('/', async (req, res) => {
-  const member = req.member; // Viene del middleware requireAuth
+  const member = req.member; 
   const locale = req.locale || 'es';
 
-  // Sincronizar puntos y tier desde Salesforce antes de mostrar la página
   if (member.salesforceId && process.env.USE_SALESFORCE === 'true') {
     try {
       await salesforceLoyalty.syncMemberPoints(member, member.salesforceId);
       Member.save(member);
-      console.log('✅ Currencies y tier sincronizados al cargar página de redemption');
     } catch (error) {
-      console.error('⚠️ Error sincronizando en página redemption:', error.message);
+      console.error('⚠️ Error sincronizando en redemption:', error.message);
     }
   }
 
-  // Verificar si hay mensaje de éxito y puntos canjeados
+  // Lógica de progreso para la tarjeta del header
+  const tierThresholds = { 'Plata': 500, 'Oro': 1500, 'Platino': 5000 };
+  const nextTierMap = { 'Plata': 'ORO', 'Oro': 'PLATINO', 'Platino': 'DIAMANTE' };
+  const currentTier = member.tier || 'Plata';
+  const nextThreshold = tierThresholds[currentTier] || 500;
+  const progressPercent = Math.min(Math.round((member.levelPoints / nextThreshold) * 100), 100);
+
+  // Obtener catálogo traducido
+  const translatedCatalog = catalogTranslations.getTranslatedCatalog(catalogConfig, locale);
+  
   const message = req.query.message;
   const pointsRedeemed = req.query.points ? parseInt(req.query.points) : null;
   const codeGenerated = req.query.code || null;
   const rewardId = req.query.rewardId ? parseInt(req.query.rewardId) : null;
-
-  // Obtener catálogo traducido
-  const translatedCatalog = catalogTranslations.getTranslatedCatalog(catalogConfig, locale);
   const redeemedReward = rewardId ? translatedCatalog.rewards.find(r => r.id === rewardId) : null;
 
   res.render('redemption', {
     member,
+    brand: safeBrand, // <--- VITAL PARA EL HEADER
     rewards: translatedCatalog.rewards,
+    nextTier: nextTierMap[currentTier] || 'MÁXIMO',
+    nextThreshold,
+    progressPercent,
+    t: (key) => {
+        const dict = {
+            'navigation.home': 'Inicio',
+            'navigation.earnPoints': 'Ganar Tréboles',
+            'navigation.redeemPoints': 'Canjear Tréboles'
+        };
+        return dict[key] || key.split('.').pop().toUpperCase();
+    },
     message,
     pointsRedeemed,
     codeGenerated,
-    redeemedReward
+    redeemedReward,
+    locale
   });
 });
 
@@ -65,59 +93,37 @@ router.post('/redeem/:id', async (req, res) => {
   const locale = req.locale || 'es';
 
   if (!reward) {
-    const message = i18n.t('messages.rewardNotFound', locale);
-    return res.redirect(`/redemption?message=${encodeURIComponent(message)}`);
+    return res.redirect(`/redemption?message=Recompensa no encontrada`);
   }
 
-  const member = req.member; // Viene del middleware requireAuth
+  const member = req.member;
 
-  // VALIDACIÓN: Solo funciona en modo Salesforce
   if (!member.salesforceId || process.env.USE_SALESFORCE !== 'true') {
-    const message = 'Las redenciones solo están disponibles en modo Salesforce.';
-    return res.redirect(`/redemption?message=${encodeURIComponent(message)}`);
+    return res.redirect(`/redemption?message=Modo Salesforce requerido`);
   }
 
   try {
-    // Generar código usando el prefix configurado
     const redemptionCode = generateRedemptionCode(reward.codePrefix);
-
-    console.log(`${member.name} canjeó ${reward.name} por ${reward.points} puntos. Código: ${redemptionCode}`);
-
-    // Preparar campos personalizados si es redención especial (Facilitea)
-    const customFields = {};
-    if (reward.isSpecial && reward.journalType === 'Redemption') {
-      customFields.Points_to_debit__c = reward.points;
-      console.log(`🔧 Agregando campo personalizado Points_to_debit__c: ${customFields.Points_to_debit__c}`);
-    }
-
-    // Registrar redemption de non-qualifying points (Cashback) en Salesforce
     const activityDate = new Date().toISOString();
-    const journalSubType = reward.journalSubType || 'Reward';
 
+    // REGISTRO EN SALESFORCE (Usando tu función processTransaction corregida)
     await salesforceLoyalty.processTransaction(
       member.salesforceId,
       'Redemption',
-      -reward.points, // Negativo para redemption
-      'nonQualifying',
-      'Redemption',
-      journalSubType,
-      activityDate,
-      null, // journalSubTypeId
-      customFields
+      -reward.points, // Importante: Negativo para restar tréboles
+      'Tréboles',     // Nombre exacto de tu moneda
+      'Redemption',   // Journal Type
+      'Redemption',   // Journal SubType
+      activityDate
     );
-    console.log('✅ Redemption registrado en Salesforce');
 
-    // Sincronizar puntos desde Salesforce después de registrar
     await salesforceLoyalty.syncMemberPoints(member, member.salesforceId);
     Member.save(member);
-    console.log('✅ Puntos sincronizados desde Salesforce después del redemption');
 
-    const message = `${i18n.t('messages.redemptionSuccess', locale)}: ${reward.name}`;
-    res.redirect(`/redemption?message=${encodeURIComponent(message)}&points=${reward.points}&code=${redemptionCode}&rewardId=${reward.id}`);
+    res.redirect(`/redemption?message=¡Canje realizado con éxito!&points=${reward.points}&code=${redemptionCode}&rewardId=${reward.id}`);
   } catch (error) {
-    console.error('⚠️ Error al registrar redención:', error.message);
-    const message = `${i18n.t('messages.error', locale)}: ${error.message}`;
-    res.redirect(`/redemption?message=${encodeURIComponent(message)}`);
+    console.error('⚠️ Error al canjear:', error.message);
+    res.redirect(`/redemption?message=Error: ${error.message}`);
   }
 });
 
