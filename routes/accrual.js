@@ -6,7 +6,6 @@ const { requireAuth } = require('../middleware/auth');
 const i18n = require('../modules/i18n');
 const salesforceLoyalty = require('../modules/salesforceLoyalty');
 
-// Objeto de marca para evitar errores en el header
 const safeBrand = {
   fullName: 'Club MAPFRE',
   images: { 
@@ -14,9 +13,7 @@ const safeBrand = {
     logo: 'https://upload.wikimedia.org/wikipedia/commons/f/fd/LOGO-MAPFRE.jpg' 
   },
   colors: {
-    primary: '#d81e05', 
-    secondary: '#333333', 
-    accent: '#a31604',
+    primary: '#d81e05', secondary: '#333333', accent: '#a31604',
     tierColors: { bronze: '#CD7F32', silver: '#C0C0C0', gold: '#FFD700', platinum: '#E5E4E2' }
   }
 };
@@ -36,7 +33,6 @@ router.get('/', async (req, res) => {
     }
   }
 
-  // Lógica de progreso para la tarjeta
   const tierThresholds = { 'Plata': 500, 'Oro': 1500, 'Platino': 5000 };
   const nextTierMap = { 'Plata': 'ORO', 'Oro': 'PLATINO', 'Platino': 'DIAMANTE' };
   const currentTier = member.tier || 'Plata';
@@ -63,13 +59,8 @@ router.get('/', async (req, res) => {
   });
 });
 
-/**
- * IMPORTANTE: Esta ruta procesa el botón "Registrar Compra".
- * Si en tu EJS el formulario dice action="/transaction", cámbialo 
- * a action="/accrual/transaction" para que llegue aquí.
- */
 router.post('/transaction', async (req, res) => {
-  const { points, journalType, journalSubType } = req.body;
+  const { points, journalSubType } = req.body;
   const member = req.member;
 
   try {
@@ -79,29 +70,30 @@ router.post('/transaction', async (req, res) => {
 
     const activityDate = new Date().toISOString();
     
-    // 1. Procesar en Salesforce
+    // CAMBIO CLAVE: Enviamos parámetros fijos que Salesforce reconoce para evitar Error 400
     await salesforceLoyalty.processTransaction(
       member.salesforceId,
-      journalType || 'Accrual',
+      'Accrual',      // Journal Type
       parseFloat(points),
-      'Tréboles',
-      journalType || 'Accrual',
-      journalSubType || 'Purchase',
+      'Tréboles',     // Nombre exacto de tu moneda en SF
+      'Accrual',      // Journal SubType (Forzado a Accrual para evitar errores de Picklist)
+      journalSubType, // Descripción
       activityDate
     );
 
-    // 2. Sincronizar puntos actualizados inmediatamente
+    // Sincronizar inmediatamente para traer el nuevo saldo
     await salesforceLoyalty.syncMemberPoints(member, member.salesforceId);
     Member.save(member);
 
-    // 3. Redirigir usando la ruta completa para evitar errores de contexto
-    res.redirect('/accrual?message=' + encodeURIComponent(`¡Éxito! Has sumado ${points} tréboles por ${journalSubType}`) + '&points=' + points);
+    res.redirect('/accrual?message=' + encodeURIComponent(`¡Éxito! Has sumado ${points} tréboles.`) + '&points=' + points);
 
   } catch (error) {
+    // Si da error 400, imprimimos el cuerpo de la respuesta de SF para saber qué campo falla
+    if (error.response && error.response.data) {
+      console.error('❌ ERROR SF DATA:', JSON.stringify(error.response.data));
+    }
     console.error('❌ Error en transacción:', error.message);
-    // IMPORTANTE: Al redirigir en caso de error, el GET de arriba se encargará 
-    // de volver a pasar el objeto 'brand' y 't', evitando el error de undefined.
-    res.redirect('/accrual?message=' + encodeURIComponent('Error: ' + error.message));
+    res.redirect('/accrual?message=' + encodeURIComponent('Error en Salesforce: Revisa metadatos de moneda o subtipo'));
   }
 });
 

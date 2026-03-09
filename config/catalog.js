@@ -12,7 +12,7 @@ module.exports = {
       icon: 'shopping-bag',
       journalType: 'Accrual',
       journalSubType: 'Compra en El Corte Inglés',
-      journalSubTypeId: '0lSJ70000008OMNMA2' // ID de ejemplo de tu SF
+      journalSubTypeId: '0lS7Q000000srPgUAI' // ID de ejemplo de tu SF
     },
     {
       id: 'amazon_accrual',
