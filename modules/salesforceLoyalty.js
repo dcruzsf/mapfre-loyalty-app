@@ -5,6 +5,13 @@ class SalesforceLoyalty {
   constructor() {
     this.apiVersion = process.env.SF_API_VERSION || 'v61.0';
     this.loyaltyProgramName = process.env.SF_LOYALTY_PROGRAM_NAME || 'Club Mapfre';
+    
+    // Mapa de Partners con los IDs proporcionados
+    this.partnerMap = {
+      'Compra en El Corte Inglés': '0ldJ70000000052IAA',
+      'Compra en Amazon': '0ldJ7000000004xIAA',
+      'Repostaje en Repsol': '0ldJ70000000057IAA'
+    };
   }
 
   async getHeaders() {
@@ -65,7 +72,6 @@ class SalesforceLoyalty {
       
       if (res.data.records) {
           res.data.records.forEach(c => {
-             // Sincronización usando el nombre exacto con tilde
              if (c.Name === 'Tréboles') {
                  member.rewardPoints = c.PointsBalance;
              } 
@@ -78,24 +84,23 @@ class SalesforceLoyalty {
     } catch (error) { return member; }
   }
 
-  // 2. PROCESAMIENTO DE TRANSACCIONES (Con objetos JournalType y JournalSubType)
+  // 2. PROCESAMIENTO DE TRANSACCIONES (Actualizado con PartnerId)
   async processTransaction(memberId, type, points, currency, jType, jSubType, date) {
     try {
-      console.log(`🍀 Club MAPFRE: Registrando ${points} Tréboles...`);
+      console.log(`🍀 Club MAPFRE: Registrando ${points} Tréboles para socio ${memberId}...`);
       const instanceUrl = await this.getInstanceUrl();
       const headers = await this.getHeaders();
 
-      // Buscamos IDs con los nombres de objetos corregidos
+      // Buscamos IDs base
       const programId = await this.getIdByQuery(`SELECT Id FROM LoyaltyProgram WHERE Name = '${this.loyaltyProgramName}'`);
-      
-      // JournalType: Accrual
       const journalTypeId = await this.getIdByQuery(`SELECT Id FROM JournalType WHERE Name = 'Accrual'`);
-      
-      // JournalSubType: Purchase
       const journalSubTypeId = await this.getIdByQuery(`SELECT Id FROM JournalSubType WHERE Name = 'Purchase'`);
 
+      // Identificamos el PartnerId basado en el jSubType que viene de la vista
+      const partnerId = this.partnerMap[jSubType] || null;
+
       if (!programId || !journalTypeId || !journalSubTypeId) {
-        console.error('❌ Error de metadatos: ProgramId:', programId, 'JournalTypeId:', journalTypeId, 'SubTypeId:', journalSubTypeId);
+        console.error('❌ Error metadatos:', { programId, journalTypeId, journalSubTypeId });
         return null;
       }
 
@@ -105,6 +110,7 @@ class SalesforceLoyalty {
         MemberId: memberId,
         JournalTypeId: journalTypeId,
         JournalSubTypeId: journalSubTypeId,
+        PartnerId: partnerId, // <--- Aquí se inyecta el ID del comercio (0ldJ...)
         TransactionAmount: Math.abs(points),
         Status: 'Pending'
       };
@@ -112,7 +118,7 @@ class SalesforceLoyalty {
       const url = `${instanceUrl}/services/data/${this.apiVersion}/sobjects/TransactionJournal`;
       const txRes = await axios.post(url, payload, { headers });
       
-      console.log(`✅ Transacción MAPFRE enviada con éxito: ${txRes.data.id}`);
+      console.log(`✅ Tx enviada con éxito. Partner: ${jSubType} (${partnerId}). ID: ${txRes.data.id}`);
       return txRes.data;
     } catch (error) { 
       console.error('❌ Error en processTransaction:', error.response ? JSON.stringify(error.response.data) : error.message); 
@@ -120,7 +126,6 @@ class SalesforceLoyalty {
     }
   }
 
-  // 3. FUNCIONES DE SOPORTE PARA EVITAR ERRORES "NOT A FUNCTION"
   async getMemberTransactions(identifier, limit = 10) { return []; }
   async getMemberBadges() { return []; }
 }
