@@ -57,36 +57,6 @@ module.exports = {
       icon: 'file-invoice-dollar',
       journalType: 'Redemption',
       journalSubType: 'Purchase' 
-    },
-    {
-      id: 'amazon_gift',
-      title: 'Cheque Amazon',
-      description: 'Canjea tus Tréboles por saldo para tus compras en Amazon.es.',
-      points: 100,
-      image: '/img/experiencia4.png',
-      icon: 'gift',
-      journalType: 'Redemption',
-      journalSubType: 'Tarjeta Amazon'
-    },
-    {
-      id: 'fuel_card',
-      title: 'Tarjeta Combustible',
-      description: 'Consigue descuentos directos al repostar en gasolineras Repsol y asociadas.',
-      points: 50,
-      image: '/img/descuento1.png',
-      icon: 'gas-pump',
-      journalType: 'Redemption',
-      journalSubType: 'Vale Combustible'
-    },
-    {
-      id: 'avios',
-      title: 'Avios Iberia',
-      description: 'Canjea tus Tréboles por Avios y vuela más cerca de tu próximo destino con Iberia.',
-      points: 500,
-      image: '/img/experiencia1.png',
-      icon: 'plane',
-      journalType: 'Redemption',
-      journalSubType: 'Uso Avios'
     }
   ]
 };
