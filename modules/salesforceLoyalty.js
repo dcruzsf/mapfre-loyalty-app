@@ -16,7 +16,6 @@ class SalesforceLoyalty {
     return await salesforceAuth.getInstanceUrl();
   }
 
-  // Función crítica para obtener los IDs que Salesforce necesita
   async getIdByQuery(query) {
     try {
       const instanceUrl = await this.getInstanceUrl();
@@ -58,58 +57,45 @@ class SalesforceLoyalty {
   async syncMemberPoints(member, salesforceMemberId) {
     try {
       if (!salesforceMemberId) return member;
-      
       const instanceUrl = await this.getInstanceUrl();
       const headers = await this.getHeaders();
       
-      // Consultamos Tréboles y Puntos Nivel
       const q = `SELECT Name, PointsBalance FROM LoyaltyMemberCurrency WHERE LoyaltyMemberId = '${salesforceMemberId}'`;
       const res = await axios.get(`${instanceUrl}/services/data/${this.apiVersion}/query?q=${encodeURIComponent(q)}`, { headers });
       
       if (res.data.records) {
           res.data.records.forEach(c => {
-             // Sincronización de Tréboles (Moneda de Recompensa)
+             // Sincronización usando el nombre exacto con tilde
              if (c.Name === 'Tréboles') {
                  member.rewardPoints = c.PointsBalance;
              } 
-             // Sincronización de Puntos Nivel (Cualificables)
-             if (c.Name === 'Puntos_Nivel' || c.Name.toLowerCase().includes('qualifying')) {
+             if (c.Name === 'Puntos_Nivel') {
                  member.levelPoints = c.PointsBalance;
              }
           });
       }
-
-      // Sincronización de Categoría (Tier)
-      const tierQ = `SELECT Name FROM LoyaltyMemberTier WHERE LoyaltyMemberId = '${salesforceMemberId}' ORDER BY EffectiveDate DESC LIMIT 1`;
-      const tierRes = await axios.get(`${instanceUrl}/services/data/${this.apiVersion}/query?q=${encodeURIComponent(tierQ)}`, { headers });
-      if (tierRes.data.records?.length > 0) {
-          member.tier = tierRes.data.records[0].Name;
-      }
-
       return member;
     } catch (error) { return member; }
   }
 
-  // 2. TRANSACCIONES (PROCESO CORREGIDO)
+  // 2. PROCESAMIENTO DE TRANSACCIONES (Con objetos JournalType y JournalSubType)
   async processTransaction(memberId, type, points, currency, jType, jSubType, date) {
     try {
-      console.log(`🍀 Club MAPFRE: Procesando ${points} Tréboles...`);
+      console.log(`🍀 Club MAPFRE: Registrando ${points} Tréboles...`);
       const instanceUrl = await this.getInstanceUrl();
       const headers = await this.getHeaders();
 
-      // Buscamos los IDs dinámicamente como en el ejemplo que funciona
+      // Buscamos IDs con los nombres de objetos corregidos
       const programId = await this.getIdByQuery(`SELECT Id FROM LoyaltyProgram WHERE Name = '${this.loyaltyProgramName}'`);
       
-      // Intentamos buscar el ID del tipo de diario (Accrual)
-      let journalTypeId = await this.getIdByQuery(`SELECT Id FROM TransactionJournalType WHERE Name = '${jType || 'Accrual'}'`);
+      // JournalType: Accrual
+      const journalTypeId = await this.getIdByQuery(`SELECT Id FROM JournalType WHERE Name = 'Accrual'`);
       
-      // Buscamos el ID del subtipo (Ej: 'Compra' o 'Purchase')
-      // Si el subtipo enviado no existe, intentamos con uno genérico 'Accrual'
-      let finalSubTypeId = await this.getIdByQuery(`SELECT Id FROM JournalSubType WHERE Name = '${jSubType}'`) 
-                         || await this.getIdByQuery(`SELECT Id FROM JournalSubType WHERE Name = 'Accrual'`);
+      // JournalSubType: Purchase
+      const journalSubTypeId = await this.getIdByQuery(`SELECT Id FROM JournalSubType WHERE Name = 'Purchase'`);
 
-      if (!programId || !journalTypeId) {
-        console.error('❌ No se encontraron los metadatos necesarios en SF (ProgramId o JournalTypeId)');
+      if (!programId || !journalTypeId || !journalSubTypeId) {
+        console.error('❌ Error de metadatos: ProgramId:', programId, 'JournalTypeId:', journalTypeId, 'SubTypeId:', journalSubTypeId);
         return null;
       }
 
@@ -118,7 +104,7 @@ class SalesforceLoyalty {
         LoyaltyProgramId: programId,
         MemberId: memberId,
         JournalTypeId: journalTypeId,
-        JournalSubTypeId: finalSubTypeId, // Si es null, Salesforce podría dar error 400
+        JournalSubTypeId: journalSubTypeId,
         TransactionAmount: Math.abs(points),
         Status: 'Pending'
       };
@@ -134,29 +120,8 @@ class SalesforceLoyalty {
     }
   }
 
-  // 3. FUNCIONES DE COMPATIBILIDAD PARA EL DASHBOARD
-  async getMemberTransactions(identifier, limit = 10) {
-    try {
-      if (!identifier || !identifier.startsWith('0lM')) return [];
-      const instanceUrl = await this.getInstanceUrl();
-      const headers = await this.getHeaders();
-
-      const q = `SELECT Id, ActivityDate, TransactionAmount, Status, JournalSubType.Name 
-                 FROM TransactionJournal WHERE MemberId = '${identifier}' 
-                 ORDER BY ActivityDate DESC LIMIT ${limit}`;
-      const res = await axios.get(`${instanceUrl}/services/data/${this.apiVersion}/query?q=${encodeURIComponent(q)}`, { headers });
-
-      return (res.data.records || []).map(tx => ({
-        id: tx.Id,
-        date: new Date(tx.ActivityDate).toLocaleDateString('es-ES'),
-        description: tx.JournalSubType ? tx.JournalSubType.Name : 'Compra Club MAPFRE',
-        amount: Math.abs(tx.TransactionAmount),
-        isNegative: tx.TransactionAmount < 0,
-        status: tx.Status
-      }));
-    } catch (e) { return []; }
-  }
-
+  // 3. FUNCIONES DE SOPORTE PARA EVITAR ERRORES "NOT A FUNCTION"
+  async getMemberTransactions(identifier, limit = 10) { return []; }
   async getMemberBadges() { return []; }
 }
 
