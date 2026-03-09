@@ -6,11 +6,12 @@ class SalesforceLoyalty {
     this.apiVersion = process.env.SF_API_VERSION || 'v61.0';
     this.loyaltyProgramName = process.env.SF_LOYALTY_PROGRAM_NAME || 'Club Mapfre';
     
+    // Mapa de Partners
     this.partnerMap = {
       'Compra en El Corte Inglés': '0ldJ70000000052IAA',
       'Compra en Amazon': '0ldJ7000000004xIAA',
-      'Repostaje en Repsol': '0ldJ70000000057IAA',
-      'Pago con Tarjeta Mapfre': '0ldJ70000000057IAA' 
+      'Repostaje en Repsol': '0ldJ70000000057IAA'
+      // Eliminamos 'Pago con Tarjeta Mapfre' para que no envíe el partner de Repsol
     };
   }
 
@@ -35,7 +36,7 @@ class SalesforceLoyalty {
     }
   }
 
-  // 1. REGISTRO DE MIEMBROS (Restaurado para que vuelva a funcionar)
+  // 1. GESTIÓN DE MIEMBROS
   async enrollMember(memberData) {
     try {
       const headers = await this.getHeaders();
@@ -71,6 +72,7 @@ class SalesforceLoyalty {
       const instanceUrl = await this.getInstanceUrl();
       const headers = await this.getHeaders();
       
+      // Sincronizar Monedas
       const q = `SELECT Name, PointsBalance FROM LoyaltyMemberCurrency WHERE LoyaltyMemberId = '${salesforceMemberId}'`;
       const res = await axios.get(`${instanceUrl}/services/data/${this.apiVersion}/query?q=${encodeURIComponent(q)}`, { headers });
       
@@ -80,11 +82,19 @@ class SalesforceLoyalty {
              if (c.Name === 'Puntos_Nivel') member.levelPoints = c.PointsBalance;
           });
       }
+
+      // Sincronizar Categoría (Tier) - Importante para la visualización
+      const tierQ = `SELECT Name FROM LoyaltyMemberTier WHERE LoyaltyMemberId = '${salesforceMemberId}' ORDER BY EffectiveDate DESC LIMIT 1`;
+      const tierRes = await axios.get(`${instanceUrl}/services/data/${this.apiVersion}/query?q=${encodeURIComponent(tierQ)}`, { headers });
+      if (tierRes.data.records?.length > 0) {
+          member.tier = tierRes.data.records[0].Name;
+      }
+
       return member;
     } catch (error) { return member; }
   }
 
-  // 2. PROCESAMIENTO DE TRANSACCIONES (Corregido y Simplificado)
+  // 2. PROCESAMIENTO DE TRANSACCIONES
   async processTransaction(memberId, type, points, currency, jType, jSubType, date, journalSubTypeId) {
     try {
       const instanceUrl = await this.getInstanceUrl();
@@ -92,18 +102,26 @@ class SalesforceLoyalty {
 
       // IDs de metadatos
       const programId = await this.getIdByQuery(`SELECT Id FROM LoyaltyProgram WHERE Name = '${this.loyaltyProgramName}'`);
-      
-      // Usamos el jType que viene (Accrual o Redemption) para buscar el ID
       const journalTypeId = await this.getIdByQuery(`SELECT Id FROM JournalType WHERE Name = '${jType || 'Accrual'}'`);
       
-      // Si jSubType es Tarjeta, partner es null. Si no, buscamos en el mapa.
+      /**
+       * GESTIÓN DE SUBTIPOS
+       * Si es redención, usamos el ID específico proporcionado.
+       * Si es acumulación, usamos el ID fijo de Accrual.
+       */
+      let finalSubTypeId = '0lS7Q000000srPgUAI'; // Default Accrual
+      if (jType === 'Redemption') {
+        finalSubTypeId = '0lSJ70000008OhgMAE'; // ID solicitado para Redención
+      }
+
+      /**
+       * GESTIÓN DE PARTNER
+       * Si es Pago con Tarjeta Mapfre, forzamos a null.
+       */
       let partnerId = null;
       if (jSubType !== 'Pago con Tarjeta Mapfre') {
         partnerId = this.partnerMap[jSubType] || null;
       }
-
-      // El ID de subtipo: si el router envía uno (redención), lo usamos. Si no, el fijo de Accrual.
-      const finalSubTypeId = journalSubTypeId || '0lS7Q000000srPgUAI';
 
       const payload = {
         ActivityDate: date || new Date().toISOString(),
@@ -119,7 +137,7 @@ class SalesforceLoyalty {
       const url = `${instanceUrl}/services/data/${this.apiVersion}/sobjects/TransactionJournal`;
       const txRes = await axios.post(url, payload, { headers });
       
-      console.log(`✅ Transacción registrada: ${jType} - Partner: ${partnerId || 'None'}`);
+      console.log(`✅ Transacción registrada: ${jType} | Subtype: ${finalSubTypeId} | Partner: ${partnerId || 'None'}`);
       return txRes.data;
     } catch (error) { 
       console.error('❌ Error en processTransaction:', error.response ? JSON.stringify(error.response.data) : error.message); 

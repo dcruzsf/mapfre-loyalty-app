@@ -53,7 +53,7 @@ module.exports = {
       title: 'Descuento en Recibo',
       description: 'Usa tus Tréboles para pagar menos en tu próximo recibo de cualquier seguro MAPFRE.',
       points: 20,
-      image: '/img/compra3.png',
+      image: '/img/descuento1.png',
       icon: 'file-invoice-dollar',
       journalType: 'Redemption',
       journalSubType: 'Purchase' 
