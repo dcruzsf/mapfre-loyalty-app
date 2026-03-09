@@ -48,21 +48,22 @@ router.get('/', async (req, res) => {
   const nextThreshold = tierThresholds[currentTier] || 500;
   const progressPercent = Math.min(Math.round((member.levelPoints / nextThreshold) * 100), 100);
 
-  // Obtenemos el catálogo completo (Asegúrate de que catalogConfig contenga el objeto 'redemption')
+  // 1. Obtenemos el catálogo traducido
   const translatedCatalog = catalogTranslations.getTranslatedCatalog(catalogConfig, locale);
   
-  // Fusionamos todas las categorías de rewards en una sola lista para el motor de búsqueda
-  let rewardsList = [];
-  if (translatedCatalog && translatedCatalog.rewards) {
-      // Si tu catálogo separa por categorías, las unimos; si es un array directo, lo usamos
-      rewardsList = Array.isArray(translatedCatalog.rewards) ? translatedCatalog.rewards : 
-                    Object.values(translatedCatalog.rewards).flat();
+  // 2. MODIFICACIÓN CLAVE: Extraemos específicamente el nodo de 'redemption'
+  // Si tu catálogo tiene rewards y redemption por separado, los unimos para que la vista los encuentre
+  let redemptionList = [];
+  if (translatedCatalog) {
+      const redemptions = translatedCatalog.redemption || [];
+      const rewards = translatedCatalog.rewards || [];
+      redemptionList = [...redemptions, ...rewards]; 
   }
 
   res.render('redemption', {
     member,
     brand: safeBrand,
-    rewards: rewardsList, 
+    rewards: redemptionList, // Pasamos la lista unificada bajo el nombre 'rewards' para que el EJS funcione
     nextTier: nextTierMap[currentTier] || 'MÁXIMO',
     nextThreshold,
     progressPercent,
@@ -72,7 +73,8 @@ router.get('/', async (req, res) => {
             'navigation.earnPoints': 'Ganar Tréboles',
             'navigation.redeemPoints': 'Canjear Tréboles',
             'pages.redemption.breadcrumb': 'Canjear Tréboles',
-            'pages.redemption.title': 'Canjear mis Tréboles',
+            'pages.redemption.title': 'CANJEAR MIS TRÉBOLES',
+            'pages.redemption.description': 'Utiliza tus tréboles acumulados para ahorrar en tus seguros o conseguir servicios exclusivos',
             'pages.redemption.notification.success': '¡Éxito!',
             'pages.redemption.reward.points': 'Tréboles',
             'pages.redemption.reward.redeem': 'Canjear ahora',
@@ -85,49 +87,54 @@ router.get('/', async (req, res) => {
     message: req.query.message || null,
     pointsRedeemed: req.query.points ? parseInt(req.query.points) : null,
     codeGenerated: req.query.code || null,
-    // Corregimos la búsqueda del reward para que sea flexible con el tipo de ID (string/int)
-    redeemedReward: req.query.rewardId ? rewardsList.find(r => String(r.id) === String(req.query.rewardId)) : null,
+    redeemedReward: req.query.rewardId ? redemptionList.find(r => String(r.id) === String(req.query.rewardId)) : null,
     locale
   });
 });
 
 router.post('/redeem/:id', async (req, res) => {
-  const rewardId = req.params.id; // Lo mantenemos como string para buscar
+  const rewardId = req.params.id;
   
-  // Buscamos en todas las categorías de recompensas
-  const allRewards = Array.isArray(catalogConfig.rewards) ? catalogConfig.rewards : 
-                     Object.values(catalogConfig.rewards).flat();
+  // Buscamos en ambos nodos del catálogo original
+  const allOptions = [
+    ...(catalogConfig.redemption || []),
+    ...(catalogConfig.rewards || [])
+  ];
                      
-  const reward = allRewards.find(r => String(r.id) === String(rewardId));
+  const reward = allOptions.find(r => String(r.id) === String(rewardId));
 
   if (!reward) return res.redirect(`/redemption?message=Error: Recompensa no encontrada`);
 
   const member = req.member;
-  if (!member.salesforceId || process.env.USE_SALESFORCE !== 'true') {
-    return res.redirect(`/redemption?message=Error: Modo Salesforce requerido`);
-  }
+  if (!member.salesforceId || process.env.USE_SALESFORCE === 'true') {
+    try {
+      const activityDate = new Date().toISOString();
+      
+      // Enviamos el ID de subtipo de redención que confirmamos anteriormente
+      const journalSubTypeId = '0lS7Q000000srPlUAI'; 
 
-  try {
-    const redemptionCode = generateRedemptionCode(reward.codePrefix);
-    
-    // Proceso de canje en Salesforce usando el ID de subtipo para REDENCIÓN
-    await salesforceLoyalty.processTransaction(
-      member.salesforceId,
-      'Redemption',
-      -reward.points, // Negativo para restar Tréboles
-      'Tréboles',
-      'Redemption', 
-      'Redemption',
-      new Date().toISOString()
-    );
+      await salesforceLoyalty.processTransaction(
+        member.salesforceId,
+        'Redemption',
+        -reward.points, // Negativo para descontar
+        'Tréboles',
+        'Redemption', 
+        'Redemption',
+        activityDate,
+        journalSubTypeId
+      );
 
-    await salesforceLoyalty.syncMemberPoints(member, member.salesforceId);
-    Member.save(member);
+      await salesforceLoyalty.syncMemberPoints(member, member.salesforceId);
+      Member.save(member);
 
-    res.redirect(`/redemption?message=¡Canje realizado con éxito!&points=${reward.points}&code=${redemptionCode}&rewardId=${reward.id}`);
-  } catch (error) {
-    console.error('⚠️ Error al canjear:', error.message);
-    res.redirect(`/redemption?message=Error en el proceso: ${error.message}`);
+      const message = `¡Canje realizado! Has utilizado ${reward.points} tréboles.`;
+      res.redirect(`/redemption?message=${encodeURIComponent(message)}&points=${reward.points}&code=${generateRedemptionCode(reward.codePrefix)}&rewardId=${reward.id}`);
+    } catch (error) {
+      console.error('⚠️ Error al canjear:', error.message);
+      res.redirect(`/redemption?message=Error en el proceso de Salesforce`);
+    }
+  } else {
+    res.redirect(`/redemption?message=Modo Salesforce no activo`);
   }
 });
 
